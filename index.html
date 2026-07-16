@@ -307,6 +307,10 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .rung .rb{font-size:.96em;line-height:1.65}
 .rung .rb b{color:var(--bone-bright)}
 .rung .rb p{margin-bottom:.5em}
+.rung .rb ul.rung-cards{list-style:none;margin:.15em 0 .2em;padding:0;display:grid;gap:.45em}
+.rung .rb ul.rung-cards li{font-size:.94em;line-height:1.5;padding-left:1em;position:relative}
+.rung .rb ul.rung-cards li:before{content:"\25AB";position:absolute;left:0;top:0;color:var(--accent);opacity:.7}
+.rung .rb ul.rung-cards .rc-why{color:var(--steel)}
 
 /* ============ MATH GRID ============ */
 .math-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75em;margin:.9em 0}
@@ -1091,6 +1095,8 @@ html.calm .station-hero::before,html.calm .station-hero::after,html.calm .counte
 .bstation .hero-card img{border-radius:11px;display:block;width:100%;aspect-ratio:63/88;object-fit:cover;background:rgba(0,0,0,.35)}
 /* beefier brass-rimmed dials inside the console */
 .bstation .counter .c-val{box-shadow:inset 0 0 0 2px rgba(0,0,0,.6),inset 0 3px 8px rgba(0,0,0,.65),inset 0 -3px 6px rgba(255,220,150,.14),0 5px 12px rgba(0,0,0,.6),0 0 0 5px rgba(0,0,0,.28),0 0 0 6px rgba(230,200,120,.3) !important}
+/* the "+ counter" drop-down tray, dropped into the plate under the dials */
+.bstation .station-ctrpick{position:relative;z-index:3;width:100%;max-width:360px;margin:.4em auto .1em;align-self:center;box-sizing:border-box}
 @media(max-width:640px){
   .bs-mid{grid-template-columns:1fr}
   .bs-center{order:-1;margin-bottom:.4em}
@@ -2600,6 +2606,8 @@ function buildUrgencyLine(row){
 }
 
 /* ============ DECK BRAIN (archetype detection) ============ */
+// How much each kill route screams "this ends the game" — sharpest first.
+const FINISHER_RANK = { "alt-win":0, "drain":1, "overrun":2, "extra-combat":3, "doubler":4, "big-burn":5, "x-spell":6, "evasive":7, "double-strike":8, "big-body":9 };
 function detectArchetype(deck, cardData){
   const signals = [];
   const nameQty = uniqueNamesWithQty(deck);
@@ -2655,21 +2663,33 @@ function detectArchetype(deck, cardData){
     if (/counter target/.test(oracle)) counterNames.push(card.name);
     if (/add \{[wubrgc]/.test(oracle) || /search your library for .* land/.test(oracle) || (type.includes("artifact") && /add \{/.test(oracle))) rampCount += qty;
 
-    const power = parseInt(card.power);
-    if (/wins the game/.test(oracle) || (!isNaN(power) && power >= 6) || (cmc >= 6 && type.includes("creature"))) {
-      bigFinishers += qty;
-      finisherNames.push({ name: card.name, cmc: cmc, kind: "big body" });
-    } else if (/deals? x damage/.test(oracle) && cmc <= 6) {
-      finisherNames.push({ name: card.name, cmc: cmc, kind: "x-spell burn" });
-    } else if (/double strike/.test(oracle) && type.includes("creature") && power && power >= 3) {
-      finisherNames.push({ name: card.name, cmc: cmc, kind: "combat closer" });
+    const powerNum = isNaN(parseInt(card.power)) ? null : parseInt(card.power);
+    // Carry the real card text forward so the coaching can name the SPECIFIC
+    // thing this card does, instead of a one-size-fits-all sentence.
+    const meta = { name: card.name, cmc: cmc, oracle: oracle, type: type, power: powerNum };
+    // Broadened, specific finisher detection. Order matters: name the sharpest
+    // kill route first, so a card that both overruns AND is big reads as "overrun".
+    let fkind = null;
+    if (/wins the game/.test(oracle)) fkind = "alt-win";
+    else if (/(an additional|extra) combat/.test(oracle) || /additional combat phase/.test(oracle)) fkind = "extra-combat";
+    else if (/creatures you control get \+/.test(oracle) && /trample/.test(oracle)) fkind = "overrun";
+    else if (/(each opponent|each of your opponents|target opponent|target player) loses/.test(oracle) && /life/.test(oracle)) fkind = "drain";
+    else if (/double/.test(oracle) && /(damage|the power)/.test(oracle)) fkind = "doubler";
+    else if (/deals? x damage/.test(oracle) && cmc <= 7) fkind = "x-spell";
+    else if (/deals damage equal to/.test(oracle)) fkind = "big-burn";
+    else if ((/can't be blocked|unblockable|infect|toxic/.test(oracle)) && powerNum !== null && powerNum >= 3) fkind = "evasive";
+    else if (/double strike/.test(oracle) && type.includes("creature") && powerNum !== null && powerNum >= 3) fkind = "double-strike";
+    else if ((powerNum !== null && powerNum >= 6) || (cmc >= 6 && type.includes("creature"))) fkind = "big-body";
+    if (fkind){
+      if (fkind === "alt-win" || fkind === "big-body") bigFinishers += qty;
+      finisherNames.push(Object.assign({ kind: fkind }, meta));
     }
 
     if (cmc <= 2 && !type.includes("land")) {
-      cheapPlays.push({ name: card.name, cmc: cmc, type: type });
+      cheapPlays.push(Object.assign({}, meta));
     }
     if ((/draw two/.test(oracle) || /whenever .* draw a card/.test(oracle) || tagCard(card).has("draw")) && cmc <= 4) {
-      enginePieces.push({ name: card.name, cmc: cmc, why: "draws you cards" });
+      enginePieces.push(Object.assign({ why: "draws you cards" }, meta));
     }
   });
 
@@ -2711,7 +2731,7 @@ function detectArchetype(deck, cardData){
     typeCounts,
     cheapPlays: cheapPlays.sort((a,b)=> a.cmc - b.cmc).slice(0,6),
     enginePieces: enginePieces.sort((a,b)=> a.cmc - b.cmc).slice(0,6),
-    finisherNames: finisherNames.sort((a,b)=> b.cmc - a.cmc).slice(0,6),
+    finisherNames: finisherNames.sort((a,b)=>{ const r=(FINISHER_RANK[a.kind]!=null?FINISHER_RANK[a.kind]:9)-(FINISHER_RANK[b.kind]!=null?FINISHER_RANK[b.kind]:9); return r!==0?r:(b.cmc-a.cmc); }).slice(0,6),
     removalNames: removalNames.slice(0,8),
     wipeNames: wipeNames.slice(0,6),
     counterNames: counterNames.slice(0,6),
@@ -3697,9 +3717,31 @@ function renderPlaybook(deck, grade, archetype){
   ships.push("Zero-land hands, always. No matter how spicy the rest looks.");
   if (!rampFriendly) ships.push("Hands with your only mana source at four or more. Too slow.");
 
-  const early = archetype ? archetype.cheapPlays.slice(0, 4).map(c => c.name) : [];
-  const mid = archetype ? archetype.enginePieces.slice(0, 4).map(c => c.name) : [];
-  const late = archetype ? archetype.finisherNames.slice(0, 4).map(c => c.name) : [];
+  // Deck-specific turn plan + a one-line "why" for each card, read from its
+  // actual text — no more generic "set the table / land the engine" boilerplate.
+  const plan = phasePlan(archetype, grade);
+  const ctx = { topKey: archetype && archetype.top && archetype.top.length ? archetype.top[0].key : null,
+                tribe: archetype && archetype.tribalHits && archetype.tribalHits.length ? archetype.tribalHits[0].type : null };
+  const earlyCards = archetype ? archetype.cheapPlays.slice(0, 4) : [];
+  const midCards   = archetype ? archetype.enginePieces.slice(0, 4) : [];
+  const lateCards  = archetype ? archetype.finisherNames.slice(0, 4) : [];
+  // Group cards that share the same "why" onto one line — like a coach saying
+  // "these three are your diggers" — instead of repeating an identical sentence.
+  const noteList = (cards, roleFn) => {
+    if (!cards.length) return "";
+    const groups = [];
+    cards.forEach(c => {
+      const why = roleFn(c);
+      const g = groups.find(x => x.why === why);
+      if (g) g.names.push(c.name); else groups.push({ why: why, names: [c.name] });
+    });
+    return '<ul class="rung-cards">' + groups.map(g =>
+      '<li><b>' + g.names.map(cardLink).join(", ") + '</b> <span class="rc-why">' + esc(g.why) + '</span></li>'
+    ).join("") + '</ul>';
+  };
+  const earlyNotes = noteList(earlyCards, c => describeRole(c, { tribe: ctx.tribe }));
+  const midNotes   = noteList(midCards,   c => describeRole(c, { tribe: ctx.tribe, preferDraw: true }));
+  const lateNotes  = noteList(lateCards,  c => describeFinisher(c));
 
   const html =
 `<div class="panel lead">
@@ -3729,22 +3771,22 @@ function renderPlaybook(deck, grade, archetype){
   <div class="rung">
     <div class="rn">Turns 1 to 3</div>
     <div class="rb">
-      <p><b>Set the table.</b> Play a land every turn. Cast a ramp piece if you have it. Deploy a cheap threat that plays into your plan.</p>
-      ${early.length ? '<p>From this list, that means: ' + early.map(cardLink).join(", ") + '.</p>' : ""}
+      <p>${esc(plan.early)}</p>
+      ${earlyNotes}
     </div>
   </div>
   <div class="rung">
     <div class="rn">Turns 4 to 6</div>
     <div class="rb">
-      <p><b>Land the engine.</b> Now the deck starts doing its thing. Draw spells online, commander down, the plan reads clearly across the table.</p>
-      ${mid.length ? '<p>The engine pieces you built for: ' + mid.map(cardLink).join(", ") + '.</p>' : ""}
+      <p>${esc(plan.mid)}</p>
+      ${midNotes}
     </div>
   </div>
   <div class="rung">
     <div class="rn">Turns 7 plus</div>
     <div class="rb">
-      <p><b>Close it.</b> By now you should have the mana and the board to end things. Pick your finisher and go.</p>
-      ${late.length ? '<p>The cards that end games in this deck: ' + late.map(cardLink).join(", ") + '.</p>' : "<p>Trust your quality curve. The biggest thing in your hand is usually the answer.</p>"}
+      <p>${esc(plan.late)}</p>
+      ${lateNotes || "<p>No single finisher jumped out — trust your quality curve. The biggest thing in your hand is usually the answer.</p>"}
     </div>
   </div>
 </div>
@@ -3766,6 +3808,139 @@ function renderPlaybook(deck, grade, archetype){
 
 function cardLink(name){
   return '<a href="https://scryfall.com/search?q=' + encodeURIComponent('!"' + name + '"') + '" target="_blank" rel="noopener">' + esc(name) + '</a>';
+}
+
+/* ============ DECK-SPECIFIC COACHING PROSE ============ */
+/* These read a card's ACTUAL text (oracle / type / power) so the coaching
+   explains THIS card in THIS deck, instead of one generic line reused
+   everywhere. Card names are linked by the caller; these return plain text. */
+function firstNum(re, oracle){ const m = (oracle||"").match(re); return m ? parseInt(m[1]) : null; }
+
+// Why a given finisher actually ends games — specific to the card.
+function describeFinisher(f){
+  const o = f.oracle || "";
+  const pw = (f.power != null) ? f.power : null;
+  switch (f.kind){
+    case "alt-win":
+      return "It literally reads “you win the game.” Protect the turn it goes off and the game is just over.";
+    case "drain": {
+      const n = firstNum(/loses (\d+) life/, o);
+      if (n) return "Drains every opponent for " + n + " at once — stack a couple of triggers and that’s a kill from any board.";
+      return "Drains life from every opponent at once. Each trigger chips the whole table, and it adds up faster than people expect.";
+    }
+    case "overrun":
+      return "Turns your whole board into one alpha strike: everything gets bigger and gains trample, so chump blocks don’t save anyone. If you’re wide, this is lethal from nowhere.";
+    case "extra-combat":
+      return "An extra combat step. A board that’s “almost lethal” becomes lethal the moment you get to swing twice.";
+    case "doubler":
+      return "Doubles your damage — whatever you were about to deal now kills. Point it at whoever’s already low.";
+    case "x-spell":
+      return "The X spell. Dump every mana you have into it and aim it at a face — this is your reach when combat stalls out.";
+    case "big-burn":
+      return "Deals damage equal to a number that only climbs in this deck. Aimed at a player it’s a kill, not a chip.";
+    case "evasive":
+      if (/infect|toxic/.test(o)) return "A poison clock. It only has to connect a few times — infect ends people far faster than 40 life suggests.";
+      return "The damage just goes through; nothing blocks it. Once it’s suited up, the clock is basically unstoppable.";
+    case "double-strike":
+      return "Double strike means every point of power hits twice. Pump it once and the lethal math arrives a turn early.";
+    case "big-body": {
+      // Read the body's own text so two big creatures don't read identically.
+      if (/flying/.test(o) && pw) return "A " + pw + "-power flyer — hard to block, so it just keeps connecting until someone dies.";
+      if (/trample/.test(o) && pw) return "A " + pw + "-power trampler. Blockers only slow it; the extra damage still spills through.";
+      if (/when(ever)? .* enters/.test(o) && /(draw|loses? \d+ life|destroy|exile|create)/.test(o)) return "It pays you the moment it lands, before it ever attacks — then it’s the biggest body at the table.";
+      if (/whenever .* deals combat damage/.test(o)) return "It pays you every time it connects, not just when it swings for the kill — a " + (pw ? pw + "-power " : "") + "threat that snowballs the moment it lands.";
+      if (/haste/.test(o)) return "It comes in swinging — no summoning-sick turn for the table to find an answer. Immediate pressure.";
+      return "The biggest body at the table. If it resolves and lives a turn, the next swing is usually the game.";
+    }
+    default:
+      return "Closes the game when it lands.";
+  }
+}
+
+// Card draw comes in flavors — say which, so four cantrips don't read the same.
+function describeDraw(o){
+  if (/put (two|three|\w+ )?cards? .* on top|put them back|on top of your library in any order/.test(o)) return "sets up your next few draws exactly how you want them.";
+  if (/scry|surveil|look at the top/.test(o)) return "smooths your draws so you hit land and gas on time.";
+  if (/draw (two|three|four|five|x|\d+) cards?/.test(o)) return "real card advantage — you pull a card or two ahead of the table.";
+  if (/whenever (an opponent|a player|you) cast/.test(o) && /draw/.test(o)) return "turns spells on the stack into extra cards for you.";
+  return "cantrips through the deck so the gas keeps flowing.";
+}
+// What a cheap play or engine piece is actually DOING for the plan.
+function describeRole(card, ctx){
+  const o = (card.oracle || "");
+  const t = (card.type || "");
+  const tribe = ctx && ctx.tribe ? ctx.tribe : null;
+  const drawish = /draw (a|two|three|\w+) cards?/.test(o) || /whenever .* draw/.test(o) || /scry|surveil|look at the top/.test(o);
+  if (ctx && ctx.preferDraw && drawish) return describeDraw(o);
+  // Order matters: name the card's most defining job first.
+  if (/add \{[wubrgc]/.test(o) || /search your library for .* land/.test(o)) return "ramps you a turn ahead — your bigger plays land early.";
+  if (/search your library for (a|an|up to)/.test(o) && !/for .* land/.test(o)) return "digs your key card out of the deck on demand.";
+  if (/counter target/.test(o)) return "protects the turn that matters — you get to say no.";
+  if (/(destroy|exile) target/.test(o)) return "clears whatever’s standing in your way.";
+  if (/sacrifice (a|another) creature/.test(o)) return "the sac outlet the deck loops for value.";
+  if (/return .* from (your |a )?graveyard/.test(o)) return "buys your best card back out of the yard.";
+  if (drawish) return describeDraw(o);
+  if (/create .* token/.test(o)) return tribe ? "adds bodies to the pile you’re building." : "makes bodies — the start of your go-wide plan.";
+  if (/\+1\/\+1 counter/.test(o) || /proliferate/.test(o)) return "grows your board every turn it stays up.";
+  if (/(other )?creatures you control get \+/.test(o)) return "pumps the whole team at once.";
+  if (t.includes("creature") && /can't be blocked|unblockable/.test(o)) return "slips in unblocked — it carries your damage and your tricks right through.";
+  if (/haste/.test(o)) return "lets your threat swing the turn it lands.";
+  if (/hexproof|indestructible|shroud|protection from/.test(o)) return "keeps your key threat alive through removal.";
+  if (tribe && (t.includes(tribe) || /changeling/.test(o))) return "another " + tribe + " for the pile — it feeds every payoff.";
+  if (t.includes("creature")) return "an early body that keeps you on curve.";
+  if (t.includes("instant") || t.includes("sorcery")) return "a cheap spell that holds tempo while you set up.";
+  return "a clean early play that keeps the plan moving.";
+}
+
+// Phase-by-phase intent tuned to THIS deck's archetype and its numbers.
+function phasePlan(archetype, grade){
+  const key = archetype && archetype.top && archetype.top.length ? archetype.top[0].key : null;
+  const tribe = archetype && archetype.tribalHits && archetype.tribalHits.length ? archetype.tribalHits[0].type : "creatures";
+  const ramp = grade && grade.counts ? grade.counts.ramp : 0;
+  let p = {
+    early: "Turns 1 to 3 are about mana and not falling behind. Land every turn, drop a rock if you have one, and play something cheap that fits the plan. You’re building the base everything else stands on.",
+    mid:   "Turns 4 to 6 are where the deck actually comes online. Your card advantage and your commander take over, and the plan gets obvious across the table.",
+    late:  "Turn 7 and up you convert. You’ve got the mana and the board — pick the finisher that fits the table and close."
+  };
+  if (key === "tribal"){
+    p.early = "Turns 1 to 3: get one or two " + tribe + " down and a lord if you can. These early bodies are what every payoff later multiplies — no bodies now, nothing to pump later.";
+    p.mid   = "Turns 4 to 6: the lords and the " + tribe + " engine stack. Every new creature is worth more than the last, so the board snowballs faster than the table can answer.";
+    p.late  = "Turn 7 and up: swing with a pile that pumps itself, or drop the payoff that turns the tribe lethal all at once.";
+  } else if (key === "spellslinger" || key === "control"){
+    p.early = "Turns 1 to 3: you’re not the beatdown. Hold cheap interaction and a draw spell, stay alive, and start digging — you win later, so don’t overextend now.";
+    p.mid   = "Turns 4 to 6: your engines turn every spell into two. This is where you pull ahead on cards and start saying no to the table’s big turns.";
+    p.late  = "Turn 7 and up: you out-carded the room. Land your wincon into an open board and it sticks.";
+  } else if (key === "graveyard"){
+    p.early = "Turns 1 to 3: fill the yard and hold your mana. The graveyard is your second hand — you’re loading it now, not spending it.";
+    p.mid   = "Turns 4 to 6: start reaching back. Reanimate or recur your best card two turns before the table thinks you can.";
+    p.late  = "Turn 7 and up: bring back the biggest thing you own and swing, or loop the yard for the kill.";
+  } else if (key === "tokens"){
+    p.early = "Turns 1 to 3: make your first bodies and hold your anthems. Tokens are cheap now and lethal later — quantity first.";
+    p.mid   = "Turns 4 to 6: go wide. Every maker doubles the board and the anthems start turning little bodies into real damage.";
+    p.late  = "Turn 7 and up: one overrun or anthem turn and the whole board connects at once.";
+  } else if (key === "aristocrats"){
+    p.early = "Turns 1 to 3: get a sac outlet and a body source down. You want the loop assembled, not big attackers.";
+    p.mid   = "Turns 4 to 6: feed the loop. Creatures in, creatures out, and the drain payoffs chip every opponent while you build.";
+    p.late  = "Turn 7 and up: close by draining the table — you don’t even need to attack.";
+  } else if (key === "counters"){
+    p.early = "Turns 1 to 3: land a cheap creature that grows. Small now, but scary in three turns — that’s the whole bet.";
+    p.mid   = "Turns 4 to 6: stack counters and proliferate. The board outgrows the table’s removal window.";
+    p.late  = "Turn 7 and up: swing with something too big to block or kill in time.";
+  } else if (key === "ramp"){
+    p.early = "Turns 1 to 3: rocks and dorks first. Every rock is a turn you skip ahead — you’re buying time on the top end.";
+    p.mid   = "Turns 4 to 6: now you’re two turns up on mana. Drop your top end while the table is still setting up.";
+    p.late  = "Turn 7 and up: your big threats came down early and unanswered. Ride them home.";
+  } else if (key === "voltron"){
+    p.early = "Turns 1 to 3: get your one creature down and a rock. Don’t overcommit — you only ever need one threat alive.";
+    p.mid   = "Turns 4 to 6: suit it up and protect it. Every aura or piece of gear is a few more points of hard-to-stop damage.";
+    p.late  = "Turn 7 and up: swing with your loaded threat behind protection. Commander damage or lethal — either way it’s over.";
+  } else if (key === "artifacts"){
+    p.early = "Turns 1 to 3: rocks and cheap artifacts. The board grows quietly while you build — nothing scary yet, on purpose.";
+    p.mid   = "Turns 4 to 6: your payoffs turn that artifact count into real advantage. The quiet board starts to bite.";
+    p.late  = "Turn 7 and up: one payoff turn flips all that setup into a kill.";
+  }
+  if (ramp >= 8) p.early += " You’re running " + ramp + " ramp sources, so your turn-4 plays often land on turn 3.";
+  return p;
 }
 
 /* STRATEGY */
@@ -3806,6 +3981,9 @@ function renderStrategy(deck, grade, archetype){
     plan = "Play the best card in your hand every turn. That is the plan. The deck has quality across the curve and closes on whatever finisher lands first.";
   }
 
+  // Name the sharpest kill route so the game plan ends on a concrete "how it ends".
+  const topFin = finishers.length ? finishers[0] : null;
+
   const html =
 `<div class="panel lead">
   <h3>The Read</h3>
@@ -3818,7 +3996,7 @@ function renderStrategy(deck, grade, archetype){
 <p class="section-sub">The cards that actually close a game in this deck.</p>
 <div class="panel gold">
   ${finishers.length ? finishers.map(f =>
-    '<p><b>' + cardLink(f.name) + '</b> . ' + esc(finisherLine(f)) + '</p>'
+    '<p><b>' + cardLink(f.name) + '</b> — ' + esc(describeFinisher(f)) + '</p>'
   ).join("") : '<p>No single finisher stood out. That is fine. This deck grinds and closes on quality. Every threat carries weight.</p>'}
 </div>
 
@@ -3827,6 +4005,7 @@ function renderStrategy(deck, grade, archetype){
 <p class="section-sub">The paragraph you should have in your head at the start of every game.</p>
 <div class="panel">
   <p>${esc(plan)}</p>
+  ${topFin ? '<p style="margin-top:.6em"><b>How it ends.</b> ' + cardLink(topFin.name) + ' — ' + esc(describeFinisher(topFin)) + '</p>' : ''}
 </div>
 
 <div class="rune-div"><span>&#9670; &#9670; &#9670;</span></div>
@@ -4642,12 +4821,90 @@ function stationAdjust(kind, idx, delta){
   else if (kind === "custom") STATION.custom[idx].value += delta;
   saveStation(); renderStation();
 }
+/* Is the commander-plate "add a counter" tray open? Module-level so a reload
+   starts closed; never persisted. */
+let STATION_CTR_PICK = false;
+/* "+ counter" on the commander plate now opens the SAME drop-down tray as the
+   Life Table (tap a common counter/token, or Custom to type) instead of a bare
+   prompt — so Greg picks from a list right next to his commander. */
 function stationAddCounter(){
-  const label = (prompt("Name this counter (e.g. Energy, Experience, Treasure):") || "").trim();
-  if (!label) return;
+  STATION_CTR_PICK = !STATION_CTR_PICK;
+  renderStation();
+  if (STATION_CTR_PICK){
+    // the console reflow relocates the tray async — once it lands, bring it into
+    // view so tapping "+ counter" visibly opens the list (no motion = instant).
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      const el = document.querySelector('#view-station .station-ctrpick');
+      if (el && el.scrollIntoView) el.scrollIntoView({ block:"center" });
+    }); });
+  }
+}
+function stationAddCounterType(name){
+  name = String(name||"").replace(/["'\\]/g,"").trim();
+  if (!name) return;
+  if (name.length > 18) name = name.slice(0,18);
   stationSnapshot();
-  STATION.custom.push({ label: label.slice(0,18), value: 0 });
+  if (!Array.isArray(STATION.custom)) STATION.custom = [];
+  if (!STATION.custom.some(function(c){ return String(c.label).toLowerCase() === name.toLowerCase(); })){
+    STATION.custom.push({ label:name, value:0 });
+  }
+  STATION_CTR_PICK = false;
   saveStation(); renderStation();
+}
+function stationAddCounterCustom(){
+  const raw = prompt("Counter or token name (e.g. Rad, Shield, Fade):");
+  STATION_CTR_PICK = false;
+  if (raw == null){ renderStation(); return; }
+  const label = String(raw).replace(/["'\\]/g,"").trim().slice(0,18);
+  if (!label){ renderStation(); return; }
+  stationSnapshot();
+  if (!Array.isArray(STATION.custom)) STATION.custom = [];
+  if (!STATION.custom.some(function(c){ return String(c.label).toLowerCase() === label.toLowerCase(); })){
+    STATION.custom.push({ label:label, value:0 });
+  }
+  saveStation(); renderStation();
+}
+/* Auto-load THIS deck's commander tokens onto the plate (Urtet -> Myr,
+   Chatterfang -> Squirrel...) the first time we can read the commander card.
+   Once per deck (STATION.tokensSeeded) so a token Greg removes stays gone. */
+function seedStationCommanderCounters(card){
+  if (!STATION || STATION.tokensSeeded) return 0;
+  if (!card) return 0; // commander card not loaded yet — retry next render
+  const want = commanderCounters(card);
+  if (!Array.isArray(STATION.custom)) STATION.custom = [];
+  let added = 0;
+  want.forEach(function(w){
+    if (w.name === "Poison") return; // poison has its own dial
+    if (!STATION.custom.some(function(c){ return String(c.label).toLowerCase() === w.name.toLowerCase(); })){
+      STATION.custom.push({ label:w.name, value:0 });
+      added++;
+    }
+  });
+  STATION.tokensSeeded = true;
+  if (added) saveStation();
+  return added;
+}
+/* The drop-down tray for the commander plate — mirrors counterPickerHTML but
+   writes to STATION.custom. Wrapped in .station-ctrpick so the console reflow
+   can relocate it into the plate, right under "+ counter". */
+function stationCounterPickerHTML(){
+  const have = {};
+  (STATION.custom||[]).forEach(function(c){ have[String(c.label).toLowerCase()] = 1; });
+  let h = '<div class="station-ctrpick lt-ctrpick">';
+  h += '<div class="lt-ctrpick-hd">Tap a counter or token to add</div>';
+  h += '<div class="lt-ctrpick-grid">';
+  Object.keys(COUNTER_ICONS).forEach(function(name){
+    if (name === "Poison") return;
+    if (have[name.toLowerCase()]) return;
+    h += '<button class="lt-ctrpick-chip" onclick="stationAddCounterType(&quot;'+esc(name)+'&quot;)">';
+    h += '<span class="lt-ctrpick-ico">'+counterIcon(name)+'</span><span class="lt-ctrpick-nm">'+esc(name)+'</span>';
+    h += '</button>';
+  });
+  h += '<button class="lt-ctrpick-chip custom" onclick="stationAddCounterCustom()"><span class="lt-ctrpick-ico">&#9998;</span><span class="lt-ctrpick-nm">Custom&#8230;</span></button>';
+  h += '</div>';
+  h += '<button class="lt-ctrpick-close" onclick="stationAddCounter()">Close</button>';
+  h += '</div>';
+  return h;
 }
 function stationRemoveCounter(idx){
   stationSnapshot();
@@ -4942,6 +5199,9 @@ function renderStation(){
   const cmdCMC = cmdCard && typeof cmdCard.cmc === "number" ? cmdCard.cmc : null;
   const art = cardArtUrl(cmdName, cd);
 
+  // Auto-load this commander's tokens onto the plate (once we can read the card).
+  seedStationCommanderCounters(cmdCard);
+
   let html = "";
 
   // Hero — your commander, front and center
@@ -4994,6 +5254,7 @@ function renderStation(){
     html += counterTileHTML({ cls:"custom", label:c.label, val:c.value, kind:"custom", idx:i, removable:true });
   });
   html += '<div class="add-counter" id="addCounter">+ counter</div>';
+  if (STATION_CTR_PICK) html += stationCounterPickerHTML();
   html += '</div>';
 
   // Tools
@@ -5056,6 +5317,7 @@ async function enterStation(){
     STATION = loadStation(ACTIVE_KEY);
     STATION_DECK = ACTIVE_KEY;
     STATION_UNDO = [];
+    STATION_CTR_PICK = false;
   }
   if (!DECK_CACHE.has(ACTIVE_KEY)){
     host.innerHTML = '<div class="load-line">Setting the table...</div>';
@@ -6501,6 +6763,9 @@ boot();
     left.appendChild(cluster);
     if(add) left.appendChild(add);
     var frame=dev.querySelector('.bstation-frame');
+    // relocate the counter drop-down tray into the plate, just under the dials
+    var pick=grid.querySelector('.station-ctrpick');
+    if(pick&&frame){ var mid=frame.querySelector('.bs-mid'); if(mid) frame.insertBefore(pick, mid.nextSibling); else frame.appendChild(pick); }
     var handPanel=host.querySelector('.hand-panel');
     if(frame&&handPanel){
       var handZone=document.createElement('div'); handZone.className='bs-hand';
