@@ -577,6 +577,8 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .lt-reset:hover{box-shadow:0 0 16px rgba(224,85,119,0.4)}
 .lt-undo{min-height:44px;padding:0 1.1em;border:1px solid var(--panel-edge);border-radius:9px;background:var(--void-2);color:var(--steel);font-family:'Cinzel',serif;font-size:.78em;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:border-color .15s,color .15s}
 .lt-undo:hover{color:var(--bone-bright);border-color:var(--accent)}
+.lt-loadtok{min-height:44px;padding:0 1.05em;border:1px solid var(--accent);border-radius:9px;background:linear-gradient(160deg,rgba(155,121,255,0.14),rgba(155,121,255,0.05));color:var(--accent-bright);font-family:'Cinzel',serif;font-size:.78em;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:box-shadow .15s}
+.lt-loadtok:hover{box-shadow:0 0 14px rgba(155,121,255,0.35)}
 
 .lt-table{display:grid;gap:.75em;grid-template-columns:1fr}
 .lt-table[data-count="2"]{grid-template-columns:1fr}
@@ -611,14 +613,14 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .lt-q{min-width:46px;min-height:32px;border-radius:8px;border:1px solid var(--panel-edge);background:rgba(5,6,13,0.35);color:var(--steel);font-size:.82em;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums}
 .lt-q:hover{color:var(--bone-bright);border-color:var(--seat,var(--accent))}
 
-.lt-cmd{margin-top:.6em;padding-top:.6em;border-top:1px dashed var(--panel-edge);display:grid;grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:.4em}
+.lt-cmd{margin-top:.6em;padding-top:.6em;border-top:1px dashed var(--panel-edge);display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:.4em}
 .lt-cmdcell{border:1px solid var(--cmc,var(--panel-edge));border-radius:8px;padding:.35em .3em;text-align:center;background:rgba(5,6,13,0.35)}
 .lt-cmdcell.hot{background:color-mix(in srgb,var(--crimson) 24%,rgba(5,6,13,0.35));border-color:var(--crimson)}
 .lt-cmdvs{display:flex;align-items:center;justify-content:center;gap:.3em;font-size:.62em;font-family:'Cinzel',serif;letter-spacing:.5px;color:var(--dim);margin-bottom:.15em;text-transform:uppercase}
 .lt-dot{width:9px;height:9px;border-radius:50%;background:var(--cmc,#888);flex:none;box-shadow:0 0 6px var(--cmc,#888)}
 .lt-cmdval{font-family:'Cinzel',serif;font-weight:800;font-size:1.15em;color:var(--bone-bright);line-height:1;font-variant-numeric:tabular-nums}
-.lt-cmdbtns{display:flex;gap:.25em;justify-content:center;margin-top:.2em}
-.lt-cmdb{width:26px;height:26px;border-radius:6px;border:1px solid var(--panel-edge);background:rgba(5,6,13,0.4);color:var(--steel);font-size:1em;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lt-cmdbtns{display:flex;flex-wrap:wrap;gap:.45em;justify-content:center;margin-top:.3em}
+.lt-cmdb{width:40px;height:40px;border-radius:8px;border:1px solid var(--panel-edge);background:rgba(5,6,13,0.4);color:var(--steel);font-size:1.2em;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .lt-cmdb:hover{color:var(--bone-bright);border-color:var(--seat,var(--accent))}
 .lt-cmd-empty{grid-column:1/-1;text-align:center;color:var(--dim);font-style:italic;font-size:.78em;padding:.3em}
 
@@ -1756,10 +1758,12 @@ function replaySeedLog(deck, log){
       loc.bucket.cards.splice(loc.cardIndex, 1);
     } else if (op.op === "add") {
       const nameLower = String(op.n || "").toLowerCase();
-      // singleton guard, except basics that carry a multiplier suffix
+      // singleton guard, except basics with a multiplier suffix and the multi-copy
+      // exception cards (Nazgûl, rats, apostles…) that may legally run extras
       const alreadyThere = findCardLocation(deck, op.n);
       const isBasicMultiple = /\s[×xX]\d+$/.test(op.n) || /\s&times;\d+$/.test(op.n);
-      if (alreadyThere && !isBasicMultiple) return;
+      const allowsMultiple = multiCopyCap(stripQty(decodeName(op.n))) > 1;
+      if (alreadyThere && !isBasicMultiple && !allowsMultiple) return;
       let target = findBucketByLabelBase(deck, op.bucket);
       if (!target) target = pickTargetBucket(deck, "misc");
       target.cards.push({ n: op.n, new: 1 });
@@ -1858,6 +1862,31 @@ const SUGG_CACHE = new Map();
 
 /* ============ HELPERS ============ */
 const BASICS = ["Plains","Island","Swamp","Mountain","Forest","Wastes","Snow-Covered Plains","Snow-Covered Island","Snow-Covered Swamp","Snow-Covered Mountain","Snow-Covered Forest"];
+
+// Singleton (rule 903.5b) has exceptions beyond basic lands: a handful of cards
+// whose text says you may run extras. Most are unlimited; two carry a hard cap.
+// Names are matched lowercased AND accent-folded, so "Nazgûl" == "nazgul".
+const MULTI_COPY = {
+  "relentless rats": Infinity,
+  "rat colony": Infinity,
+  "persistent petitioners": Infinity,
+  "shadowborn apostle": Infinity,
+  "dragon's approach": Infinity,
+  "slime against humanity": Infinity,
+  "templar knight": Infinity,
+  "seven dwarves": 7,
+  "nazgul": 9
+};
+function foldCardName(s){
+  var t = String(s||"").toLowerCase();
+  try { t = t.normalize("NFD").replace(new RegExp("[\\u0300-\\u036f]","g"), ""); } catch(e){}
+  return t.trim();
+}
+// How many copies of this card a Commander deck may legally run (1 for normal cards).
+function multiCopyCap(name){
+  const cap = MULTI_COPY[foldCardName(name)];
+  return cap === undefined ? 1 : cap;
+}
 
 function stripQty(name){
   return name.replace(/\s[×xX]\d+$/,"").replace(/\s&times;\d+$/,"").trim();
@@ -1971,15 +2000,20 @@ function validateDeck(deck, cardData){
   else countLabel = total + " cards. Cut " + (total-100) + ".";
   checks.push({ label: countLabel, pass: total === 100 });
 
-  // Singleton check, qty-aware
-  const dupeNames = Object.keys(nonbasicCounts).filter(n => nonbasicCounts[n] > 1);
-  if (dupeNames.length === 0) {
-    checks.push({ label: "Singleton clean. Every nonbasic has one copy.", pass: true });
+  // Singleton check, qty-aware — honors the multi-copy exceptions (rule 903.5b) so
+  // cards like Nazgûl (up to 9), Seven Dwarves (up to 7) and the "any number"
+  // rats/apostles aren't falsely flagged as illegal duplicates.
+  const overCopies = Object.keys(nonbasicCounts).filter(n => nonbasicCounts[n] > multiCopyCap(n));
+  if (overCopies.length === 0) {
+    checks.push({ label: "Singleton clean. Copy counts are all legal.", pass: true });
   } else {
-    dupeNames.forEach(n => {
+    overCopies.forEach(n => {
       const qty = nonbasicCounts[n];
+      const cap = multiCopyCap(n);
       checks.push({
-        label: "Duplicate: " + n + " appears " + qty + " times. Commander decks run 1 copy. Cut " + (qty - 1) + ".",
+        label: cap === 1
+          ? "Duplicate: " + n + " appears " + qty + " times. Commander decks run 1 copy. Cut " + (qty - 1) + "."
+          : n + " appears " + qty + " times. This card allows up to " + cap + ". Cut " + (qty - cap) + ".",
         pass: false
       });
     });
@@ -5411,6 +5445,60 @@ async function setSeatCommander(i){
   if (seeded > 0) p.showCtr = true;
   saveTable(); renderTable(); syncStationTable();
 }
+// Back-fill for commanders that were set BEFORE token auto-load existed: their
+// p.commander has no .tokens array and no seeded counters. Walk the pod, look each
+// one up on Scryfall, infer its tokens/counters, and drop them on the seat exactly
+// as if you'd just set the commander. Purely ADDITIVE — never removes a counter you
+// already have. Runs quietly whenever you open the Life Table (legacy seats only,
+// so it self-heals and never re-runs work), and the "Load tokens" button force
+// re-scans every seat on demand.
+let BACKFILL_RUNNING = false;
+async function backfillCommanderTokens(opts){
+  opts = opts || {};
+  const force = !!opts.force;
+  if (BACKFILL_RUNNING) return;
+  if (!TABLE || !Array.isArray(TABLE.players)) return;
+  const withCmd = TABLE.players.filter(function(p){ return p && p.commander && p.commander.name; }).length;
+  if (force && !withCmd){ alert("Set a commander on a seat first, then I can load its tokens."); return; }
+  // Which seats need a look-up? Auto = legacy only (no .tokens array). Force = all.
+  const todo = [];
+  TABLE.players.forEach(function(p, i){
+    if (!p || !p.commander || !p.commander.name) return;
+    const legacy = !Array.isArray(p.commander.tokens);
+    if (force || legacy) todo.push(i);
+  });
+  if (!todo.length) return;   // nothing legacy to fix; stay silent
+  BACKFILL_RUNNING = true;
+  let seededAny = 0;
+  try {
+    for (let k=0;k<todo.length;k++){
+      const i = todo[k];
+      const p = TABLE.players[i];
+      if (!p || !p.commander || !p.commander.name) continue;
+      let card = null;
+      try { card = await lookupCommander(p.commander.name); } catch(e){ card = null; }
+      if (!card) continue;
+      const tokens = commanderCounters(card);
+      p.commander.tokens = tokens.map(function(t){ return t.name; });
+      if (!p.commander.art) p.commander.art = cardArtCrop(card);
+      if (!Array.isArray(p.commander.colors) || !p.commander.colors.length){
+        p.commander.colors = Array.isArray(card.color_identity) ? card.color_identity.slice() : [];
+      }
+      const seeded = seedSeatCountersFromCommander(p, card);
+      if (seeded > 0){ p.showCtr = true; seededAny += seeded; }
+      saveTable(); renderTable(); syncStationTable();   // let tokens pop in as they resolve
+      if (k < todo.length - 1) await new Promise(function(r){ setTimeout(r, 120); });  // be kind to Scryfall
+    }
+  } finally {
+    BACKFILL_RUNNING = false;
+  }
+  saveTable(); renderTable(); syncStationTable();
+  if (force){
+    alert(seededAny > 0
+      ? ("Loaded tokens onto your commanders — added " + seededAny + " counter" + (seededAny===1?"":"s") + ".")
+      : "Scanned every commander — none of them use tokens or counters.");
+  }
+}
 function colorPips(colors){
   if (!colors || !colors.length) return '<span class="lt-pip cl">C</span>';
   return COLOR_ORDER.filter(c => colors.includes(c))
@@ -5976,6 +6064,8 @@ function renderTable(){
   html += '</div>';
   html += '<button class="lt-undo" onclick="tableUndo()">Undo</button>';
   html += '<button class="lt-reset" onclick="tableNewGame()">New Game</button>';
+  const anyCmd = (t.players||[]).some(function(p){ return p && p.commander && p.commander.name; });
+  if (anyCmd) html += '<button class="lt-loadtok" onclick="backfillCommanderTokens({force:true})" title="Look up every commander and drop its tokens &amp; counters onto the seat">&#9670; Load tokens</button>';
   html += '</div>';
   if (lay === "round"){
     // Modular honeycomb: same regular-hexagon cells, arranged the way Greg picks.
@@ -6005,6 +6095,10 @@ function renderTable(){
 function enterTable(){
   if (!TABLE) TABLE = loadTable();
   renderTable();
+  // Commanders set before token auto-load have no tokens yet — quietly back-fill
+  // them so they "just appear" on the seats and battle station. Fire-and-forget;
+  // only touches legacy seats, so it runs its work once and then stays idle.
+  backfillCommanderTokens();
 }
 /* Hex pick-up & drop (phone-first). Press-and-HOLD a hex to lift it, drag it over
    another seat, release to snap the two players' places. A swipe that moves before
