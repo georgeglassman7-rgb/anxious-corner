@@ -891,7 +891,7 @@ body.lt-dragging-active{cursor:grabbing;user-select:none;-webkit-user-select:non
 .st-nav{flex:0 0 auto;min-width:44px;font-size:1.5em;line-height:1;color:var(--seat-bright,var(--accent-bright));background:var(--void-2);border:1px solid color-mix(in srgb,var(--seat,var(--accent)) 45%,var(--panel-edge));border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s,box-shadow .12s}
 .st-nav:hover{background:color-mix(in srgb,var(--seat,var(--accent)) 22%,var(--void-2));box-shadow:0 0 14px color-mix(in srgb,var(--seat,var(--accent)) 40%,transparent)}
 .st-seats{display:flex;flex-direction:column;gap:.5em}
-.st-seat{display:flex;align-items:center;gap:.7em;padding:.5em .65em;border-radius:9px;
+.st-seat{display:flex;flex-wrap:wrap;align-items:center;gap:.7em;padding:.5em .65em;border-radius:9px;
   background:linear-gradient(160deg,var(--shadow),var(--void-2));
   border:1px solid var(--panel-edge);border-left:3px solid var(--seat,var(--accent))}
 .st-seat.active{border-color:color-mix(in srgb,var(--seat,var(--accent)) 60%,var(--panel-edge));box-shadow:0 0 18px color-mix(in srgb,var(--seat,var(--accent)) 32%,transparent);background:linear-gradient(160deg,color-mix(in srgb,var(--seat,var(--accent)) 14%,var(--shadow)),var(--void-2))}
@@ -917,6 +917,12 @@ body.lt-dragging-active{cursor:grabbing;user-select:none;-webkit-user-select:non
 .st-token{display:inline-flex;align-items:center;gap:.2em;font-family:'Cinzel',serif;font-size:.62em;letter-spacing:.3px;padding:.22em .48em;border-radius:6px;border:1px solid var(--panel-edge);background:rgba(5,6,13,.4);color:var(--steel);white-space:nowrap;font-variant-numeric:tabular-nums}
 .st-token.live{color:var(--bone-bright);border-color:color-mix(in srgb,var(--seat-bright,var(--accent-bright)) 55%,var(--panel-edge))}
 .st-token.hot{color:#ff9a8a;border-color:#ff8f7a}
+/* Interactive counter tray inside a station seat — full-width line under the
+   seat row. Reuses the Life Table's .lt-ctrgrid / .lt-ctrtile / picker so the
+   two views behave identically; just a touch tighter to fit the station. */
+.st-ctrs{flex:0 0 100%;margin-top:.2em;padding-top:.5em;border-top:1px dashed color-mix(in srgb,var(--seat,var(--accent)) 30%,var(--panel-edge))}
+.st-ctrs-hd{font-family:'Cinzel',serif;font-size:.6em;letter-spacing:2px;text-transform:uppercase;color:var(--seat-bright,var(--accent-bright));margin-bottom:.45em}
+.st-ctrs .lt-ctrgrid{grid-template-columns:repeat(auto-fill,minmax(116px,1fr))}
 .st-life{flex:0 0 auto;display:flex;align-items:center;gap:.35em}
 .st-step{width:40px;height:40px;font-size:1.3em;line-height:1;color:var(--bone);background:var(--void-2);border:1px solid var(--panel-edge);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .st-step:hover{border-color:var(--seat,var(--accent));box-shadow:0 0 12px color-mix(in srgb,var(--seat,var(--accent)) 35%,transparent)}
@@ -6013,22 +6019,27 @@ function stationTableHTML(){
     } else {
       h += '<button class="st-cmdr add" onclick="setSeatCommander('+i+')">+ set commander</button>';
     }
-    // this commander's tokens at a glance (auto-loaded when the commander is set)
-    const stCtrs = normCounters(p.counters);
-    if (stCtrs.length || p.poison > 0){
-      h += '<div class="st-tokens">';
-      if (p.poison > 0) h += '<span class="st-token hot" title="Poison">&#9763; '+p.poison+'</span>';
-      stCtrs.forEach(function(c){
-        h += '<span class="st-token'+(c.val>0?' live':'')+'" title="'+esc(c.name)+'">'+c.icon+(c.val>0?' '+c.val:'')+'</span>';
-      });
-      h += '</div>';
-    }
     h += '</div>';
     // life stepper (edits the same pod state)
     h += '<div class="st-life">';
     h += '<button class="st-step" onclick="tableLife('+i+',-1)" title="Lose 1">&#8722;</button>';
     h += '<span class="st-num'+(p.life<=5?' low':'')+'">'+p.life+'</span>';
     h += '<button class="st-step" onclick="tableLife('+i+',1)" title="Gain 1">+</button>';
+    h += '</div>';
+    // Interactive counters + tokens — the SAME tray as the Life Table, now right
+    // here in the station. Poison is the always-present anchor; "+ counter" opens
+    // the drop-down; a commander's tokens auto-populate when the commander is set.
+    const stCtrs = normCounters(p.counters);
+    h += '<div class="st-ctrs">';
+    h += '<div class="st-ctrs-hd">Counters &amp; tokens</div>';
+    h += '<div class="lt-ctrgrid">';
+    h += drawerCtrTileHTML(i, "Poison", "&#9763;", p.poison, true);
+    stCtrs.forEach(function(c){ h += drawerCtrTileHTML(i, c.name, c.icon, c.val, false); });
+    h += '<div class="lt-ctrtile add">';
+    h += '<button class="lt-ctradd" onclick="tableAddCounter('+i+')">+ counter</button>';
+    h += '</div>';
+    h += '</div>';
+    if (LT_CTR_PICK === i) h += counterPickerHTML(i, p);
     h += '</div>';
     h += '</div>';
   });
