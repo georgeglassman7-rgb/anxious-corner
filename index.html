@@ -133,6 +133,22 @@ h1{font-family:'Cinzel',serif;font-weight:900;
 .deck-mark:empty{display:none}
 .deck-mark svg{width:100%;height:100%;display:block}
 html.calm .deck-mark{filter:none;opacity:.13}
+/* "Which card is your commander?" prompt: shown on an imported list when we could not
+   tell the commander. Type it and the whole deck is re-read for that commander. */
+.cmd-prompt{max-width:640px;margin:.1em 0 1.5em;padding:.95em 1.1em;background:var(--panel);
+  border:1px solid var(--accent-2);border-radius:9px}
+.cmd-prompt label{display:block;font-size:1em;color:var(--text);margin-bottom:.55em}
+.cmd-row{display:flex;gap:.55em;flex-wrap:wrap}
+.cmd-row input{flex:1 1 220px;background:var(--void-2);border:1px solid var(--panel-edge);border-radius:6px;
+  padding:.6em .85em;color:var(--bone);font-family:'EB Garamond',Georgia,serif;font-size:1em}
+.cmd-row input:focus{outline:none;border-color:var(--accent-2)}
+/* Inline card links inside the coaching tabs -- match the app's clean link look
+   (accent color, no default underline; a soft dotted underline only on hover) so they
+   stop reading as raw blue hyperlinks in the middle of the prose. */
+#playbookBody a,#strategyBody a{color:var(--accent-2-bright);text-decoration:none;
+  border-bottom:1px dotted transparent;transition:color .16s,border-color .16s,text-shadow .16s}
+#playbookBody a:hover,#strategyBody a:hover{border-bottom-color:var(--accent-2);
+  text-shadow:0 0 8px var(--glow-2)}
 /* Live color chooser (Job 5): toggling W/U/B/R/G re-themes the whole app in real time. */
 .theme-lab{margin:-1em 0 1.7em;padding:.85em .95em;max-width:760px;
   border:1px solid var(--panel-edge);border-left:3px solid var(--accent-2);border-radius:0 8px 8px 0;
@@ -1389,6 +1405,15 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
   </div>
   <p class="sub" id="deckFlavor"></p>
 
+  <div class="cmd-prompt" id="commanderPrompt" hidden>
+    <label for="commanderInput">Which card is your commander?</label>
+    <div class="cmd-row">
+      <input type="text" id="commanderInput" placeholder="Type the commander's name" autocomplete="off" spellcheck="false">
+      <button type="button" class="btn small" id="commanderSetBtn">Read it</button>
+    </div>
+    <div class="status" id="commanderStatus"></div>
+  </div>
+
   <div class="guild-badge" id="guildBadge" hidden role="button" tabindex="0" aria-expanded="false" aria-controls="themeLab" title="Tap to try a color feel">
     <span class="g-pips" id="guildPips"></span>
     <span class="g-name" id="guildName"></span>
@@ -2184,7 +2209,9 @@ function renderDeckHeader(deck){
     THEME_BASE = ci.slice();
     THEME_PICK = null;
     paintGuildBadge(ci);
-    badge.hidden = false;
+    // No commander detected yet -> hide the guild identity (the "Which card is your
+    // commander?" prompt takes over) instead of pretending a blank list is five-color.
+    badge.hidden = !deck.commander;
     badge.setAttribute("aria-expanded", "false");
     const lab = document.getElementById("themeLab");
     if (lab) lab.setAttribute("hidden", "");
@@ -2221,10 +2248,15 @@ function syncThemeChips(ci){
     ch.setAttribute("aria-pressed", ci.includes(ch.dataset.c) ? "true" : "false"));
 }
 
-/* Apply a chosen color array live: re-theme the app + repaint the badge + chips. */
+/* Apply a chosen color array live: re-theme the app + (maybe) repaint the badge + chips.
+   A loaded commander's identity is fixed. "Try colors" recolors the app's scheme, but it
+   must never relabel the deck -- the guild name, tribe/flavor, color pips and mana symbols
+   all stay true to the real commander (Splinter is always Esper). Only a blank, commanderless
+   list lets the badge follow the colors you pick. */
 function applyThemePick(ci){
   applyTheme(ci);
-  paintGuildBadge(ci);
+  const hasCommander = !!(ACTIVE_DECK && ACTIVE_DECK.commander);
+  if (!hasCommander) paintGuildBadge(ci);   // blank deck: label may follow the pick
   syncThemeChips(ci);
 }
 
@@ -2308,6 +2340,15 @@ function renderShowcaseActions(){
   const isSeed = SEED_KEYS.has(ACTIVE_KEY);
 
   el.innerHTML = "";
+
+  // Copy List: puts the whole deck on the clipboard as plain text,
+  // commander first, so it pastes straight back into the importer.
+  const copyBtn = document.createElement("button");
+  copyBtn.className = "btn ghost small";
+  copyBtn.textContent = "Copy List";
+  copyBtn.addEventListener("click", () => copyDeckList(ACTIVE_DECK, copyBtn));
+  el.appendChild(copyBtn);
+
   const saveBtn = document.createElement("button");
   saveBtn.className = "btn ghost small";
   saveBtn.textContent = "Save Deck File";
@@ -2361,6 +2402,56 @@ function renderShowcaseActions(){
 
   // clear any confirm/rename rows
   document.getElementById("showcaseConfirm").innerHTML = "";
+}
+
+/* Turn a deck into a plain paste-ready list: commander on the first line,
+   then one card per line, with a leading count only when qty > 1. This
+   round-trips cleanly back through parseDeckList/importFromText. */
+function deckToPlainList(deck){
+  const cmd = deck && deck.commander ? deck.commander : "";
+  const map = uniqueNamesWithQty(deck || { buckets: [] });
+  const lines = [];
+  if (cmd) lines.push(cmd);
+  map.forEach((qty, name) => {
+    if (cmd && name.toLowerCase() === cmd.toLowerCase()) return;
+    lines.push(qty > 1 ? (qty + " " + name) : name);
+  });
+  return lines.join("\n");
+}
+
+/* Copy the deck list to the clipboard. Falls back to a hidden textarea +
+   execCommand when the async clipboard API is unavailable (older mobile). */
+async function copyDeckList(deck, btn){
+  const text = deckToPlainList(deck);
+  const done = (ok) => {
+    if (!btn) return;
+    const old = btn.textContent;
+    btn.textContent = ok ? "Copied" : "Press Cmd+C";
+    setTimeout(() => { btn.textContent = old; }, 1600);
+  };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(text);
+      done(true);
+    } else {
+      throw new Error("no clipboard");
+    }
+  } catch(e){
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      done(ok);
+    } catch(e2){
+      done(false);
+    }
+  }
 }
 
 /* Seed reset: clears the change log and rebuilds from seed. */
@@ -2560,10 +2651,62 @@ function resetGeneratedViews(){
 
 function renderShowcase(deck, cardData){
   renderDeckHeader(deck);
+  updateCommanderPrompt(deck);
   renderValidation(deck, cardData);
   renderStats(deck);
   renderDecklist(deck);
   renderShowcaseActions();
+}
+
+/* Show the "Which card is your commander?" box only when the active deck has no commander
+   (a pasted list we could not read a general from). Typing a name re-reads the whole deck
+   for that commander. Handlers are bound once. */
+function updateCommanderPrompt(deck){
+  const cp = document.getElementById("commanderPrompt");
+  if (!cp) return;
+  const hasCmd = !!(deck && deck.commander);
+  cp.hidden = hasCmd;
+  const inp = document.getElementById("commanderInput");
+  const st = document.getElementById("commanderStatus");
+  if (!hasCmd){
+    if (inp) inp.value = "";
+    if (st){ st.textContent = ""; st.className = "status"; }
+  }
+  const btn = document.getElementById("commanderSetBtn");
+  if (btn && !btn.dataset.bound){
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", submitCommanderName);
+    if (inp) inp.addEventListener("keydown", e => {
+      if (e.key === "Enter"){ e.preventDefault(); submitCommanderName(); }
+    });
+  }
+}
+
+function submitCommanderName(){
+  const inp = document.getElementById("commanderInput");
+  const st = document.getElementById("commanderStatus");
+  const btn = document.getElementById("commanderSetBtn");
+  const name = inp ? inp.value.trim() : "";
+  if (!name){
+    if (st){ st.textContent = "Type your commander's name first."; st.className = "status err"; }
+    return;
+  }
+  applyCommanderName(name, st, btn);
+}
+
+/* Re-read the ACTIVE deck as a chosen commander. We rebuild the current card list as plain
+   text with the commander on the first line, then run it through the normal importer --
+   forcing that commander and reusing the same deck slot so nothing gets duplicated. */
+async function applyCommanderName(name, statusEl, btn){
+  const deck = ACTIVE_DECK;
+  if (!deck){ return; }
+  const map = uniqueNamesWithQty(deck);      // Map: clean name -> qty
+  const lines = [name];
+  map.forEach((qty, cardName) => {
+    if (cardName.toLowerCase() === name.toLowerCase()) return;   // don't list the commander twice
+    lines.push(qty > 1 ? (qty + " " + cardName) : cardName);
+  });
+  await importFromText(lines.join("\n"), statusEl, btn, { reuseKey: ACTIVE_KEY, forceCommander: name });
 }
 
 /* ============ FILE OUT: download deck ============ */
@@ -4541,6 +4684,10 @@ function parseDeckList(text){
     // leak into the deck as fake "cards".
     if (/^(https?:\/\/|www\.)\S+$/i.test(line)) continue;
     if (sideboardHeaders.test(line)) continue;
+    // Skip our own showcase bucket headers ("Ramp (9)", "Top Control & Tutors (12)",
+    // "Commander (1)") so a list copied straight off the showcase never turns those
+    // section labels into phantom cards (the old "extra spots" bug).
+    if (/^[^()]+\(\d+\)\s*$/.test(line)) continue;
     // Unwrap markdown links [Name](http...) -> Name, strip stray HTML tags, and
     // cut any trailing URL left on a line (e.g. "Sol Ring https://…").
     line = line.replace(/\[([^\]]+)\]\((?:https?:\/\/|www\.)[^)]*\)/gi, "$1");
@@ -4554,6 +4701,9 @@ function parseDeckList(text){
     let qty = 1, name = line;
     if (m) { qty = parseInt(m[1]); name = m[2].trim(); }
     name = name.trim();
+    // Trailing quantity from our showcase format ("Island ×7", "Swamp x8").
+    const tq = qtyOf(name);
+    if (tq > 1) { qty = tq; name = stripQty(name); }
     if (!name) continue;
     // Final guard: if cleaning still left a URL-looking token, it is not a card.
     if (/^(https?:\/\/|www\.)/i.test(name)) continue;
@@ -4634,7 +4784,8 @@ async function readDroppedDeck(){
   await importFromText(text, statusEl, btn);
 }
 
-async function importFromText(text, statusEl, btn){
+async function importFromText(text, statusEl, btn, opts){
+  opts = opts || {};
   const parsed = parseDeckList(text);
   if (parsed.length === 0) {
     statusEl.textContent = "Nothing to read. Paste a list first.";
@@ -4651,13 +4802,28 @@ async function importFromText(text, statusEl, btn){
 
     let commanderName = null;
     let commanderNote = null;
-    const firstLine = parsed[0];
-    if (firstLine) {
-      const first = found[firstLine.name.toLowerCase()];
-      if (first && (first.type_line || "").toLowerCase().includes("legendary") && (first.type_line || "").toLowerCase().includes("creature")) {
-        commanderName = first.name;
+    if (opts.forceCommander) {
+      // The user typed the commander in the "Which card is your commander?" box.
+      // Trust it as long as the card exists -- planeswalker / background commanders
+      // don't pass the legendary-creature test, and the user knows their own general.
+      const fc = found[opts.forceCommander.toLowerCase()];
+      if (fc) {
+        commanderName = fc.name;
       } else {
-        commanderNote = "Tell me your commander. Put it on the first line.";
+        statusEl.textContent = 'Could not find "' + opts.forceCommander + '". Check the spelling and try again.';
+        statusEl.className = "status err";
+        if (btn) btn.disabled = false;
+        return;
+      }
+    } else {
+      const firstLine = parsed[0];
+      if (firstLine) {
+        const first = found[firstLine.name.toLowerCase()];
+        if (first && (first.type_line || "").toLowerCase().includes("legendary") && (first.type_line || "").toLowerCase().includes("creature")) {
+          commanderName = first.name;
+        } else {
+          commanderNote = "I could not tell which card is your commander. Type it in the box below the deck name and I'll read the whole deck for it.";
+        }
       }
     }
 
@@ -4690,7 +4856,7 @@ async function importFromText(text, statusEl, btn){
       buckets: buckets
     };
 
-    registerImportedDeck(newDeck, { found, notFound });
+    registerImportedDeck(newDeck, { found, notFound }, opts.reuseKey);
     statusEl.textContent = "Read it. Your coaching is right above.";
     statusEl.className = "status";
   } catch (err) {
@@ -4704,10 +4870,11 @@ async function importFromText(text, statusEl, btn){
 /* Register an imported deck: save it, switch to it, render everything.
    v0.9: imports NEVER shadow the seed. Even a name-matched import lands in the
    user-deck slot (its own key) so the seed + its change log remain intact. */
-function registerImportedDeck(newDeck, cardBundle){
+function registerImportedDeck(newDeck, cardBundle, reuseKey){
   // Stable storage key from the deck name (survives reload; fixes the old quirk
-  // where an imported deck was not the active one after a refresh).
-  const key = uniqueUserKey(newDeck.name || "deck");
+  // where an imported deck was not the active one after a refresh). reuseKey lets a
+  // re-read (e.g. "set the commander") overwrite the same slot instead of duplicating.
+  const key = (reuseKey && DECKS[reuseKey]) ? reuseKey : uniqueUserKey(newDeck.name || "deck");
   DECK_META[key] = { seed: false, storageKey: key };
   DECKS[key] = newDeck;
   ACTIVE_KEY = key;
