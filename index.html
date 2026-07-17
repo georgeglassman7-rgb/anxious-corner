@@ -5154,22 +5154,10 @@ function bindPeek(){
       if (!to || !to.closest || !to.closest("[data-card]")) hidePeek();
     }
   });
-  document.addEventListener("touchstart", e => {
-    const t = e.target.closest && e.target.closest("[data-card]");
-    if (t){ showPeek(t.dataset.card, window.innerWidth/2 - 122, 70); clearTimeout(PEEK_TIMER); PEEK_TIMER = setTimeout(hidePeek, 2600); }
-  }, { passive: true });
-  // A plain tap/click on a card NAME shows the in-app card image instead of
-  // yanking you out to a new Scryfall tab. The Scryfall link is still in the
-  // markup: long-press (phone) or cmd/ctrl/middle-click (desktop) still opens it.
-  document.addEventListener("click", e => {
-    const a = e.target.closest && e.target.closest("a[data-card]");
-    if (!a) return;
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let power users open Scryfall
-    e.preventDefault();
-    showPeek(a.dataset.card, window.innerWidth/2 - 122, 70);
-    clearTimeout(PEEK_TIMER);
-    PEEK_TIMER = setTimeout(hidePeek, 2600);
-  });
+  // A plain tap/click on a card NAME opens its Scryfall page in a new tab --
+  // the expected behavior on phone and desktop. The floating card image is now
+  // a desktop HOVER preview only (the mouseover handler above); it never blocks
+  // the link, so a tap always reaches Scryfall.
   // Job 5: guild badge opens the color chooser; chips re-theme the app live.
   document.addEventListener("click", e => {
     if (!e.target.closest) return;
