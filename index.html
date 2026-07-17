@@ -111,6 +111,44 @@ h1{font-family:'Cinzel',serif;font-weight:900;
   margin:.1em 0 .2em;animation:glowPulse 6s ease-in-out infinite}
 .sub{color:var(--text-dim);font-style:italic;margin-bottom:1.4em;font-size:1.05em;
   border-top:1px solid var(--panel-edge);border-bottom:1px solid var(--panel-edge);padding:.85em 0;max-width:760px}
+/* Guild / color-identity badge (Esper, Dimir, Grixis...) — sits under the deck header. */
+.guild-badge{display:flex;align-items:center;flex-wrap:wrap;gap:.45em .7em;margin:-.4em 0 1.7em;padding:.65em .95em;
+  border:1px solid var(--panel-edge);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;
+  background:linear-gradient(160deg,var(--glow-soft),transparent);max-width:760px;cursor:pointer}
+.guild-badge:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.guild-badge .g-pips{display:inline-flex;gap:3px}
+.guild-badge .g-name{font-family:'Cinzel',serif;font-size:1.02em;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--accent-bright);font-weight:700;text-shadow:0 0 12px var(--glow-soft)}
+.guild-badge .g-try{font-family:'Cinzel',serif;font-size:.6em;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text-dim);opacity:.75;margin-left:auto}
+.guild-badge .g-flavor{flex:1 1 100%;color:var(--text-dim);font-style:italic;font-size:.98em;line-height:1.5}
+/* Color-identity mana symbols ("the symbol"), sized big and set BEHIND the deck name
+   as a faint watermark so it adds presence without taking its own vertical space.
+   No motion, low opacity -> stays calm-mode / dyslexia friendly and keeps the title readable. */
+.deck-head{position:relative}
+.deck-head .kicker,.deck-head h1{position:relative;z-index:1}
+.deck-mark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(240px,64vw);aspect-ratio:1;z-index:0;opacity:.17;pointer-events:none;
+  filter:drop-shadow(0 0 16px rgba(170,158,205,.12))}
+.deck-mark:empty{display:none}
+.deck-mark svg{width:100%;height:100%;display:block}
+html.calm .deck-mark{filter:none;opacity:.13}
+/* Live color chooser (Job 5): toggling W/U/B/R/G re-themes the whole app in real time. */
+.theme-lab{margin:-1em 0 1.7em;padding:.85em .95em;max-width:760px;
+  border:1px solid var(--panel-edge);border-left:3px solid var(--accent-2);border-radius:0 8px 8px 0;
+  background:linear-gradient(160deg,var(--void-2),var(--shadow))}
+.theme-lab .tl-title{font-size:.92em;color:var(--text-dim);margin-bottom:.75em;line-height:1.45}
+.theme-lab .tl-chips{display:flex;flex-wrap:wrap;gap:.5em;margin-bottom:.85em}
+.tl-chip{display:inline-flex;align-items:center;gap:.45em;font-family:'EB Garamond',Georgia,serif;font-size:.96em;
+  color:var(--text-dim);background:var(--void-2);border:1px solid var(--panel-edge);border-radius:22px;
+  padding:.45em .9em;cursor:pointer;transition:border-color .15s,color .15s,box-shadow .15s}
+.tl-chip .tl-dot{width:14px;height:14px;border-radius:50%;background:var(--pc,#888);
+  box-shadow:0 0 6px color-mix(in srgb,var(--pc,#888) 60%,transparent)}
+.tl-chip[aria-pressed="true"]{color:var(--bone-bright);border-color:var(--accent);box-shadow:0 0 10px var(--glow-soft)}
+.tl-reset{font-family:'Cinzel',serif;font-size:.72em;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text-dim);background:transparent;border:1px solid var(--panel-edge);border-radius:6px;
+  padding:.45em .95em;cursor:pointer;transition:color .15s,border-color .15s}
+.tl-reset:hover{color:var(--bone);border-color:var(--accent-2)}
 
 /* ============ VIEW TABS ============ */
 .tabs{display:flex;gap:.55em;flex-wrap:wrap;margin:1.2em 0 1.8em}
@@ -319,6 +357,7 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
   background:linear-gradient(90deg,transparent,var(--accent),transparent)}
 .math-tile .lbl{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:.25em}
 .math-tile .val{font-family:'Cinzel',serif;font-size:1.55em;color:var(--accent-bright);letter-spacing:1px;text-shadow:0 0 12px var(--glow)}
+.math-tile .tip{font-size:.8em;color:var(--text-dim);line-height:1.5;margin-top:.5em}
 
 /* ============ NAMECARD chip (Where I'm At) ============ */
 .namecard{display:inline-block;
@@ -401,6 +440,32 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .swap-btn.cycle:hover{box-shadow:0 0 14px var(--glow),0 0 22px var(--glow-soft);border-color:var(--accent-bright)}
 .swap-urgency{font-size:.86em;color:var(--crimson-bright);font-style:italic;margin:.15em 0 .55em;padding-left:.3em;line-height:1.55}
 .swap-urgency.sharpen{color:var(--accent-2-bright)}
+/* ---- deck change log: always-visible undo history ---- */
+#deckChangeLog{margin-top:1em}
+#deckChangeLog:empty{display:none}
+.changelog{padding:.9em 1em 1em;border-radius:8px;border:1px solid var(--panel-edge);border-left:3px solid var(--accent-2);background:linear-gradient(165deg,rgba(95,208,230,0.05),rgba(95,208,230,0.015))}
+.cl-head{display:flex;align-items:baseline;gap:.6em;flex-wrap:wrap;margin-bottom:.15em}
+.cl-title{font-family:'Cinzel',serif;font-size:1.02em;font-weight:700;color:var(--bone-bright);letter-spacing:.3px}
+.cl-count{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent-2-bright);border:1px solid var(--accent-2);border-radius:10px;padding:.22em .7em;line-height:1.4}
+.cl-note{font-size:.9em;color:var(--text-dim);margin:.25em 0 .8em;line-height:1.55}
+.cl-note b{color:var(--text)}
+.cl-list{list-style:none;margin:0;padding:0;display:grid;gap:.55em}
+.cl-list li{display:flex;align-items:center;justify-content:space-between;gap:.7em;flex-wrap:wrap;padding:.55em .7em;border-radius:6px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
+.cl-cards{display:flex;align-items:center;gap:.5em;flex-wrap:wrap;flex:1;min-width:0}
+.cl-card{font-size:.98em;font-weight:600;line-height:1.4}
+.cl-out{color:var(--crimson-bright)}
+.cl-in{color:var(--accent-2-bright)}
+.cl-tag{font-family:'Cinzel',serif;font-size:.56em;letter-spacing:1.5px;text-transform:uppercase;padding:.18em .5em;border-radius:4px;line-height:1.4}
+.cl-tag.out{color:var(--crimson-bright);background:rgba(224,85,119,0.10);border:1px solid rgba(224,85,119,0.32)}
+.cl-tag.in{color:var(--accent-2-bright);background:rgba(95,208,230,0.10);border:1px solid rgba(95,208,230,0.34)}
+.cl-undo{min-height:40px;padding:0 1.05em;border:1px solid var(--panel-edge);border-radius:7px;background:var(--void-2);color:var(--steel);font-family:'Cinzel',serif;font-size:.68em;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:color .15s,border-color .15s,box-shadow .15s;flex-shrink:0}
+.cl-undo:hover{color:var(--bone-bright);border-color:var(--accent-2);box-shadow:0 0 12px var(--glow-2)}
+.cl-undo:active{transform:translateY(1px)}
+.cl-foot{display:flex;align-items:center;gap:.7em;flex-wrap:wrap;margin-top:.9em;padding-top:.75em;border-top:1px dashed rgba(255,255,255,.08)}
+.cl-undo-all{min-height:40px;padding:0 1.05em;border:1px solid var(--panel-edge);border-radius:7px;background:transparent;color:var(--text-dim);font-family:'Cinzel',serif;font-size:.66em;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:color .15s,border-color .15s,box-shadow .15s}
+.cl-undo-all:hover{color:var(--crimson-bright);border-color:var(--crimson)}
+.cl-undo-all.armed{color:var(--crimson-bright);border-color:var(--crimson);box-shadow:0 0 12px rgba(224,85,119,0.3);background:rgba(224,85,119,0.06)}
+.cl-foot-note{font-size:.84em;color:var(--text-dim);line-height:1.5}
 
 /* ============ PILL (seed / meta labels) ============ */
 .pill{display:inline-block;font-family:'Cinzel',serif;font-size:.62em;letter-spacing:1.5px;text-transform:uppercase;padding:.18em .65em;border-radius:10px;border:1px solid var(--accent);color:var(--accent-bright);margin-left:.4em;vertical-align:middle;box-shadow:0 0 8px var(--glow-soft)}
@@ -1317,9 +1382,31 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
   <div class="switcher" id="switcher"></div>
   <p class="storage-note" id="storageNote"></p>
 
-  <div class="kicker" id="deckKicker">Commander . Esper Ninjutsu</div>
-  <h1 id="deckName"></h1>
+  <div class="deck-head">
+    <div class="deck-mark" id="deckMark" aria-hidden="true"></div>
+    <div class="kicker" id="deckKicker">Commander . Esper Ninjutsu</div>
+    <h1 id="deckName"></h1>
+  </div>
   <p class="sub" id="deckFlavor"></p>
+
+  <div class="guild-badge" id="guildBadge" hidden role="button" tabindex="0" aria-expanded="false" aria-controls="themeLab" title="Tap to try a color feel">
+    <span class="g-pips" id="guildPips"></span>
+    <span class="g-name" id="guildName"></span>
+    <span class="g-try" aria-hidden="true">tap to try colors</span>
+    <span class="g-flavor" id="guildFlavor"></span>
+  </div>
+
+  <div class="theme-lab" id="themeLab" hidden>
+    <div class="tl-title">Try a color feel. The whole app follows along.</div>
+    <div class="tl-chips">
+      <button type="button" class="tl-chip" data-c="W" aria-pressed="false"><span class="tl-dot" style="--pc:#f4e9c3"></span>White</button>
+      <button type="button" class="tl-chip" data-c="U" aria-pressed="false"><span class="tl-dot" style="--pc:#4f9be0"></span>Blue</button>
+      <button type="button" class="tl-chip" data-c="B" aria-pressed="false"><span class="tl-dot" style="--pc:#8a7bb0"></span>Black</button>
+      <button type="button" class="tl-chip" data-c="R" aria-pressed="false"><span class="tl-dot" style="--pc:#e05577"></span>Red</button>
+      <button type="button" class="tl-chip" data-c="G" aria-pressed="false"><span class="tl-dot" style="--pc:#5ce08e"></span>Green</button>
+    </div>
+    <button type="button" class="tl-reset" id="tlReset">Back to my deck's colors</button>
+  </div>
 
   <div class="tabs" id="tabs">
     <div class="tab active" data-view="showcase">Showcase</div>
@@ -1369,6 +1456,7 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
       <span class="status" id="scoreStatus">Positive read plus concrete suggestions, from the same numbers.</span>
     </div>
     <div id="gradePanel"></div>
+    <div id="deckChangeLog"></div>
 
     <div class="dropzone">
       <h3>Drop A Deck In</h3>
@@ -1798,14 +1886,20 @@ function rebuildRegistry(){
   Object.keys(DECKS).forEach(k => delete DECKS[k]);
   Object.keys(DECK_META).forEach(k => delete DECK_META[k]);
 
-  // First: user decks (non-seed, full-copy storage)
+  // First: user decks (non-seed). v0.9.1: user decks now follow the SAME
+  // baseline + change-log model as seeds. userdecks[sk] is the IMMUTABLE baseline
+  // (the list exactly as imported); anxiousdeck.log.<sk> is its change log. The
+  // live deck = deepClone(baseline) then replay(log). This is what gives pasted
+  // decks the same persistent Undo list the seed decks have.
   const users = loadUserDecks();
   Object.keys(users).forEach(sk => {
-    const deck = users[sk];
-    if (!deck || !deck.name) return;
-    // Safety: if a user deck's name happens to match a seed, leave it in userdecks
-    // but expose it under its own storage key so it does not shadow the seed.
-    DECKS[sk] = deck;
+    const base = users[sk];
+    if (!base || !base.name) return;
+    const built = deepClone(base);
+    const log = loadSeedLog(sk);
+    if (log.length > 0) replaySeedLog(built, log);
+    else refreshBucketCounts(built);
+    DECKS[sk] = built;
     DECK_META[sk] = { seed: false, storageKey: sk };
   });
 
@@ -1859,11 +1953,23 @@ function removeDeckFromStorage(key){
   const users = loadUserDecks();
   delete users[meta.storageKey];
   saveUserDecks(users);
+  clearSeedLog(meta.storageKey); // user decks now carry a change log too
   return true;
 }
 
 function slugify(s){
   return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60) || "deck";
+}
+
+/* A stable storage key for an imported deck, derived from its name. Never clashes
+   with a seed key or an existing user slot, so an import can never shadow a seed. */
+function uniqueUserKey(name){
+  const base = slugify(name || "deck");
+  const users = loadUserDecks();
+  let sk = base;
+  let n = 2;
+  while (SEED_DECKS[sk] || users[sk]) { sk = base + "-" + n; n++; }
+  return sk;
 }
 
 /* Per-deck analysis cache. Filled after Scryfall fetch. */
@@ -2070,6 +2176,80 @@ function renderDeckHeader(deck){
   document.getElementById("deckFlavor").textContent = deck.flavor || "";
   document.getElementById("deckKicker").textContent = deck.kicker || ("Commander . " + (deck.colors || ""));
   document.getElementById("mantra").textContent = deck.flavor ? ('"' + deck.flavor + '"') : "";
+  // Job 4: surface the color-pair / guild identity (Esper, Dimir, Grixis...) plus its flavor line.
+  const badge = document.getElementById("guildBadge");
+  if (badge) {
+    const ci = identityStringToArray(deck.identity || "");
+    // Job 5: this deck's real identity is the baseline the color chooser resets to.
+    THEME_BASE = ci.slice();
+    THEME_PICK = null;
+    paintGuildBadge(ci);
+    badge.hidden = false;
+    badge.setAttribute("aria-expanded", "false");
+    const lab = document.getElementById("themeLab");
+    if (lab) lab.setAttribute("hidden", "");
+    syncThemeChips(ci);
+  }
+}
+
+/* ============ JOB 5: LIVE COLOR CHOOSER ============ */
+/* Choosing colors re-themes the whole app in real time. This is a preview only:
+   it recolors CSS variables + the guild badge, but never edits the deck's data.
+   Switching or reloading a deck resets it to that deck's real color identity. */
+let THEME_PICK = null;   // null = following the deck; array = a manual color pick
+let THEME_BASE = [];     // the active deck's real color-identity array
+
+/* Repaint the guild badge (pips + name + flavor) for a given color array. */
+function paintGuildBadge(ci){
+  const theme = themeForIdentity(ci);
+  const pips = document.getElementById("guildPips");
+  const nm = document.getElementById("guildName");
+  const fl = document.getElementById("guildFlavor");
+  if (pips) pips.innerHTML = colorPips(ci);
+  const mark = document.getElementById("deckMark");
+  if (mark) mark.innerHTML = buildManaMark(ci);   // mana symbols for the deck's colors
+  if (nm) nm.textContent = theme.name;
+  if (fl) fl.textContent = theme.flavor || "";
+  return theme;
+}
+
+/* Mark which color chips are active. */
+function syncThemeChips(ci){
+  const lab = document.getElementById("themeLab");
+  if (!lab) return;
+  lab.querySelectorAll(".tl-chip[data-c]").forEach(ch =>
+    ch.setAttribute("aria-pressed", ci.includes(ch.dataset.c) ? "true" : "false"));
+}
+
+/* Apply a chosen color array live: re-theme the app + repaint the badge + chips. */
+function applyThemePick(ci){
+  applyTheme(ci);
+  paintGuildBadge(ci);
+  syncThemeChips(ci);
+}
+
+/* Toggle one color in the current pick and re-theme. */
+function toggleThemeColor(c){
+  let cur = (THEME_PICK ? THEME_PICK.slice() : THEME_BASE.slice());
+  cur = cur.includes(c) ? cur.filter(x => x !== c) : cur.concat([c]);
+  THEME_PICK = cur;
+  applyThemePick(cur);
+}
+
+/* Snap the theme back to the deck's real colors. */
+function resetThemePick(){
+  THEME_PICK = null;
+  applyThemePick(THEME_BASE.slice());
+}
+
+/* Open / close the color chooser under the guild badge. */
+function toggleThemeLab(){
+  const lab = document.getElementById("themeLab");
+  const badge = document.getElementById("guildBadge");
+  if (!lab) return;
+  const willOpen = lab.hasAttribute("hidden");
+  if (willOpen) lab.removeAttribute("hidden"); else lab.setAttribute("hidden", "");
+  if (badge) badge.setAttribute("aria-expanded", willOpen ? "true" : "false");
 }
 
 function renderValidation(deck, cardData){
@@ -2207,6 +2387,7 @@ function showResetSeedConfirm(){
     renderShowcaseActions();
     resetGeneratedViews();
     flashSavedToast();
+    renderChangeLog();
   });
   document.getElementById("cancelReset").addEventListener("click", () => {
     holder.innerHTML = "";
@@ -2224,11 +2405,17 @@ function exportBackup(){
     const log = loadSeedLog(k);
     if (log && log.length) logs[k] = log;
   });
+  // User decks now carry change logs too — back those up alongside the baselines.
+  const userMap = loadUserDecks();
+  Object.keys(userMap).forEach(k => {
+    const log = loadSeedLog(k);
+    if (log && log.length) logs[k] = log;
+  });
   const bundle = {
     version: 9,
     exportedAt: new Date().toISOString(),
     logs: logs,
-    userdecks: loadUserDecks(),
+    userdecks: userMap,
     activeDeck: loadStoredActive()
   };
   const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
@@ -2250,20 +2437,21 @@ function importBackupFromText(text){
     flashInlineMessage("That file does not look like a backup.");
     return;
   }
-  // Merge logs: imported logs replace same-key entries.
-  if (obj.logs && typeof obj.logs === "object") {
-    Object.keys(obj.logs).forEach(k => {
-      if (SEED_DECKS[k] && Array.isArray(obj.logs[k])) saveSeedLog(k, obj.logs[k]);
-    });
-  }
-  // Merge userdecks: imported entries replace same-key entries.
+  // Merge userdecks FIRST so their change logs (below) can attach to real slots.
+  const restoredUserKeys = {};
   if (obj.userdecks && typeof obj.userdecks === "object") {
     const merged = loadUserDecks();
     Object.keys(obj.userdecks).forEach(k => {
       const d = obj.userdecks[k];
-      if (d && d.name && Array.isArray(d.buckets)) merged[k] = d;
+      if (d && d.name && Array.isArray(d.buckets)) { merged[k] = d; restoredUserKeys[k] = true; }
     });
     saveUserDecks(merged);
+  }
+  // Merge logs: imported logs replace same-key entries (a seed OR a restored user deck).
+  if (obj.logs && typeof obj.logs === "object") {
+    Object.keys(obj.logs).forEach(k => {
+      if ((SEED_DECKS[k] || restoredUserKeys[k]) && Array.isArray(obj.logs[k])) saveSeedLog(k, obj.logs[k]);
+    });
   }
   if (obj.activeDeck && typeof obj.activeDeck === "string") saveStoredActive(obj.activeDeck);
 
@@ -2314,8 +2502,13 @@ function showRenameRow(){
     const v = input.value.trim();
     if (!v) return;
     ACTIVE_DECK.name = v;
-    if (ACTIVE_DECK.commander && !ACTIVE_DECK.commander) ACTIVE_DECK.commander = v;
-    persistDeck(ACTIVE_KEY);
+    // Update ONLY the stored baseline's name — never write the live (post-swap)
+    // deck back, or logged changes would double-apply on the next reload.
+    const meta = DECK_META[ACTIVE_KEY];
+    if (meta && meta.storageKey) {
+      const users = loadUserDecks();
+      if (users[meta.storageKey]) { users[meta.storageKey].name = v; saveUserDecks(users); }
+    }
     renderShowcase(ACTIVE_DECK, (DECK_CACHE.get(ACTIVE_KEY) || {}).cardData);
     renderSwitcher();
     flashSavedToast();
@@ -2545,10 +2738,10 @@ function coachRead(g, deck){
     level.push({ key: "curve", label: "Curve", text: "Curve: " + g.avgCmc.toFixed(2) + ". On the heavy side. Either more ramp or a couple cheaper picks makes every opener feel better." });
   }
 
-  read.push({ key: "counters", label: "Counters", text: "Counterspells on board: " + g.counts.counter + "." });
-  read.push({ key: "tutors", label: "Tutors", text: "Tutors on board: " + g.counts.tutor + "." });
-  read.push({ key: "finishers", label: "Finishers", text: "Finisher signals: " + g.counts.finisher + ". Big bodies and game-ending text." });
-  read.push({ key: "price", label: "Price", text: "About $" + g.priceTotal.toFixed(0) + " paper." });
+  read.push({ key: "counters", label: "Counters", text: "Counterspells on board: " + g.counts.counter + ". " + readCountersText(g.counts.counter) });
+  read.push({ key: "tutors", label: "Tutors", text: "Tutors on board: " + g.counts.tutor + ". " + readTutorsText(g.counts.tutor) });
+  read.push({ key: "finishers", label: "Finishers", text: "Finisher signals: " + g.counts.finisher + ". " + readFinishersText(g.counts.finisher) });
+  read.push({ key: "price", label: "Price", text: "About $" + g.priceTotal.toFixed(0) + " paper. This is the whole deck at market — a number to gut-check upgrades against, not a target." });
 
   /* Priority score per level row. Bigger score = bigger gap = render first.
      Threshold splits tier: critical vs sharpen. Words on the tag come from tier. */
@@ -2581,6 +2774,24 @@ function coachRead(g, deck){
   level.sort((a,b) => (b.priority||0) - (a.priority||0));
 
   return { working, level, read };
+}
+
+/* Plain-language meaning for the three "read" numbers, so a bare count always
+   comes with what it means for how you actually play. Scales with the count. */
+function readCountersText(n){
+  if (n === 0) return "None. You are trusting the rest of the table to answer the scary turns. Fine in a casual pod, rough against combo — if games feel like you get run over out of nowhere, this is usually why.";
+  if (n <= 3) return "A few. Treat these as your emergency brake. Leave their mana untapped on the turn a rival looks ready to pop off — a counter you are holding makes people play scared even before you cast it.";
+  return "Plenty. You can police the whole table, but only if you keep mana open. A counter in hand with no mana up does nothing, so plan your turns so you can always afford to say no.";
+}
+function readTutorsText(n){
+  if (n === 0) return "None. Every game you play the cards you happen to draw. That is consistent, but there is no shortcut to your best card — so lean on your draw to dig you there instead.";
+  if (n <= 3) return "A handful. Each one is a wish. Point it at whatever the game needs right now — usually your engine or your answer, not always your flashiest bomb.";
+  return "A lot. Your deck plays the same strong game every time because you can fetch the piece you need. Watch your life total: many of the best tutors cost life or a turn of tempo.";
+}
+function readFinishersText(n){
+  if (n === 0) return "Nothing here ends the game on its own. That is okay — you win by grinding on quality. Just know your kill is a slow squeeze, not one big swing, so protect the engines that get you there.";
+  if (n <= 2) return "One or two real kill buttons. Everything else is setup that keeps them alive. Know which card is your finish and steer every game toward casting it safely.";
+  return "Several ways to close. You are rarely stuck without a kill — the flip side is drawing a finisher when you needed a land or an answer. Trust your other numbers to keep the balance.";
 }
 
 /* Urgency framing per level row. Critical tiers read like "You are really missing
@@ -3394,11 +3605,34 @@ function swapChipLink(name){
 }
 
 function inAddReason(inCard, category){
-  if (category === "ramp") return "Cheap rock in your colors. Turn-three plays land on turn two.";
-  if (category === "draw") return "Keeps your hand full. You do not go blank.";
-  if (category === "removal") return "One more clean answer. You can say no on any turn.";
-  if (category === "wipe") return "Reset button. Bad boards turn into fresh ones.";
-  return "Solid staple in your colors, sitting near the top of what Scryfall recommends.";
+  // Read the actual card so the "why add" line teaches the mechanism, not a slogan.
+  const o = (inCard.oracle_text || "").toLowerCase();
+  const t = (inCard.type_line || "").toLowerCase();
+  if (category === "ramp") {
+    if (/add \{[wubrgc]/.test(o) && (t.includes("artifact") || t.includes("enchantment")))
+      return "This is a mana rock. Tap it for an extra mana every turn, so your 4-drop lands on turn 3 instead of turn 4. That is literally how you get more mana — you buy a full turn on the whole table.";
+    if (/search your library for .* land/.test(o))
+      return "This fetches a land straight out of your deck and puts it into play. You jump a turn ahead on mana, and your deck gets thinner, so the rest of the game you draw more spells and fewer lands.";
+    if (t.includes("creature"))
+      return "A mana dork — the turn after it lands it taps for mana like an extra land. Cheap, and it pushes your big spells a turn early. One catch: a board wipe kills it, so do not lean on it as your only ramp.";
+    return "More mana, sooner. Every ramp piece is a turn you skip ahead, so your expensive cards come down while the rest of the table is still setting up.";
+  }
+  if (category === "draw") {
+    if (/draw (two|three|four|five|six|seven|\d+) cards?/.test(o))
+      return "This refills your hand — you pull one or two cards ahead of everyone else. In a long game the player holding the most cards usually wins, and this keeps that player you.";
+    if (/scry|surveil|look at the top/.test(o))
+      return "This smooths your draws. You peek at the top of your deck and fix it, so you stop drawing lands when you need spells. Fewer dead turns, more real plays.";
+    return "Keeps your hand full so you never run out of things to do. That is how a slow game tips your way — you always have the next card and they do not.";
+  }
+  if (category === "removal") {
+    if (/destroy target|exile target/.test(o))
+      return "A clean answer — point it at the scariest thing on the table and it is gone. Holding one means you are never helpless the turn someone drops a bomb.";
+    return "One more answer for the thing that is about to run you over. You get to say no on any turn instead of just hoping it does not come up.";
+  }
+  if (category === "wipe") {
+    return "Your reset button. When the table gets ahead of you this clears the board and everyone starts from scratch — and because you chose the timing, you are the one who rebuilds first.";
+  }
+  return "A solid staple in your colors, near the top of what the data recommends. It slots into the plan on its own and never asks the rest of your deck for setup.";
 }
 
 /* ============ APPLY SWAP (v0.8) ============
@@ -3435,21 +3669,16 @@ function applySwap(opts){
   s.swaps.push({ outName: outName, inName: inCard.name, category: category, at: Date.now() });
   noteSwapExcludes(key, category, outName, inCard.name);
 
-  // 6. Persist. Seed decks: append the swap op to the change log. User decks:
-  //    fall through to the full-copy path.
-  const metaHere = DECK_META[key] || { seed:false };
-  if (metaHere.seed) {
-    appendSeedLogOp(key, {
-      op: "swap",
-      out: outName,
-      in: inCard.name,
-      category: category || "misc",
-      inBucket: bucketLabelBase(targetBucket.bucket),
-      at: Date.now()
-    });
-  } else {
-    persistDeck(key);
-  }
+  // 6. Persist. Seed AND user decks now both use the append-only change log.
+  //    userdecks[key] holds the immutable baseline, so we never overwrite it here.
+  appendSeedLogOp(key, {
+    op: "swap",
+    out: outName,
+    in: inCard.name,
+    category: category || "misc",
+    inBucket: bucketLabelBase(targetBucket.bucket),
+    at: Date.now()
+  });
   flashSavedToast();
 
   // 7. Refresh grade + cache. The deck changed; drop suggestion map so next
@@ -3570,14 +3799,9 @@ function undoSwap(blockEl){
     s.excludes.get(last.category).delete(String(last.outName).toLowerCase());
   }
 
-  // Storage: seed decks pop the last log op (log is source of truth on reload).
-  // User decks persist their new full copy.
-  const metaHere = DECK_META[key] || { seed:false };
-  if (metaHere.seed) {
-    popSeedLogOp(key);
-  } else {
-    persistDeck(key);
-  }
+  // Storage: both seed and user decks pop the last log op. The log is the source
+  // of truth on reload; the immutable baseline in userdecks is left untouched.
+  popSeedLogOp(key);
   flashSavedToast();
 
   const bundle = DECK_CACHE.get(key);
@@ -3608,6 +3832,126 @@ function refreshCoachPanel(){
   const bundle = DECK_CACHE.get(ACTIVE_KEY);
   if (!bundle) return;
   bundle.coach = renderGradePanel(ACTIVE_DECK, bundle.grade, bundle.notFound, bundle.archetype, bundle.suggMap);
+}
+
+/* ============ CHANGE LOG (always-visible undo history) ============
+   The op-log at anxiousdeck.log.<seedKey> is the durable source of truth for
+   every swap/cut/add on a seed deck. renderChangeLog surfaces it as a plain
+   list so Greg can always SEE what he changed and undo any single change --
+   even after a reload, and even though the inline "confirmed" swap block gets
+   redrawn away by the coach refresh. Undo works by editing the log and
+   rebuilding the deck from seed+log, so it never depends on an in-memory
+   snapshot that a reload would lose. */
+function renderChangeLog(){
+  const holder = document.getElementById("deckChangeLog");
+  if (!holder) return;
+  const key = ACTIVE_KEY;
+  const meta = DECK_META[key] || {};
+  // Both seed and user decks carry a per-change log we can walk and undo precisely.
+  // A deck with no storage backing (no meta) gets nothing.
+  if (!meta.seed && !meta.storageKey) { holder.innerHTML = ""; return; }
+  const log = loadSeedLog(key);
+  if (!log || log.length === 0) { holder.innerHTML = ""; return; }
+
+  const shortName = (ACTIVE_DECK && ACTIVE_DECK.commander
+    ? ACTIVE_DECK.commander.split(",")[0]
+    : (ACTIVE_DECK ? ACTIVE_DECK.name.split(",")[0] : "this deck")).trim();
+  const n = log.length;
+
+  let html = '<div class="changelog">';
+  html += '<div class="cl-head"><span class="cl-title">Your changes to ' + esc(shortName) + '</span>';
+  html += '<span class="cl-count">' + n + (n === 1 ? " change" : " changes") + '</span></div>';
+  html += '<p class="cl-note">Newest first. This is exactly what you swapped. Tap <b>Undo</b> to put a card back.</p>';
+  html += '<ul class="cl-list">';
+  for (let i = log.length - 1; i >= 0; i--) {
+    const op = log[i] || {};
+    let body = "";
+    if (op.op === "swap") {
+      body = '<span class="cl-card cl-out">' + esc(stripQty(decodeName(op.out || ""))) + '</span>'
+           + '<span class="cl-tag out">cut</span>'
+           + '<span class="cl-card cl-in">' + esc(stripQty(decodeName(op.in || ""))) + '</span>'
+           + '<span class="cl-tag in">in</span>';
+    } else if (op.op === "remove") {
+      body = '<span class="cl-card cl-out">' + esc(stripQty(decodeName(op.n || ""))) + '</span>'
+           + '<span class="cl-tag out">cut</span>';
+    } else if (op.op === "add") {
+      body = '<span class="cl-card cl-in">' + esc(stripQty(decodeName(op.n || ""))) + '</span>'
+           + '<span class="cl-tag in">added</span>';
+    } else {
+      continue;
+    }
+    html += '<li><div class="cl-cards">' + body + '</div>'
+         + '<button class="cl-undo" data-op-index="' + i + '">Undo</button></li>';
+  }
+  html += '</ul>';
+  html += '<div class="cl-foot"><button class="cl-undo-all" id="clUndoAll">Undo everything</button>'
+       + '<span class="cl-foot-note">Puts ' + esc(shortName) + ' back to the original list.</span></div>';
+  html += '</div>';
+  holder.innerHTML = html;
+
+  holder.querySelectorAll(".cl-undo").forEach(btn => {
+    btn.addEventListener("click", () => undoLoggedOp(parseInt(btn.dataset.opIndex, 10)));
+  });
+  const allBtn = holder.querySelector("#clUndoAll");
+  if (allBtn) {
+    allBtn.addEventListener("click", () => {
+      if (allBtn.dataset.armed === "1") { undoAllOps(); return; }
+      allBtn.dataset.armed = "1";
+      allBtn.textContent = "Tap again to undo all";
+      allBtn.classList.add("armed");
+      setTimeout(() => {
+        if (allBtn && allBtn.isConnected) {
+          allBtn.dataset.armed = "0";
+          allBtn.textContent = "Undo everything";
+          allBtn.classList.remove("armed");
+        }
+      }, 5000);
+    });
+  }
+}
+
+/* Undo ONE change: drop that op from the log, rebuild deck from seed+log. */
+function undoLoggedOp(index){
+  const key = ACTIVE_KEY;
+  const meta = DECK_META[key] || {};
+  if (!meta.seed && !meta.storageKey) return;
+  const log = loadSeedLog(key);
+  if (!Array.isArray(log) || index < 0 || index >= log.length) return;
+  log.splice(index, 1);
+  saveSeedLog(key, log);
+  rebuildDeckFromStorage(key);
+}
+
+/* Undo ALL changes: clear the log entirely (same result as seed reset). */
+function undoAllOps(){
+  const key = ACTIVE_KEY;
+  const meta = DECK_META[key] || {};
+  if (!meta.seed && !meta.storageKey) return;
+  clearSeedLog(key);
+  rebuildDeckFromStorage(key);
+}
+
+/* Shared: re-derive the active deck from storage and repaint every surface. */
+function rebuildDeckFromStorage(key){
+  rebuildRegistry();
+  ACTIVE_DECK = DECKS[key];
+  DECK_CACHE.delete(key);
+  // Reset in-memory session tracking so suggestions recompute against the
+  // restored list (a card we just put back should be eligible again).
+  if (typeof SESSION !== "undefined" && SESSION.has(key)) {
+    const s = SESSION.get(key);
+    s.swaps = []; s.snapshots = []; s.excludes = new Map();
+  }
+  applyTheme(identityStringToArray(ACTIVE_DECK.identity));
+  renderShowcase(ACTIVE_DECK);
+  if (typeof renderSwitcher === "function") renderSwitcher();
+  if (typeof renderShowcaseActions === "function") renderShowcaseActions();
+  resetGeneratedViews();
+  flashSavedToast();
+  renderChangeLog();
+  // Re-run analysis so the coach panel repaints with the restored list; its
+  // tail calls renderChangeLog again once fresh card data is in.
+  ensureDeckAnalysis(key, ACTIVE_DECK).then(() => { renderChangeLog(); }).catch(() => {});
 }
 
 /* ============ COACH PANEL RENDER ============ */
@@ -3676,6 +4020,7 @@ function renderGradePanel(deck, grade, notFound, archetype, suggMap){
   el.innerHTML = html;
 
   renderSwapMomentum();
+  renderChangeLog();
 
   if (coach.level.length > 0) {
     loadSuggestionsForLevelRows(coach.level, deck, suggMap);
@@ -3795,10 +4140,10 @@ function renderPlaybook(deck, grade, archetype){
 <h2>The Math</h2>
 <p class="section-sub">Four numbers to trust.</p>
 <div class="math-grid">
-  <div class="math-tile"><div class="lbl">Lands</div><div class="val">${lands}</div></div>
-  <div class="math-tile"><div class="lbl">Ramp</div><div class="val">${ramp}</div></div>
-  <div class="math-tile"><div class="lbl">Draw</div><div class="val">${draw}</div></div>
-  <div class="math-tile"><div class="lbl">Avg Mana</div><div class="val">${avg}</div></div>
+  <div class="math-tile"><div class="lbl">Lands</div><div class="val">${lands}</div><div class="tip">Your fuel. Hit a land drop every turn or the plan stalls. 34 to 38 is the pocket.</div></div>
+  <div class="math-tile"><div class="lbl">Ramp</div><div class="val">${ramp}</div><div class="tip">Extra mana. Each rock is a turn you jump ahead — past 8, your big plays land early.</div></div>
+  <div class="math-tile"><div class="lbl">Draw</div><div class="val">${draw}</div><div class="tip">Fresh cards. Past 8 your hand never runs dry and you stop drawing blanks.</div></div>
+  <div class="math-tile"><div class="lbl">Avg Mana</div><div class="val">${avg}</div><div class="tip">How heavy the deck is. Under 3 casts on time; over 3.5 wants more lands or ramp.</div></div>
 </div>
 <div class="panel">
   <p>Read the math like this. If your average mana value is under three, you hit curve on ${lands < 34 ? "even a light land count." : "your land base."} If it drifts over three and a half, you want more lands or more ramp. Draw over eight means your hand does not go blank. Ramp over eight means turn-three plays land on turn two.</p>
@@ -4123,7 +4468,9 @@ async function switchView(name){
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + name));
 
   if (name === "showcase") return;
-  if (name === "coach") return;
+  // Opening Coach always repaints the persistent change/undo list, even before
+  // you run "Coach This Deck" and even after a fresh reload. Cheap, no network.
+  if (name === "coach") { renderChangeLog(); return; }
   if (name === "station") { await enterStation(); return; }
   if (name === "table") { enterTable(); return; }
   if (name === "play") { await enterPlay(); return; }
@@ -4190,7 +4537,17 @@ function parseDeckList(text){
     let line = raw.trim();
     if (!line) continue;
     if (line.startsWith("//") || line.startsWith("#")) continue;
+    // A bare link or note line is never a card — drop it so pasted URLs never
+    // leak into the deck as fake "cards".
+    if (/^(https?:\/\/|www\.)\S+$/i.test(line)) continue;
     if (sideboardHeaders.test(line)) continue;
+    // Unwrap markdown links [Name](http...) -> Name, strip stray HTML tags, and
+    // cut any trailing URL left on a line (e.g. "Sol Ring https://…").
+    line = line.replace(/\[([^\]]+)\]\((?:https?:\/\/|www\.)[^)]*\)/gi, "$1");
+    line = line.replace(/<[^>]+>/g, "");
+    line = line.replace(/\s+(?:https?:\/\/|www\.)\S+/gi, "");
+    // Strip leading list bullets some note apps add ("- ", "* ", "• ").
+    line = line.replace(/^[-*•·]\s+/, "");
     line = line.replace(/\s*\([A-Za-z0-9]{2,6}\)\s*[A-Za-z0-9\-]+.*$/,"");
     line = line.replace(/\s*\*[A-Za-z]\*\s*$/,"");
     const m = line.match(/^(\d+)\s*[xX]?\s+(.+)$/);
@@ -4198,6 +4555,8 @@ function parseDeckList(text){
     if (m) { qty = parseInt(m[1]); name = m[2].trim(); }
     name = name.trim();
     if (!name) continue;
+    // Final guard: if cleaning still left a URL-looking token, it is not a card.
+    if (/^(https?:\/\/|www\.)/i.test(name)) continue;
     cards.push({ name, qty });
   }
   return cards;
@@ -4332,7 +4691,7 @@ async function importFromText(text, statusEl, btn){
     };
 
     registerImportedDeck(newDeck, { found, notFound });
-    statusEl.textContent = "Loaded. Jumped to showcase.";
+    statusEl.textContent = "Read it. Your coaching is right above.";
     statusEl.className = "status";
   } catch (err) {
     statusEl.textContent = "Could not reach the card library. Check your connection and try again.";
@@ -4346,14 +4705,21 @@ async function importFromText(text, statusEl, btn){
    v0.9: imports NEVER shadow the seed. Even a name-matched import lands in the
    user-deck slot (its own key) so the seed + its change log remain intact. */
 function registerImportedDeck(newDeck, cardBundle){
-  const key = "deck_" + Date.now().toString(36);
-  DECK_META[key] = { seed: false, storageKey: null };
+  // Stable storage key from the deck name (survives reload; fixes the old quirk
+  // where an imported deck was not the active one after a refresh).
+  const key = uniqueUserKey(newDeck.name || "deck");
+  DECK_META[key] = { seed: false, storageKey: key };
   DECKS[key] = newDeck;
   ACTIVE_KEY = key;
   ACTIVE_DECK = newDeck;
 
-  // persist
-  const saved = persistDeck(key);
+  // Persist the IMMUTABLE baseline (the list exactly as imported) and start with a
+  // clean change log. Swaps append to the log; Undo walks it back — same model as
+  // the seed decks, so pasted decks get the same persistent Undo list.
+  clearSeedLog(key);
+  const users = loadUserDecks();
+  users[key] = deepClone(newDeck);
+  const saved = saveUserDecks(users);
   saveStoredActive(key);
 
   // theme
@@ -4377,7 +4743,10 @@ function registerImportedDeck(newDeck, cardBundle){
   renderPlaybook(newDeck, grade, archetype);
   renderStrategy(newDeck, grade, archetype);
   renderWhere(newDeck, grade, bundle.coach, archetype, bundle.suggMap);
-  switchView("showcase");
+  // Land the user ON the coaching, not the showcase. The whole point of a paste
+  // is "read it and coach me" — so jump straight to the read and scroll it up.
+  switchView("coach");
+  try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch(e) { window.scrollTo(0,0); }
 }
 
 /* Load a deck from a JSON file. Basic shape validation. */
@@ -4394,7 +4763,7 @@ function loadDeckJsonObject(obj, statusEl){
   registerImportedDeck(obj, { found: {}, notFound: [] });
   // scryfall analysis will run on demand
   DECK_CACHE.delete(ACTIVE_KEY);
-  if (statusEl) { statusEl.textContent = "Loaded from file. Jumped to showcase."; statusEl.className = "status"; }
+  if (statusEl) { statusEl.textContent = "Loaded from file. Coaching is right above."; statusEl.className = "status"; }
 }
 
 function handleFile(file, statusEl){
@@ -4561,6 +4930,7 @@ function cardImageUrl(name, cardData){
   return scryImgUrl(clean);
 }
 let PEEK = null;
+let PEEK_TIMER = null;
 function ensurePeek(){
   if (!PEEK){
     PEEK = document.createElement("div");
@@ -4619,8 +4989,32 @@ function bindPeek(){
   });
   document.addEventListener("touchstart", e => {
     const t = e.target.closest && e.target.closest("[data-card]");
-    if (t){ showPeek(t.dataset.card, window.innerWidth/2 - 122, 70); setTimeout(hidePeek, 2600); }
+    if (t){ showPeek(t.dataset.card, window.innerWidth/2 - 122, 70); clearTimeout(PEEK_TIMER); PEEK_TIMER = setTimeout(hidePeek, 2600); }
   }, { passive: true });
+  // A plain tap/click on a card NAME shows the in-app card image instead of
+  // yanking you out to a new Scryfall tab. The Scryfall link is still in the
+  // markup: long-press (phone) or cmd/ctrl/middle-click (desktop) still opens it.
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest("a[data-card]");
+    if (!a) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let power users open Scryfall
+    e.preventDefault();
+    showPeek(a.dataset.card, window.innerWidth/2 - 122, 70);
+    clearTimeout(PEEK_TIMER);
+    PEEK_TIMER = setTimeout(hidePeek, 2600);
+  });
+  // Job 5: guild badge opens the color chooser; chips re-theme the app live.
+  document.addEventListener("click", e => {
+    if (!e.target.closest) return;
+    const chip = e.target.closest(".tl-chip[data-c]");
+    if (chip) { toggleThemeColor(chip.dataset.c); return; }
+    if (e.target.closest("#tlReset")) { resetThemePick(); return; }
+    if (e.target.closest("#guildBadge")) { toggleThemeLab(); return; }
+  });
+  const guildBadgeEl = document.getElementById("guildBadge");
+  if (guildBadgeEl) guildBadgeEl.addEventListener("keydown", ev => {
+    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggleThemeLab(); }
+  });
   const am = document.getElementById("artMode");
   if (am){
     syncArtModeBtn();
@@ -5767,6 +6161,96 @@ async function backfillCommanderTokens(opts){
       : "Scanned every commander — none of them use tokens or counters.");
   }
 }
+/* ============ DECK MARK (static color-identity emblem) ============
+   The "land logos" symbol Greg asked for, modeled on the Atraxa showcase mark but
+   kept SIMPLE and STATIC (no spin). The outer ring is split into one arc per color
+   in the deck's identity, painted from the same COLOR_HEX the pips use, wrapped
+   around a 4-point praetor star. Rendered from paintGuildBadge, so it appears on
+   deck load and re-colors live when the color chooser is used. */
+/* ALTERNATIVE deck mark: the color-arc + praetor-star emblem (the original "Atraxa-style"
+   symbol). Superseded by buildManaMark (the mana symbols) in paintGuildBadge, but kept as a
+   one-line-flip fallback in case we want the plain color rings back. Not called right now. */
+function buildDeckMark(ci){
+  const cx = 80, cy = 80, r = 70;
+  const cols = (ci && ci.length) ? COLOR_ORDER.filter(c => ci.includes(c)) : [];
+  const paints = cols.length ? cols.map(c => COLOR_HEX[c]) : ["#8a86a0"]; // colorless -> soft grey
+  const n = paints.length;
+  const pt = (deg) => {
+    const a = (deg - 90) * Math.PI / 180;   // 0deg = 12 o'clock, sweeping clockwise
+    return [(cx + r * Math.cos(a)).toFixed(2), (cy + r * Math.sin(a)).toFixed(2)];
+  };
+  let arcs = "";
+  if (n === 1) {
+    arcs = '<circle cx="80" cy="80" r="70" fill="none" stroke="' + paints[0] + '" stroke-width="3" opacity="0.85"/>';
+  } else {
+    const seg = 360 / n, gap = 7;           // small gap so each color reads as its own arc
+    for (let i = 0; i < n; i++) {
+      const a0 = i * seg + gap / 2, a1 = (i + 1) * seg - gap / 2;
+      const p0 = pt(a0), p1 = pt(a1);
+      const large = (a1 - a0) > 180 ? 1 : 0;
+      arcs += '<path d="M' + p0[0] + ' ' + p0[1] + ' A70 70 0 ' + large + ' 1 ' + p1[0] + ' ' + p1[1] +
+              '" fill="none" stroke="' + paints[i] + '" stroke-width="3" stroke-linecap="round" opacity="0.85"/>';
+    }
+  }
+  const accent = paints[0];
+  return '<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="80" cy="80" r="74" fill="none" stroke="rgba(230,225,245,0.10)" stroke-width="1"/>' +
+    arcs +
+    '<circle cx="80" cy="80" r="40" fill="none" stroke="rgba(230,225,245,0.14)" stroke-width="1"/>' +
+    '<polygon points="80,40 87,73 120,80 87,87 80,120 73,87 40,80 73,73" fill="' + accent + '" fill-opacity="0.10" stroke="rgba(230,225,245,0.5)" stroke-width="1.5" stroke-linejoin="round"/>' +
+    '<circle cx="80" cy="80" r="4.5" fill="' + accent + '"/>' +
+    '</svg>';
+}
+/* Per-color MANA SYMBOLS for the deck mark. Greg's "it should know the commander" =
+   read the deck's color identity and draw that color's iconic mana symbol(s) --
+   sun (W), water drop (U), skull (B), flame (R), tree (G), diamond (colorless) --
+   in the guild colors, set BIG and faint behind the deck name. It varies per deck
+   because the colors do (mono shows one symbol, a guild shows its pair, etc.).
+   All drawn inline: no network, so it always renders instantly and offline
+   (reliability over flash). No motion -> stays calm-mode / dyslexia friendly. */
+function manaGlyph(c){
+  switch (c){
+    case "W": { // sun: center disc + 8 tapered rays
+      let rays = "";
+      const baseR = 25, tipR = 49, hw = 6;   // ray base radius, tip radius, half-width (deg)
+      for (let k = 0; k < 8; k++){
+        const A = k * 45;
+        const aL = (A - hw) * Math.PI / 180, aR = (A + hw) * Math.PI / 180, aT = A * Math.PI / 180;
+        const x1 = (50 + baseR * Math.cos(aL)).toFixed(1), y1 = (50 + baseR * Math.sin(aL)).toFixed(1);
+        const xt = (50 + tipR  * Math.cos(aT)).toFixed(1), yt = (50 + tipR  * Math.sin(aT)).toFixed(1);
+        const x2 = (50 + baseR * Math.cos(aR)).toFixed(1), y2 = (50 + baseR * Math.sin(aR)).toFixed(1);
+        rays += "M" + x1 + " " + y1 + "L" + xt + " " + yt + "L" + x2 + " " + y2 + "Z";
+      }
+      return '<circle cx="50" cy="50" r="22"/><path d="' + rays + '"/>';
+    }
+    case "U": // water drop
+      return '<path d="M50 12 C 64 38, 76 50, 76 62 A 26 26 0 1 1 24 62 C 24 50, 36 38, 50 12 Z"/>';
+    case "B": // skull (eyes + nose knocked out via even-odd fill)
+      return '<path fill-rule="evenodd" d="M50 14 C 74 14, 85 33, 85 52 C 85 65, 78 71, 73 77 L 71 88 L 61 85 L 56 89 L 50 85 L 44 89 L 39 85 L 29 88 L 27 77 C 22 71, 15 65, 15 52 C 15 33, 26 14, 50 14 Z M28 50 a 9 9 0 1 0 18 0 a 9 9 0 1 0 -18 0 Z M54 50 a 9 9 0 1 0 18 0 a 9 9 0 1 0 -18 0 Z M50 58 L 56 70 L 44 70 Z"/>';
+    case "R": // flame
+      return '<path d="M50 9 C 60 28, 74 37, 74 57 A 24 24 0 1 1 26 57 C 26 43, 39 41, 41 25 C 44 33, 50 33, 50 24 C 50 18, 48 14, 50 9 Z"/>';
+    case "G": // tree: leafy canopy (overlapping circles) + trunk
+      return '<circle cx="50" cy="38" r="24"/><circle cx="33" cy="52" r="18"/><circle cx="67" cy="52" r="18"/><rect x="44" y="60" width="12" height="30" rx="3"/>';
+    default: // colorless diamond
+      return '<polygon points="50,10 86,50 50,90 14,50"/>';
+  }
+}
+function buildManaMark(ci){
+  const cols = (ci && ci.length) ? COLOR_ORDER.filter(c => ci.includes(c)) : ["C"];
+  const n = cols.length;
+  const x0 = 6, span = 148, cellW = span / n;
+  const s = Math.min(cellW / 100 * 1.04, 0.98);   // one symbol fills; a row shrinks to fit
+  let body = "";
+  for (let i = 0; i < n; i++){
+    const c = cols[i];
+    const fill = (c === "C") ? "#8a86a0" : COLOR_HEX[c];
+    const cx = x0 + cellW * (i + 0.5);
+    const tx = (cx - 50 * s).toFixed(2), ty = (80 - 50 * s).toFixed(2);
+    body += '<g transform="translate(' + tx + ' ' + ty + ') scale(' + s.toFixed(3) + ')" fill="' + fill + '">' +
+            manaGlyph(c) + '</g>';
+  }
+  return '<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + body + '</svg>';
+}
 function colorPips(colors){
   if (!colors || !colors.length) return '<span class="lt-pip cl">C</span>';
   return COLOR_ORDER.filter(c => colors.includes(c))
@@ -6592,6 +7076,22 @@ function boot(){
 
   document.getElementById("scoreBtn").addEventListener("click", () => scoreDeck(ACTIVE_DECK));
   document.getElementById("readBtn").addEventListener("click", readDroppedDeck);
+
+  // Paste-to-read: pasting a full list auto-runs the coach so you never have to
+  // hunt for a button. The "Read My Deck" button still works the same way.
+  const dropText = document.getElementById("dropText");
+  if (dropText) {
+    dropText.addEventListener("paste", () => {
+      // Let the pasted text land in .value first, then read if it looks like a
+      // real list (5+ non-empty lines). A stray word or URL won't trigger it.
+      setTimeout(() => {
+        const readBtn = document.getElementById("readBtn");
+        if (readBtn && readBtn.disabled) return; // a read is already running
+        const lines = (dropText.value || "").split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+        if (lines.length >= 5) readDroppedDeck();
+      }, 60);
+    });
+  }
 
   // File input wiring
   const fileInput = document.getElementById("fileInput");
