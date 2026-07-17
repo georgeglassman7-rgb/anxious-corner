@@ -4737,8 +4737,13 @@ function bucketByRole(cards, cardData, commanderName, archetypeHint){
 
   cards.forEach(({ name, qty }) => {
     const clean = name;
-    const cardObj = { n: qty > 1 ? (clean + " ×" + qty) : clean };
-    if (commanderName && clean.toLowerCase() === commanderName.toLowerCase()) {
+    const known = cardData[clean.toLowerCase()];
+    const isCmd = commanderName && clean.toLowerCase() === commanderName.toLowerCase();
+    // Show the canonical Scryfall name, never the user's typed casing, so a
+    // pasted or typed-in list always reads cleanly ("sol ring" -> "Sol Ring").
+    const display = isCmd ? commanderName : (known && known.name ? known.name : clean);
+    const cardObj = { n: qty > 1 ? (display + " ×" + qty) : display };
+    if (isCmd) {
       cardObj.star = 1;
       buckets["Commander"].push(cardObj);
       return;
@@ -4747,7 +4752,7 @@ function bucketByRole(cards, cardData, commanderName, archetypeHint){
       buckets["Lands"].push(cardObj);
       return;
     }
-    const card = cardData[clean.toLowerCase()];
+    const card = known;
     if (!card) { buckets["The Rest"].push(cardObj); return; }
     const type = (card.type_line || "").toLowerCase();
     if (type.includes("land")) { buckets["Lands"].push(cardObj); return; }
