@@ -181,6 +181,51 @@ html.calm .deck-mark{filter:none;opacity:.13}
   box-shadow:0 0 20px var(--glow),0 0 40px var(--glow-2)}
 .tab.active::before{opacity:1;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
 
+/* Book sub-tabs (Coach / Playbook / Strategy / Where I'm At) — one tab, internal sub-navigation */
+.book-tabs{display:flex;gap:.4em;flex-wrap:wrap;margin:0 0 1.5em;padding:.35em;
+  background:linear-gradient(160deg,var(--void-2),var(--shadow));border:1px solid var(--panel-edge);border-radius:10px}
+.book-tab{flex:1 1 auto;font-family:'Cinzel',serif;font-size:.72em;letter-spacing:1.2px;text-transform:uppercase;
+  padding:.75em 1em;border-radius:7px;border:1px solid transparent;color:var(--text-dim);
+  background:transparent;cursor:pointer;text-align:center;line-height:1.25;
+  transition:color .2s,background .2s,border-color .2s,box-shadow .2s}
+.book-tab:hover{color:var(--bone-bright)}
+.book-tab.active{color:var(--bone-bright);border-color:var(--accent);
+  background:linear-gradient(160deg,var(--panel),var(--shadow));box-shadow:0 0 16px var(--glow)}
+.book-panel{display:none;animation:bookFade .22s ease}
+.book-panel.active{display:block}
+@keyframes bookFade{from{opacity:0}to{opacity:1}}
+
+/* Spellbook is the everything-hub — its tab reads as home base with a persistent glow */
+.tab-hero{color:var(--accent-bright);border-color:var(--accent);padding:.6em 1.5em;font-size:.82em;
+  background:linear-gradient(160deg,var(--panel),var(--shadow));box-shadow:0 0 14px var(--glow-soft)}
+.tab-hero::before{opacity:.85;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.tab-hero:hover{color:var(--bone-bright);box-shadow:0 0 18px var(--glow)}
+.tab-hero.active{box-shadow:0 0 22px var(--glow),0 0 44px var(--glow-2)}
+
+/* Counters mirrored from Station, pinned atop Spellbook — tap the strip to jump to Station */
+.sb-mirror{margin:0 0 1.4em;cursor:pointer}
+.sbm-row{display:flex;align-items:center;gap:.7em;flex-wrap:wrap;padding:.7em .9em;border-radius:10px;
+  border:1px solid var(--panel-edge);background:linear-gradient(160deg,var(--void-2),var(--shadow));
+  transition:border-color .2s,box-shadow .2s}
+.sb-mirror:hover .sbm-row{border-color:var(--accent-2);box-shadow:0 0 14px var(--glow-2)}
+.sbm-chip{display:inline-flex;align-items:baseline;gap:.45em;padding:.35em .8em;border-radius:8px;
+  border:1px solid var(--panel-edge);background:linear-gradient(160deg,var(--panel),var(--shadow))}
+.sbm-k{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
+.sbm-v{font-size:1.25em;font-weight:700;color:var(--bone-bright)}
+.sbm-chip.life .sbm-v{color:var(--jade-bright)}
+.sbm-chip.poison{border-color:rgba(224,85,119,0.45)}
+.sbm-chip.poison .sbm-v{color:var(--crimson-bright)}
+.sbm-chip.cmd{border-color:rgba(95,208,230,0.4)}
+.sbm-chip.cmd .sbm-v{color:var(--cyan-bright)}
+.sbm-note{margin-left:auto;font-size:.82em;color:var(--text-dim);font-style:italic}
+
+/* Combos view — engines + closers as stacked rows inside jade/gold panels */
+.combo-list{display:flex;flex-direction:column;gap:.7em;margin-top:.7em}
+.combo-row{padding:.75em .9em;border-radius:7px;border:1px solid var(--panel-edge);
+  background:linear-gradient(160deg,rgba(18,21,48,0.55),rgba(8,10,22,0.4))}
+.combo-name{font-size:1.08em;font-weight:600;color:var(--bone-bright);margin-bottom:.28em;line-height:1.35}
+.combo-why{font-size:.95em;color:var(--steel);line-height:1.55}
+
 /* views with a light fade */
 .view{display:none;opacity:0;transition:opacity .22s ease}
 .view.active{display:block;opacity:1}
@@ -199,6 +244,23 @@ html.calm .deck-mark{filter:none;opacity:.13}
   background:linear-gradient(90deg,transparent,var(--accent),transparent)}
 .s-label{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
 .s-value{font-size:1.1em;color:var(--bone-bright);margin-top:.3em;font-weight:500}
+
+/* ============ DECK FRONT PAGE (bracket + how-you-win hero) ============ */
+.deck-front{background:linear-gradient(165deg,rgba(18,21,48,0.92),rgba(8,10,22,0.95));
+  border:1px solid var(--panel-edge);border-radius:12px;padding:1.15em 1.2em 1.25em;margin:.2em 0 1.8em;
+  box-shadow:0 2px 24px rgba(0,0,0,0.34)}
+.deck-front:empty{display:none}
+.df-top{display:flex;align-items:center;gap:.75em;flex-wrap:wrap;margin-bottom:.55em}
+.df-pips{display:inline-flex;gap:4px}
+.df-bracket{display:inline-flex;align-items:baseline;gap:.55em;margin-left:auto;
+  padding:.4em .85em;border-radius:999px;border:1px solid var(--accent);
+  background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.df-bracket .b-num{font-family:'Cinzel',serif;font-size:1em;letter-spacing:1px;color:var(--accent-bright);font-weight:600}
+.df-bracket .b-note{font-size:.7em;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px}
+.df-arch{font-family:'Cinzel',serif;font-size:.98em;letter-spacing:1.5px;text-transform:uppercase;color:var(--bone-bright);margin:.15em 0 .8em;line-height:1.4}
+.df-win{border-top:1px solid var(--panel-edge);padding-top:.8em}
+.df-win .w-label{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:2px;text-transform:uppercase;color:var(--accent-bright);display:block;margin-bottom:.35em}
+.df-win .w-text{color:var(--text);line-height:1.6;font-size:1.04em;display:block}
 
 /* ============ SECTION HEADERS & RUNE DIVIDERS ============ */
 h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);color:var(--bone-bright);
@@ -1435,19 +1497,17 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
 
   <div class="tabs" id="tabs">
     <div class="tab active" data-view="showcase">Showcase</div>
+    <div class="tab tab-hero" data-view="sb">Spellbook</div>
     <div class="tab" data-view="station">Station</div>
     <div class="tab" data-view="table">Life Table</div>
     <div class="tab" data-view="play">Playtest</div>
-    <div class="tab" data-view="coach">Coach</div>
-    <div class="tab" data-view="playbook">Playbook</div>
-    <div class="tab" data-view="strategy">Strategy</div>
-    <div class="tab" data-view="where">Where I'm At</div>
   </div>
 
   <!-- ============ SHOWCASE VIEW ============ -->
   <div class="view active" id="view-showcase">
     <div class="actions" id="showcaseActions"></div>
     <div id="showcaseConfirm"></div>
+    <div id="deckFront" class="deck-front"></div>
     <div class="validation" id="validation"></div>
     <div class="stats" id="stats"></div>
 
@@ -1474,43 +1534,62 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
     <div id="playBody"><div class="load-line">Shuffling up...</div></div>
   </div>
 
-  <!-- ============ COACH VIEW ============ -->
-  <div class="view" id="view-coach">
-    <div class="actions">
-      <button class="btn" id="scoreBtn">Coach This Deck</button>
-      <span class="status" id="scoreStatus">Positive read plus concrete suggestions, from the same numbers.</span>
-    </div>
-    <div id="gradePanel"></div>
-    <div id="deckChangeLog"></div>
+  <!-- ============ SPELLBOOK VIEW (the deck-brain hub: Coach / Playbook / Strategy / Where / Combos) ============ -->
+  <div class="view" id="view-sb">
+    <!-- Counters mirrored live from Station so you can glance at the game while reading your plan -->
+    <div class="sb-mirror" id="sbMirror"></div>
 
-    <div class="dropzone">
-      <h3>Drop A Deck In</h3>
-      <p>Paste a list or load a file. The coach reads it against the same benchmarks. Moxfield exports work. Commander on the first line.</p>
-      <textarea id="dropText" placeholder="Paste your list. Moxfield export works. One card per line, like: 1 Kess, Dissident Mage"></textarea>
-      <div class="drop-actions">
-        <button class="btn" id="readBtn">Read My Deck</button>
-        <label class="file-slot">
-          <input type="file" id="fileInput" accept=".json,.txt">
-          <span class="btn ghost" id="loadFileBtn">Load Deck File</span>
-        </label>
-        <span class="status" id="dropStatus"></span>
+    <div class="book-tabs" role="tablist">
+      <button class="book-tab active" data-book="coach">Coach</button>
+      <button class="book-tab" data-book="playbook">Playbook</button>
+      <button class="book-tab" data-book="strategy">Strategy</button>
+      <button class="book-tab" data-book="where">Where I'm At</button>
+      <button class="book-tab" data-book="combos">Combos</button>
+    </div>
+
+    <!-- Coach sub-panel -->
+    <div class="book-panel active" data-book-panel="coach">
+      <div class="actions">
+        <button class="btn" id="scoreBtn">Coach This Deck</button>
+        <span class="status" id="scoreStatus">Positive read plus concrete suggestions, from the same numbers.</span>
+      </div>
+      <div id="gradePanel"></div>
+      <div id="deckChangeLog"></div>
+
+      <div class="dropzone">
+        <h3>Drop A Deck In</h3>
+        <p>Paste a list or load a file. The coach reads it against the same benchmarks. Moxfield exports work. Commander on the first line.</p>
+        <textarea id="dropText" placeholder="Paste your list. Moxfield export works. One card per line, like: 1 Kess, Dissident Mage"></textarea>
+        <div class="drop-actions">
+          <button class="btn" id="readBtn">Read My Deck</button>
+          <label class="file-slot">
+            <input type="file" id="fileInput" accept=".json,.txt">
+            <span class="btn ghost" id="loadFileBtn">Load Deck File</span>
+          </label>
+          <span class="status" id="dropStatus"></span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ============ PLAYBOOK VIEW ============ -->
-  <div class="view" id="view-playbook">
-    <div id="playbookBody"><div class="load-line">Reading the deck...</div></div>
-  </div>
+    <!-- Playbook sub-panel -->
+    <div class="book-panel" data-book-panel="playbook">
+      <div id="playbookBody"><div class="load-line">Reading the deck...</div></div>
+    </div>
 
-  <!-- ============ STRATEGY VIEW ============ -->
-  <div class="view" id="view-strategy">
-    <div id="strategyBody"><div class="load-line">Reading the deck...</div></div>
-  </div>
+    <!-- Strategy sub-panel -->
+    <div class="book-panel" data-book-panel="strategy">
+      <div id="strategyBody"><div class="load-line">Reading the deck...</div></div>
+    </div>
 
-  <!-- ============ WHERE I'M AT VIEW ============ -->
-  <div class="view" id="view-where">
-    <div id="whereBody"><div class="load-line">Reading the deck...</div></div>
+    <!-- Where I'm At sub-panel -->
+    <div class="book-panel" data-book-panel="where">
+      <div id="whereBody"><div class="load-line">Reading the deck...</div></div>
+    </div>
+
+    <!-- Combos sub-panel -->
+    <div class="book-panel" data-book-panel="combos">
+      <div id="combosBody"><div class="load-line">Reading the deck...</div></div>
+    </div>
   </div>
 
 </div>
@@ -1528,6 +1607,8 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
 const SPLINTER_DECK = {
   name: "Splinter, Radical Rat",
   flavor: "Strike twice. Every ninja hits like it attacked two turns in a row.",
+  bracket: "4 — Optimized",
+  winLine: "Sneak an evasive attacker in, ninjutsu a bigger threat into its place, and double strike makes every hit count twice. Commander damage closes games before the table steadies.",
   colors: "Esper (W/U/B)",
   commander: "Splinter, Radical Rat",
   kicker: "Commander . Esper Ninjutsu",
@@ -1539,6 +1620,8 @@ const SPLINTER_DECK = {
 const URTET_DECK = {
   name: "Urtet, Remnant of Memnarch",
   flavor: "Every Myr is another Urtet trigger. The swarm remembers.",
+  bracket: "4 — Optimized",
+  winLine: "Flood the board with Myr, untap them with Urtet for a pile of mana, then empty it into an overrun or a game-ending X spell.",
   colors: "Five-Color (W/U/B/R/G)",
   commander: "Urtet, Remnant of Memnarch",
   kicker: "Commander . Five-Color Myr Tribal",
@@ -1620,6 +1703,8 @@ const URTET_DECK = {
 const CHATTERFANG_DECK = {
   name: "Chatterfang, Squirrel General",
   flavor: "Every token comes with a squirrel. Every squirrel is a life total problem.",
+  bracket: "4 — Optimized",
+  winLine: "Go wide on squirrels, then sacrifice the swarm into your drain payoffs. Blood Artist and friends bleed the whole table out — no attack required.",
   colors: "Golgari (B/G)",
   commander: "Chatterfang, Squirrel General",
   kicker: "Commander . Golgari Squirrel Tokens",
@@ -1691,6 +1776,8 @@ const CHATTERFANG_DECK = {
 const KESS_DECK = {
   name: "Kess, Dissident Mage",
   flavor: "Every spell comes back. The graveyard is hand number two.",
+  bracket: "4 — Optimized",
+  winLine: "Recast your spells out of the graveyard, out-card the room, and close with a big burn or a storm turn once they are buried in card advantage.",
   colors: "Grixis (U/B/R)",
   commander: "Kess, Dissident Mage",
   kicker: "Commander . Grixis Spellslinger",
@@ -2649,8 +2736,75 @@ function resetGeneratedViews(){
   document.getElementById("whereBody").innerHTML = '<div class="load-line">Reading the deck...</div>';
 }
 
+/* ============ DECK FRONT PAGE (bracket + how-you-win hero) ============
+   The deck's front page: color pips, a power Bracket, the archetype line, and a
+   plain-language "how you win." Seed decks carry an explicit bracket + winLine;
+   imported decks derive both from the deck brain, so every deck gets a front page. */
+function winKindLine(kind){
+  switch(kind){
+    case "alt-win":       return "Assemble the combo that simply says you win — once it is online, the game is over.";
+    case "drain":         return "Bleed the whole table at once. Stack the drain triggers and it is lethal from any board.";
+    case "overrun":       return "Go wide, then one big trample swing ends it in a single turn.";
+    case "extra-combat":  return "Chain extra combat steps and keep swinging until the table is gone.";
+    case "doubler":       return "Double your damage and turn one clean hit into a kill.";
+    case "big-burn":      return "Point a big burn spell at a player and close from across the room.";
+    case "x-spell":       return "Ramp hard, then empty it all into a game-ending X spell.";
+    case "evasive":       return "Push an unblockable threat through and race the table down.";
+    case "double-strike": return "Suit up a double-strike threat — every hit counts twice and games end fast.";
+    case "big-body":      return "Land a threat they cannot answer and swing until it is over.";
+    default:              return "";
+  }
+}
+function deckWinLine(deck){
+  if (deck.winLine) return deck.winLine;               // hand-written (seed decks)
+  const b = DECK_CACHE.get(ACTIVE_KEY);
+  const arch = b && b.archetype;
+  if (arch && arch.finisherNames && arch.finisherNames.length){
+    const line = winKindLine(arch.finisherNames[0].kind);
+    if (line) return line;
+  }
+  if (arch && arch.personality) return arch.personality;
+  return deck.flavor || "";
+}
+function deckBracket(deck){
+  if (deck.bracket) return deck.bracket;               // explicit (seed decks)
+  const b = DECK_CACHE.get(ACTIVE_KEY);
+  const arch = b && b.archetype;
+  if (!arch) return null;
+  const c = arch.counts || {};
+  const fin = (arch.finisherNames || []).length;
+  const combo = (arch.finisherNames || []).some(f => f.kind === "alt-win");
+  let n = 2;
+  if (combo || fin >= 4) n = 4;
+  else if (fin >= 2 || (c.instantsSorceries||0) >= 20 || (c.rampCount||0) >= 12) n = 3;
+  return n + " — estimate";
+}
+function renderDeckFront(deck){
+  const host = document.getElementById("deckFront");
+  if (!host) return;
+  const ci = identityStringToArray(deck.identity || "");
+  const pips = ci.length ? colorPips(ci) : "";
+  let arch = (deck.kicker || "").replace(/^\s*Commander\s*[.·•—-]\s*/i, "").trim();
+  if (!arch){ const b = DECK_CACHE.get(ACTIVE_KEY); arch = (b && b.archetype && b.archetype.personality) || ""; }
+  const brk = deckBracket(deck);
+  const win = deckWinLine(deck);
+  if (!pips && !brk && !arch && !win){ host.innerHTML = ""; return; }
+  let html = '<div class="df-top">';
+  if (pips) html += '<span class="df-pips">' + pips + '</span>';
+  if (brk){
+    const parts = brk.split(/\s*—\s*|\s+-\s+/);
+    html += '<span class="df-bracket"><span class="b-num">Bracket ' + esc(parts[0].trim()) + '</span>' +
+            (parts[1] ? '<span class="b-note">' + esc(parts[1].trim()) + '</span>' : '') + '</span>';
+  }
+  html += '</div>';
+  if (arch) html += '<div class="df-arch">' + esc(arch) + '</div>';
+  if (win)  html += '<div class="df-win"><span class="w-label">How you win</span><span class="w-text">' + esc(win) + '</span></div>';
+  host.innerHTML = html;
+}
+
 function renderShowcase(deck, cardData){
   renderDeckHeader(deck);
+  renderDeckFront(deck);
   updateCommanderPrompt(deck);
   renderValidation(deck, cardData);
   renderStats(deck);
@@ -4611,40 +4765,136 @@ async function switchView(name){
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + name));
 
   if (name === "showcase") return;
-  // Opening Coach always repaints the persistent change/undo list, even before
-  // you run "Coach This Deck" and even after a fresh reload. Cheap, no network.
-  if (name === "coach") { renderChangeLog(); return; }
   if (name === "station") { await enterStation(); return; }
   if (name === "table") { enterTable(); return; }
   if (name === "play") { await enterPlay(); return; }
-  if (["playbook","strategy","where"].includes(name)) {
-    const bundle = DECK_CACHE.get(ACTIVE_KEY);
-    if (!bundle) {
-      const target = document.getElementById(name === "where" ? "whereBody" : name + "Body");
-      target.innerHTML = '<div class="load-line">Reading the deck...</div>';
-      try {
-        const b = await ensureDeckAnalysis(ACTIVE_KEY, ACTIVE_DECK);
-        if (!b.coach) {
-          const grade = b.grade;
-          b.coach = coachRead(grade, ACTIVE_DECK);
-          await loadSuggestionsForLevelRows(b.coach.level, ACTIVE_DECK, b.suggMap);
-        }
-        renderPlaybook(ACTIVE_DECK, b.grade, b.archetype);
-        renderStrategy(ACTIVE_DECK, b.grade, b.archetype);
-        renderWhere(ACTIVE_DECK, b.grade, b.coach, b.archetype, b.suggMap);
-      } catch (err) {
-        target.innerHTML = '<div class="panel warn"><p>Could not reach the card library. Check your connection and try again.</p></div>';
-      }
-    } else {
-      if (!bundle.coach) {
-        bundle.coach = coachRead(bundle.grade, ACTIVE_DECK);
-        await loadSuggestionsForLevelRows(bundle.coach.level, ACTIVE_DECK, bundle.suggMap);
-      }
-      renderPlaybook(ACTIVE_DECK, bundle.grade, bundle.archetype);
-      renderStrategy(ACTIVE_DECK, bundle.grade, bundle.archetype);
-      renderWhere(ACTIVE_DECK, bundle.grade, bundle.coach, bundle.archetype, bundle.suggMap);
-    }
+  if (name === "sb") { await enterSpellbook(); return; }
+}
+
+/* ============ SPELLBOOK HUB ============
+   The Spellbook tab is the deck-brain hub: Coach + Playbook + Strategy +
+   Where I'm At + Combos, as internal sub-panels. A slim counter strip up top
+   mirrors Station (life / poison / commander damage) so you can glance at the
+   live game while you read your plan. Opening it runs ONE shared analysis of
+   the active deck and fills every panel; sub-tab clicks just toggle panels. */
+let BOOK_SUB = "coach";
+function showBookSub(sub){
+  BOOK_SUB = sub;
+  document.querySelectorAll("#view-sb .book-tab").forEach(t => t.classList.toggle("active", t.dataset.book === sub));
+  document.querySelectorAll("#view-sb .book-panel").forEach(p => p.classList.toggle("active", p.dataset.bookPanel === sub));
+}
+
+// Slim counters strip, mirrored from Station. A glance at the live game while
+// you read the plan; tap it to jump to Station where the counters are set.
+function renderSbMirror(){
+  const host = document.getElementById("sbMirror");
+  if (!host) return;
+  // Point STATION at the active deck's saved counters, same as Station does.
+  if (STATION_DECK !== ACTIVE_KEY){
+    STATION = loadStation(ACTIVE_KEY);
+    STATION_DECK = ACTIVE_KEY;
   }
+  const s = STATION || {};
+  let chips = '';
+  chips += '<span class="sbm-chip life"><span class="sbm-k">Life</span><span class="sbm-v">' + (s.life != null ? s.life : 40) + '</span></span>';
+  if ((s.poison||0) > 0) chips += '<span class="sbm-chip poison"><span class="sbm-k">Poison</span><span class="sbm-v">' + s.poison + '</span></span>';
+  const dmg = Array.isArray(s.cmdDmg) ? s.cmdDmg : [];
+  const maxDmg = dmg.length ? Math.max.apply(null, dmg) : 0;
+  if (maxDmg > 0) chips += '<span class="sbm-chip cmd"><span class="sbm-k">Cmdr dmg</span><span class="sbm-v">' + maxDmg + '</span></span>';
+  host.innerHTML = '<div class="sbm-row">' + chips + '<span class="sbm-note">from Station &rsaquo;</span></div>';
+  host.onclick = function(){ switchView("station"); };
+}
+
+// Combos & engines, built from the same deck read the coach uses.
+function renderSbCombos(archetype){
+  const host = document.getElementById("combosBody");
+  if (!host) return;
+  const arch = archetype || {};
+  const signals = arch.signals || [];
+  const fins = arch.finisherNames || [];
+  let html = '';
+  html += '<div class="panel jade"><h4>Your Engines</h4>';
+  if (signals.length){
+    html += '<div class="combo-list">';
+    signals.slice(0,5).forEach(sig => {
+      html += '<div class="combo-row"><div class="combo-name">' + esc(sig.label || sig.short || "") + '</div><div class="combo-why">' + esc(sig.detail || "") + '</div></div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<p>No single engine dominates — this plays as good-stuff. Lean on card quality.</p>';
+  }
+  html += '</div>';
+
+  html += '<div class="panel gold"><h4>How You Close</h4>';
+  if (fins.length){
+    const seen = new Set();
+    html += '<div class="combo-list">';
+    fins.slice(0,6).forEach(f => {
+      if (seen.has(f.name)) return; seen.add(f.name);
+      html += '<div class="combo-row"><div class="combo-name"><a href="' + scry(f.name) + '" target="_blank" rel="noopener" data-card="' + esc(f.name) + '">' + esc(f.name) + '</a></div><div class="combo-why">' + esc(winKindLine(f.kind)) + '</div></div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<p>No dedicated finisher stands out. You win on grind and board presence.</p>';
+  }
+  html += '</div>';
+  host.innerHTML = html;
+}
+
+async function enterSpellbook(){
+  // Mirror the live counters from Station up top.
+  renderSbMirror();
+  // Coach panel: cheap, no network — always repaint the persistent change/undo list.
+  renderChangeLog();
+  // Playbook / Strategy / Where / Combos all read from ONE shared analysis.
+  const fill = (b) => {
+    renderPlaybook(ACTIVE_DECK, b.grade, b.archetype);
+    renderStrategy(ACTIVE_DECK, b.grade, b.archetype);
+    renderWhere(ACTIVE_DECK, b.grade, b.coach, b.archetype, b.suggMap);
+    renderSbCombos(b.archetype);
+  };
+  const bundle = DECK_CACHE.get(ACTIVE_KEY);
+  if (!bundle) {
+    ["playbookBody","strategyBody","whereBody","combosBody"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '<div class="load-line">Reading the deck...</div>';
+    });
+    try {
+      const b = await ensureDeckAnalysis(ACTIVE_KEY, ACTIVE_DECK);
+      if (!b.coach) {
+        b.coach = coachRead(b.grade, ACTIVE_DECK);
+        await loadSuggestionsForLevelRows(b.coach.level, ACTIVE_DECK, b.suggMap);
+      }
+      fill(b);
+    } catch (err) {
+      ["playbookBody","strategyBody","whereBody","combosBody"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '<div class="panel warn"><p>Could not reach the card library. Check your connection and try again.</p></div>';
+      });
+    }
+  } else {
+    if (!bundle.coach) {
+      bundle.coach = coachRead(bundle.grade, ACTIVE_DECK);
+      await loadSuggestionsForLevelRows(bundle.coach.level, ACTIVE_DECK, bundle.suggMap);
+    }
+    fill(bundle);
+  }
+  showBookSub(BOOK_SUB);
+}
+
+/* ============ SPELLBOOK EMBED ============
+   Loads the full Spellbook companion app into an isolated same-origin iframe the
+   first time its tab is opened. The app's HTML is parked in a #spellbook-doc
+   text/html block with its closing tag escaped; we restore it here. Total
+   isolation means Spellbook cannot collide with this app's CSS/JS/storage. */
+let SB_MOUNTED = false;
+function mountSpellbook(){
+  if (SB_MOUNTED) return;
+  const frame = document.getElementById("spellbookFrame");
+  const holder = document.getElementById("spellbook-doc");
+  if (!frame || !holder) return;
+  frame.srcdoc = holder.textContent.replace(/<\\\/script>/g, "<\/script>");
+  SB_MOUNTED = true;
 }
 
 /* ============ COACH BUTTON ============ */
@@ -4916,8 +5166,9 @@ function registerImportedDeck(newDeck, cardBundle, reuseKey){
   renderStrategy(newDeck, grade, archetype);
   renderWhere(newDeck, grade, bundle.coach, archetype, bundle.suggMap);
   // Land the user ON the coaching, not the showcase. The whole point of a paste
-  // is "read it and coach me" — so jump straight to the read and scroll it up.
-  switchView("coach");
+  // is "read it and coach me" — so jump straight to Spellbook on its Coach sub-tab.
+  BOOK_SUB = "coach";
+  switchView("sb");
   try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch(e) { window.scrollTo(0,0); }
 }
 
@@ -5687,6 +5938,21 @@ function handAnalysis(deck, cd){
   }
   return { cmdName, cmdCMC, lands, ramp, plays, verdict, vclass, castText, count:n };
 }
+// Just the filtered card buttons for the hand picker. Split out so the filter
+// box can refresh ONLY this list on each keystroke (never re-rendering the input
+// itself), which keeps typing focus and lets multi-letter words work normally.
+function handPickListHTML(deck){
+  const handLow = new Set((STATION.hand||[]).map(x=>x.toLowerCase()));
+  const names = Array.from(uniqueNamesWithQty(deck).keys()).sort((x,y)=>x.localeCompare(y));
+  const f = (HAND_FILTER||"").toLowerCase();
+  let h = "";
+  names.forEach(nm => {
+    if (f && nm.toLowerCase().indexOf(f) === -1) return;
+    const on = handLow.has(nm.toLowerCase()) ? " on" : "";
+    h += '<button class="hand-pick' + on + '" data-add="' + esc(nm) + '" data-card="' + esc(nm) + '">' + esc(nm) + '</button>';
+  });
+  return h;
+}
 function handSectionHTML(deck, cd){
   const a = handAnalysis(deck, cd);
   let h = '<div class="station-section"><span class="zn">&#9670;</span> The Cards You Were Dealt <span class="zn">&#9670;</span></div>';
@@ -5706,15 +5972,8 @@ function handSectionHTML(deck, cd){
   if (HAND_PICKER_OPEN){
     h += '<div class="hand-picker">';
     h += '<input type="text" id="handFilter" class="hand-search" placeholder="Filter your deck…" value="' + esc(HAND_FILTER) + '">';
-    h += '<div class="hand-pick-list">';
-    const handLow = new Set((STATION.hand||[]).map(x=>x.toLowerCase()));
-    const names = Array.from(uniqueNamesWithQty(deck).keys()).sort((x,y)=>x.localeCompare(y));
-    const f = HAND_FILTER.toLowerCase();
-    names.forEach(nm => {
-      if (f && nm.toLowerCase().indexOf(f) === -1) return;
-      const on = handLow.has(nm.toLowerCase()) ? " on" : "";
-      h += '<button class="hand-pick' + on + '" data-add="' + esc(nm) + '" data-card="' + esc(nm) + '">' + esc(nm) + '</button>';
-    });
+    h += '<div class="hand-pick-list" id="handPickList">';
+    h += handPickListHTML(deck);
     h += '</div></div>';
   }
   // chosen hand as chips
@@ -5846,9 +6105,14 @@ function renderStation(){
   const hf = host.querySelector("#handFilter");
   if (hf) hf.addEventListener("input", () => {
     HAND_FILTER = hf.value;
-    // re-render just the pick list to keep focus feel; simplest = full re-render then refocus
-    const pos = hf.selectionStart; renderStation();
-    const nf = document.getElementById("handFilter"); if (nf){ nf.focus(); try{ nf.setSelectionRange(pos,pos);}catch(e){} }
+    // Refresh ONLY the card list, leaving the input box in place. No full
+    // re-render, no focus juggling — so you can type a whole word ("lands")
+    // straight through instead of one letter at a time.
+    const listEl = host.querySelector("#handPickList");
+    if (listEl){
+      listEl.innerHTML = handPickListHTML(ACTIVE_DECK);
+      listEl.querySelectorAll(".hand-pick").forEach(b => b.addEventListener("click", () => handToggleCard(b.dataset.add)));
+    }
   });
 
   // Turn walker
@@ -7281,6 +7545,7 @@ function boot(){
   setupDragDrop();
 
   document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => switchView(t.dataset.view)));
+  document.querySelectorAll("#view-sb .book-tab").forEach(t => t.addEventListener("click", () => showBookSub(t.dataset.book)));
 
   bindPeek();
   bindTableDrag();
@@ -7371,12 +7636,12 @@ boot();
       var b = document.querySelector('.swdeck[data-key="'+(window.CSS&&CSS.escape?CSS.escape(key):key)+'"]');
       if(b) b.click(); // full, tested deck switch (synchronous)
     }
-    if(typeof switchView==='function') switchView('coach');
+    if(typeof switchView==='function'){ if(typeof BOOK_SUB!=='undefined') BOOK_SUB='coach'; switchView('sb'); }
     if(typeof scoreDeck==='function' && typeof ACTIVE_DECK!=='undefined') scoreDeck(ACTIVE_DECK);
   }
   function coachImport(){
     closeMenu();
-    if(typeof switchView==='function') switchView('coach');
+    if(typeof switchView==='function'){ if(typeof BOOK_SUB!=='undefined') BOOK_SUB='coach'; switchView('sb'); }
     var ta = document.getElementById('dropText');
     if(ta){ try{ ta.scrollIntoView({block:'center'}); }catch(e){} ta.focus(); }
   }
@@ -7486,6 +7751,1420 @@ boot();
   new MutationObserver(function(){ build(); }).observe(host,{childList:true});
   build();
 })();
+</script>
+<script type="text/html" id="spellbook-doc">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Spellbook — Live Magic Companion</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+  :root {
+    --void: #07060c;
+    --void-2: #0e0b18;
+    --panel: #15101f;
+    --panel-2: #1a1326;
+    --edge: #2e2240;
+    --text: #d8d2e4;
+    --dim: #8b829c;
+    --bone: #e8e2d0;
+    --gold: #d9b65a;
+    --gold-bright: #f0d384;
+    --green: #4ecb8d;
+    --red: #ff5a3c;
+    --accent: #9b6cff;       /* overridden per deck */
+    --accent-soft: rgba(155,108,255,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { background: var(--void); height: 100%; }
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    color: var(--text); line-height: 1.55;
+    overflow-x: hidden;
+    background:
+      radial-gradient(ellipse 800px 600px at 50% -5%, var(--accent-soft), transparent 70%),
+      var(--void);
+    transition: background 0.4s;
+  }
+  .cinzel { font-family: 'Cinzel', serif; }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 0.7em;
+    padding: 0.7em 1em;
+    background: linear-gradient(180deg, rgba(10,8,18,0.97), rgba(10,8,18,0.85));
+    border-bottom: 1px solid var(--edge);
+    backdrop-filter: blur(6px);
+  }
+  .topbar .back {
+    font-family: 'Cinzel', serif; font-size: 0.8em; letter-spacing: 1px;
+    color: var(--accent); background: none; border: 1px solid var(--edge);
+    border-radius: 5px; padding: 0.4em 0.7em; cursor: pointer;
+  }
+  .topbar .tb-title {
+    font-family: 'Cinzel', serif; font-weight: 700; color: var(--bone);
+    font-size: 1.05em; letter-spacing: 1px; flex: 1; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-shadow: 0 0 16px var(--accent-soft);
+  }
+  .topbar .tb-sub { font-size: 0.7em; color: var(--dim); font-style: italic; }
+  .pip { display:inline-block; width:0.85em; height:0.85em; border-radius:50%; margin-left:2px; vertical-align:middle; border:1px solid rgba(255,255,255,0.25); }
+  .pip.W{background:#f8f3d6;} .pip.U{background:#3b82c4;} .pip.B{background:#3a2a45;} .pip.R{background:#d3492f;} .pip.G{background:#46a05a;}
+
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 1.2em 1em 5em; }
+  .hidden { display: none !important; }
+
+  /* ---------- home / deck picker ---------- */
+  .home-head { text-align: center; padding: 2.2em 1em 1.4em; }
+  .home-head .mark { font-size: 2.4em; }
+  .home-head h1 {
+    font-family: 'Cinzel', serif; font-weight: 900; color: var(--bone);
+    font-size: clamp(1.8em, 6vw, 2.8em); letter-spacing: 2px;
+    text-shadow: 0 0 26px rgba(155,108,255,0.5);
+  }
+  .home-head p { color: var(--dim); font-style: italic; margin-top: 0.3em; }
+
+  .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1em; }
+  .deck-card {
+    position: relative; cursor: pointer;
+    background: linear-gradient(165deg, var(--panel-2), var(--void-2));
+    border: 1px solid var(--edge); border-left: 4px solid var(--dc-accent, var(--accent));
+    border-radius: 8px; padding: 1.2em 1.3em; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .deck-card:hover, .deck-card:active { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  .deck-card::after {
+    content:""; position:absolute; right:-30px; top:-30px; width:110px; height:110px;
+    background: radial-gradient(circle, var(--dc-glow, rgba(155,108,255,0.18)), transparent 70%);
+  }
+  .deck-card .dc-kicker { font-family:'Cinzel',serif; font-size:0.62em; letter-spacing:2px; text-transform:uppercase; color: var(--dc-accent, var(--accent)); }
+  .deck-card .dc-name { font-family:'Cinzel',serif; font-weight:700; color: var(--bone); font-size:1.25em; margin-top:0.25em; }
+  .deck-card .dc-sub { color: var(--dim); font-size:0.85em; font-style:italic; margin-top:0.3em; }
+  .deck-card .dc-meta { display:flex; gap:0.5em; flex-wrap:wrap; margin-top:0.9em; }
+  .deck-card .dc-tag { font-family:'Cinzel',serif; font-size:0.6em; letter-spacing:1px; text-transform:uppercase; padding:0.25em 0.55em; border:1px solid var(--edge); border-radius:4px; color: var(--dim); }
+  .deck-card .dc-edit { position:absolute; right:0.6em; bottom:0.5em; font-size:0.7em; color:var(--dim); background:none; border:none; cursor:pointer; z-index:2; }
+  .deck-card .dc-edit:hover { color: var(--gold); }
+
+  .add-card {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border:1px dashed var(--edge); border-radius:8px; padding:1.5em; cursor:pointer;
+    color: var(--dim); min-height: 130px; transition: border-color 0.2s, color 0.2s;
+  }
+  .add-card:hover { border-color: var(--accent); color: var(--accent); }
+  .add-card .plus { font-size: 2em; line-height: 1; }
+  .add-card .lbl { font-family:'Cinzel',serif; font-size:0.75em; letter-spacing:1px; text-transform:uppercase; margin-top:0.4em; }
+
+  /* ---------- tabs ---------- */
+  .tabs { display:flex; gap:0.3em; overflow-x:auto; padding:0.2em 0 0.9em; }
+  .tab {
+    font-family:'Cinzel',serif; font-size:0.72em; letter-spacing:1px; text-transform:uppercase;
+    color: var(--dim); background: var(--panel); border:1px solid var(--edge);
+    border-radius:6px; padding:0.55em 0.9em; cursor:pointer; white-space:nowrap;
+  }
+  .tab.active { color: var(--void); background: var(--accent); border-color: var(--accent); font-weight:700; }
+
+  /* ---------- generic panels ---------- */
+  .panel {
+    background: linear-gradient(165deg, var(--panel-2), var(--void-2));
+    border: 1px solid var(--edge); border-radius: 8px; padding: 1.1em 1.2em; margin-bottom: 1em;
+  }
+  .panel-h { font-family:'Cinzel',serif; color: var(--gold-bright); font-size:0.8em; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:0.7em; display:flex; align-items:center; gap:0.4em; }
+  .muted { color: var(--dim); font-size:0.9em; font-style:italic; }
+  .accent-text { color: var(--accent); font-weight:600; }
+  .gold-text { color: var(--gold-bright); font-weight:600; }
+
+  /* ---------- life counter ---------- */
+  .seats { display:grid; grid-template-columns: 1fr 1fr; gap:0.8em; margin-bottom:1em; }
+  @media (max-width:560px){ .seats { grid-template-columns:1fr 1fr; } }
+  .seat {
+    position:relative; border:1px solid var(--edge); border-radius:10px; overflow:hidden;
+    background: linear-gradient(165deg, var(--panel-2), var(--void-2));
+    display:flex; flex-direction:column; min-height: 150px;
+  }
+  .seat.you { border-color: var(--accent); box-shadow: inset 0 0 30px var(--accent-soft); }
+  .seat .seat-name {
+    font-family:'Cinzel',serif; font-size:0.72em; letter-spacing:1px; text-align:center;
+    padding:0.45em 0.3em; color: var(--bone); background: rgba(0,0,0,0.25);
+    border:none; width:100%; cursor:text;
+  }
+  .seat.you .seat-name { color: var(--accent); }
+  .seat .life-zone { flex:1; display:flex; align-items:stretch; position:relative; }
+  .life-btn { flex:1; border:none; background:none; color:var(--dim); font-size:1.3em; cursor:pointer; transition:background 0.15s; }
+  .life-btn:active { background: rgba(255,255,255,0.06); }
+  .life-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; font-family:'Cinzel',serif; font-weight:900; font-size:2.6em; color:var(--bone); text-shadow:0 2px 8px #000; }
+  .life-num.low { color: var(--red); }
+  .seat .seat-foot { display:flex; gap:0.3em; padding:0.4em; border-top:1px solid var(--edge); justify-content:center; flex-wrap:wrap; }
+  .mini-btn { font-family:'Cinzel',serif; font-size:0.62em; letter-spacing:0.5px; padding:0.25em 0.5em; border:1px solid var(--edge); border-radius:4px; background:var(--panel); color:var(--dim); cursor:pointer; }
+  .mini-btn:active { background: var(--accent); color: var(--void); }
+  .mini-stat { font-size:0.65em; color:var(--dim); display:flex; align-items:center; gap:0.2em; }
+  .mini-stat b { color:var(--bone); font-family:'Cinzel',serif; }
+  .mini-stat.danger b { color: var(--red); }
+
+  .gp-tools { display:grid; grid-template-columns: 1fr 1fr; gap:0.8em; }
+  @media (max-width:560px){ .gp-tools { grid-template-columns:1fr; } }
+
+  /* phase / turn */
+  .turn-counter { display:flex; align-items:center; justify-content:space-between; gap:0.5em; }
+  .turn-counter .tc-num { font-family:'Cinzel',serif; font-size:1.6em; color:var(--bone); font-weight:900; }
+  .phase-row { display:flex; gap:0.25em; flex-wrap:wrap; margin-top:0.6em; }
+  .phase-chip { font-family:'Cinzel',serif; font-size:0.58em; letter-spacing:0.5px; text-transform:uppercase; padding:0.3em 0.5em; border:1px solid var(--edge); border-radius:4px; color:var(--dim); cursor:pointer; }
+  .phase-chip.active { background:var(--accent); color:var(--void); border-color:var(--accent); }
+
+  /* counters/tokens */
+  .counter-row { display:flex; align-items:center; justify-content:space-between; padding:0.45em 0; border-bottom:1px solid rgba(46,34,64,0.5); }
+  .counter-row:last-child { border-bottom:none; }
+  .counter-row .cr-name { font-size:0.95em; }
+  .counter-ctl { display:flex; align-items:center; gap:0.5em; }
+  .counter-ctl button { width:1.9em; height:1.9em; border-radius:5px; border:1px solid var(--edge); background:var(--panel); color:var(--accent); font-size:1.1em; cursor:pointer; }
+  .counter-ctl button:active { background:var(--accent); color:var(--void); }
+  .counter-ctl .cval { font-family:'Cinzel',serif; font-weight:700; min-width:1.6em; text-align:center; color:var(--bone); }
+
+  /* dice / coin */
+  .big-roll { font-family:'Cinzel',serif; font-weight:900; font-size:2.4em; color:var(--bone); text-align:center; padding:0.1em 0 0.2em; text-shadow:0 0 18px var(--accent-soft); min-height:1.4em; }
+  .big-roll small { display:block; font-family:'EB Garamond',serif; font-size:0.3em; color:var(--dim); letter-spacing:1.5px; font-weight:400; text-transform:uppercase; }
+  .dice-row { display:flex; gap:0.35em; flex-wrap:wrap; justify-content:center; }
+
+  /* spell counter */
+  .spell-big { display:flex; align-items:center; justify-content:center; gap:0.9em; }
+  .spell-big .sb-num { font-family:'Cinzel',serif; font-weight:900; font-size:2.6em; color:var(--accent); min-width:1.4em; text-align:center; text-shadow:0 0 18px var(--accent-soft); }
+  .spell-tap { width:2.5em; height:2.5em; border-radius:50%; border:1px solid var(--accent); background:var(--accent-soft); color:var(--accent); font-size:1.3em; cursor:pointer; }
+  .spell-tap:active { background:var(--accent); color:var(--void); }
+
+  /* swing math */
+  .swing-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.6em; }
+  @media (max-width:480px){ .swing-grid { grid-template-columns:1fr 1fr; } }
+  .swing-field label { display:block; font-family:'Cinzel',serif; font-size:0.58em; letter-spacing:1px; text-transform:uppercase; color:var(--dim); margin-bottom:0.25em; }
+  .swing-field input { width:100%; background:var(--void-2); border:1px solid var(--edge); border-radius:6px; color:var(--text); font-family:'EB Garamond',serif; font-size:1em; padding:0.45em 0.55em; text-align:center; }
+  .swing-field input:focus { outline:none; border-color:var(--accent); }
+  .swing-toggles { display:flex; gap:1.2em; flex-wrap:wrap; margin-top:0.7em; }
+  .swing-toggle { display:flex; align-items:center; gap:0.45em; font-size:0.9em; cursor:pointer; }
+  .swing-toggle .sw-box { width:1.3em; height:1.3em; border:1px solid var(--accent); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:0.85em; }
+  .swing-toggle.on .sw-box { background:var(--accent); color:var(--void); }
+  .swing-out { margin-top:0.9em; border-top:1px solid var(--edge); padding-top:0.8em; }
+  .swing-total { font-family:'Cinzel',serif; font-size:1.9em; font-weight:900; color:var(--bone); text-align:center; }
+  .swing-total span { font-size:0.45em; color:var(--dim); font-family:'EB Garamond',serif; letter-spacing:1px; text-transform:uppercase; }
+  .swing-per { text-align:center; color:var(--dim); font-size:0.85em; margin-top:0.15em; }
+
+  /* hand tab */
+  .hand-in-row { display:flex; gap:0.5em; margin-bottom:0.3em; }
+  .hand-in-row input { flex:1; background:var(--void-2); border:1px solid var(--edge); border-radius:6px; color:var(--text); font-family:'EB Garamond',serif; font-size:1em; padding:0.5em 0.6em; }
+  .hand-hint { font-size:0.75em; color:var(--dim); margin-bottom:0.8em; line-height:1.4; }
+  .hand-verdict { font-family:'Cinzel',serif; font-weight:700; text-align:center; padding:0.7em; border-radius:8px; letter-spacing:0.5px; border:1px solid var(--edge); text-transform:uppercase; font-size:0.85em; }
+  .hand-verdict.keep { color:#6fdf9b; border-color:rgba(111,223,155,0.4); background:rgba(111,223,155,0.08); }
+  .hand-verdict.ship { color:#ff7a7a; border-color:rgba(255,122,122,0.4); background:rgba(255,122,122,0.08); }
+  .hand-verdict.warn { color:var(--gold-bright); border-color:rgba(220,180,90,0.4); background:rgba(220,180,90,0.07); }
+  .hand-verdict.muted { color:var(--dim); font-family:'EB Garamond',serif; font-weight:400; text-transform:none; }
+  .hand-verdict .vsub { display:block; font-family:'EB Garamond',serif; font-weight:400; font-size:0.62em; color:var(--dim); letter-spacing:0.5px; margin-top:0.35em; text-transform:none; }
+  .hand-card { border:1px solid var(--edge); border-radius:8px; padding:0.6em 0.7em; margin-bottom:0.5em; background:var(--void-2); }
+  .hand-card:first-child { margin-top:0.8em; }
+  .hand-card.fresh { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent-soft); }
+  .hc-top { display:flex; align-items:center; gap:0.5em; }
+  .hc-name { flex:1; font-family:'Cinzel',serif; font-size:0.95em; color:var(--bone); }
+  .hc-fresh { font-size:0.62em; color:var(--accent); letter-spacing:0.5px; white-space:nowrap; }
+  .hc-x { background:none; border:none; color:var(--dim); font-size:1em; cursor:pointer; line-height:1; padding:0 0.2em; }
+  .hc-chips { display:flex; flex-wrap:wrap; gap:0.4em; margin-top:0.5em; }
+  .hc-chip { font-size:0.62em; font-family:'Cinzel',serif; letter-spacing:0.5px; padding:0.2em 0.5em; border-radius:5px; border:1px solid var(--edge); color:var(--dim); }
+  .hc-chip.key { color:var(--accent); border-color:var(--accent); }
+  .hc-chip.combo { color:#c89bff; border-color:rgba(155,108,255,0.5); }
+  .hc-chip.keep { color:#6fdf9b; border-color:rgba(111,223,155,0.45); }
+  .hc-chip.ship { color:#ff7a7a; border-color:rgba(255,122,122,0.45); }
+  .hc-chip.land { color:var(--gold-bright); border-color:rgba(220,180,90,0.45); }
+  .hc-note { font-size:0.8em; color:var(--dim); margin-top:0.45em; line-height:1.45; }
+  .hand-rule { font-size:0.82em; color:var(--dim); line-height:1.5; border-top:1px solid var(--edge); padding-top:0.7em; margin-top:0.6em; }
+  .hand-rule b { color:var(--gold-bright); font-family:'Cinzel',serif; font-size:0.85em; letter-spacing:0.5px; }
+  .lethal-line { display:flex; align-items:center; justify-content:space-between; padding:0.35em 0; font-size:0.92em; border-bottom:1px solid rgba(46,34,64,0.5); }
+  .lethal-line:last-child { border-bottom:none; }
+  .lethal-line .yes { color:var(--green); font-family:'Cinzel',serif; font-size:0.8em; letter-spacing:0.5px; }
+  .lethal-line .no { color:var(--dim); font-size:0.85em; }
+
+  .row-btns { display:flex; gap:0.5em; flex-wrap:wrap; }
+  .btn {
+    font-family:'Cinzel',serif; font-size:0.72em; letter-spacing:1px; text-transform:uppercase;
+    padding:0.55em 0.9em; border-radius:6px; cursor:pointer; border:1px solid var(--edge);
+    background: var(--panel); color: var(--text);
+  }
+  .btn.primary { background: var(--accent); color: var(--void); border-color: var(--accent); font-weight:700; }
+  .btn.ghost { background:none; }
+  .btn.danger { color: var(--red); border-color: rgba(255,90,60,0.4); }
+  .btn:active { transform: translateY(1px); }
+
+  /* ---------- coach ---------- */
+  .now-turn {
+    background: linear-gradient(120deg, var(--panel-2), var(--void-2));
+    border:1px solid var(--accent); border-radius:10px; padding:1.2em 1.3em; margin-bottom:1em;
+    box-shadow: 0 0 30px var(--accent-soft);
+  }
+  .now-turn .nt-top { display:flex; align-items:center; justify-content:space-between; gap:0.5em; margin-bottom:0.6em; }
+  .now-turn .nt-label { font-family:'Cinzel',serif; color:var(--accent); font-size:1.2em; font-weight:700; letter-spacing:1px; }
+  .now-turn .nt-phase { font-size:0.75em; color:var(--dim); font-style:italic; }
+  .now-turn .nt-body { font-size:1.02em; }
+  .now-turn .nt-nav { display:flex; gap:0.5em; margin-top:0.9em; }
+  .step-dots { display:flex; gap:0.3em; justify-content:center; margin-top:0.8em; flex-wrap:wrap; }
+  .step-dot { width:0.6em; height:0.6em; border-radius:50%; background:var(--edge); cursor:pointer; }
+  .step-dot.active { background:var(--accent); box-shadow:0 0 8px var(--accent); }
+  .step-dot.watch.active { background: var(--red); box-shadow:0 0 8px var(--red); }
+
+  .trigger-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:0.5em; }
+  .trigger {
+    font-size:0.8em; text-align:left; padding:0.6em 0.7em; border-radius:6px; cursor:pointer;
+    border:1px solid var(--edge); background:var(--panel); color:var(--text); line-height:1.3;
+  }
+  .trigger.watch { border-color: rgba(255,90,60,0.4); color: var(--red); }
+  .trigger.active { border-color:var(--accent); background:var(--accent-soft); }
+  .trigger-answer {
+    margin-top:0.8em; border:1px solid var(--accent); border-radius:8px; padding:1em 1.1em;
+    background: var(--accent-soft); font-size:0.98em;
+  }
+  .trigger-answer .ta-q { font-family:'Cinzel',serif; font-size:0.72em; letter-spacing:1px; text-transform:uppercase; color:var(--gold-bright); margin-bottom:0.4em; }
+
+  /* win path */
+  .path-pick { display:flex; gap:0.4em; flex-wrap:wrap; margin-bottom:0.8em; }
+  .path-pick .pp { font-family:'Cinzel',serif; font-size:0.7em; letter-spacing:0.5px; padding:0.45em 0.7em; border:1px solid var(--edge); border-radius:6px; background:var(--panel); color:var(--dim); cursor:pointer; }
+  .path-pick .pp.active { background:var(--accent); color:var(--void); border-color:var(--accent); }
+  .path-detail .pd-desc { margin-bottom:0.6em; }
+  .path-detail .pd-play { font-size:0.92em; border-top:1px solid var(--edge); padding-top:0.6em; color:var(--text); }
+  .path-detail .pd-play b { color: var(--gold); }
+
+  /* checklist */
+  .check-item { display:flex; align-items:flex-start; gap:0.6em; padding:0.5em 0; border-bottom:1px solid rgba(46,34,64,0.5); cursor:pointer; }
+  .check-item:last-child { border-bottom:none; }
+  .check-box { flex-shrink:0; width:1.4em; height:1.4em; border:1px solid var(--accent); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.9em; color:var(--accent); margin-top:0.1em; }
+  .check-item.done .check-box { background:var(--accent); color:var(--void); }
+  .check-item.done .ci-text { color:var(--dim); text-decoration:line-through; }
+  .ci-num { font-family:'Cinzel',serif; color:var(--accent); font-weight:700; flex-shrink:0; }
+
+  /* reference */
+  .ref-cols { display:grid; grid-template-columns:1fr 1fr; gap:0.8em; }
+  @media (max-width:560px){ .ref-cols { grid-template-columns:1fr; } }
+  .ref-list { list-style:none; }
+  .ref-list li { padding:0.3em 0 0.3em 1em; position:relative; font-size:0.92em; }
+  .ref-list li::before { content:"›"; position:absolute; left:0; color:var(--accent); }
+  .ref-list.ship li::before { color: var(--red); }
+  .keycard { padding:0.4em 0; border-bottom:1px solid rgba(46,34,64,0.5); font-size:0.92em; }
+  .keycard:last-child{border-bottom:none;}
+  .keycard b { color: var(--gold-bright); }
+  .kc-tag { font-family:'Cinzel',serif; font-size:0.55em; letter-spacing:1px; text-transform:uppercase; padding:0.15em 0.45em; border-radius:3px; border:1px solid var(--accent); color:var(--accent); margin-left:0.4em; }
+
+  /* ---------- editor ---------- */
+  .field { margin-bottom:0.9em; }
+  .field label { display:block; font-family:'Cinzel',serif; font-size:0.66em; letter-spacing:1px; text-transform:uppercase; color:var(--dim); margin-bottom:0.3em; }
+  .field input, .field textarea, .field select {
+    width:100%; background: var(--void-2); border:1px solid var(--edge); border-radius:6px;
+    color:var(--text); font-family:'EB Garamond',serif; font-size:1em; padding:0.55em 0.7em; resize:vertical;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { outline:none; border-color:var(--accent); }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:0.7em; }
+  .sub-edit { border:1px solid var(--edge); border-radius:8px; padding:0.8em; margin-bottom:0.7em; background: var(--void-2); }
+  .sub-edit .se-del { float:right; color:var(--red); background:none; border:none; cursor:pointer; font-size:0.8em; }
+  .editor-section-h { font-family:'Cinzel',serif; color:var(--gold-bright); font-size:0.82em; letter-spacing:1px; text-transform:uppercase; margin:1.4em 0 0.6em; padding-bottom:0.3em; border-bottom:1px solid var(--edge); }
+  .color-pick { display:flex; gap:0.4em; flex-wrap:wrap; }
+  .color-pick .cp { width:2em; height:2em; border-radius:50%; border:2px solid var(--edge); cursor:pointer; }
+  .color-pick .cp.on { border-color:var(--bone); transform:scale(1.1); }
+
+  .toast {
+    position:fixed; left:50%; bottom:1.5em; transform:translateX(-50%) translateY(2em);
+    background: var(--accent); color: var(--void); font-family:'Cinzel',serif; font-size:0.8em;
+    letter-spacing:0.5px; padding:0.7em 1.2em; border-radius:8px; opacity:0; pointer-events:none;
+    transition: all 0.3s; z-index:100; box-shadow:0 8px 30px rgba(0,0,0,0.5);
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="topbar hidden" id="topbar">
+  <button class="back" id="backBtn">‹ Decks</button>
+  <div style="flex:1; min-width:0;">
+    <div class="tb-title" id="tbTitle">—</div>
+    <div class="tb-sub" id="tbSub"></div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-head">
+    <div class="mark">✦</div>
+    <h1 class="cinzel">SPELLBOOK</h1>
+    <p>Your live Magic companion — strategy, coaching &amp; the table, in one place.</p>
+  </div>
+  <div class="wrap" style="padding-top:0;">
+    <div class="deck-grid" id="deckGrid"></div>
+  </div>
+</div>
+
+<!-- COMPANION -->
+<div id="companion" class="hidden">
+  <div class="wrap">
+    <div class="tabs" id="tabs"></div>
+    <div id="tabBody"></div>
+  </div>
+</div>
+
+<!-- EDITOR -->
+<div id="editor" class="hidden">
+  <div class="wrap" id="editorBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   SPELLBOOK — Live Magic Companion
+   ============================================================ */
+
+/* ---------- SEED DECKS ---------- */
+const SEED_DECKS = [
+  {
+    id: "atraxa",
+    name: "Atraxa, Praetors' Voice",
+    title: "The Swarm Ascendant",
+    subtitle: "Token Tribal · Painter Combo · 4-Color Faerie Engine",
+    colors: ["W","U","B","G"],
+    accent: "#6fdfb8",
+    bracket: "4 — Optimized",
+    archetype: "Token + Combo",
+    winTurn: "T6–8",
+    startLife: 40,
+    counters: ["Faerie token","Plant token","+1/+1","Opp. poison"],
+    winPaths: [
+      { name:"Painter + Grindstone", desc:"Mill an opponent's entire library in one activation. Both pieces are artifacts — Enlightened Tutor finds either. Most reliable line.", play:"Lead with Painter's Servant. Hold activation mana. Pop Grindstone when you have protection or opponents are tapped out." },
+      { name:"Triumph of the Hordes", desc:"5-mana infect overrun. Wide token board + Triumph = lethal across the table in one swing. Silverquill copies it.", play:"Wait for 10+ tokens. Cast at sorcery speed. Silverquill casualty → sac a token to copy = two Triumphs = 20 infect to every player." },
+      { name:"Avenger of Zendikar", desc:"Drop at 7–8 lands with two doublers out → 30+ 0/1 plants. Each land play pumps them all. Lethal next swing.", play:"Crack a fetch the turn you drop Avenger — plants pump immediately. Next turn: Triumph or Akroma's Will mode 2 for lethal." },
+      { name:"Craterhoof Behemoth", desc:"8 mana, or cheat in via Finale of Devastation X≥6. Wide board + trample = alpha-strike kill in one attack.", play:"Best after a Cyclonic Rift when opponents are empty. Finale X=10 copies Craterhoof and draws it." },
+      { name:"Commander Damage", desc:"Atraxa + Whispersilk Cloak = 4 unblockable per swing. Lifelink keeps you alive during the grind.", play:"Backup when the board is controlled. Equip Cloak when Atraxa is safe. 6 unblocked swings = 24 damage." }
+    ],
+    mulligan: {
+      keep: [
+        "2–3 lands + Sol Ring + 1-mana dork (curves into Atraxa T3)",
+        "Land + Bitterblossom + any ramp (engine starts T2)",
+        "Land + Bloom Tender + 4-mana threat (Atraxa T3)",
+        "Rhystic Study + 2 lands (auto-keep)",
+        "Painter + Grindstone + 3 lands (win by T6)",
+        "Leyline of Anticipation in opener (free flash)"
+      ],
+      ship: [
+        "0–1 lands of any kind",
+        "6+ lands and fewer than 2 real spells",
+        "4-mana spells but zero ramp",
+        "No card draw and no Bitterblossom",
+        "All colorless mana but you need color T2",
+        "Three or more 6+ CMC cards in one hand"
+      ],
+      rule: "If your hand has no green source and no Bitterblossom, you have no engine. Ship it. One ramp + Bitterblossom beats any 7 with 4 threats and no engine."
+    },
+    turns: [
+      { label:"T1–2", phase:"Ramp Phase", body:"Land → Sol Ring → 1-mana dork. T2: drop Bitterblossom if you have black. Every turn you delay it is a token you never got. Hold Rhystic Study / Smothering Tithe — worth more T3 on." },
+      { label:"T3", phase:"Tax Engine", body:"Lead with Rhystic Study or Smothering Tithe. Most important turn — either left unanswered wins the resource war. If neither: Sylvan Library or Faeburrow Elder into Atraxa T4. Goal: 5+ mana next turn + a draw engine running." },
+      { label:"T4", phase:"First Threat", body:"Cast Atraxa, a token doubler (Mondrak/Adrix), or Faerie Mastermind on opp's draw step. Doublers first if in hand — they amplify Bitterblossom's next trigger. Always hold counter mana after your T4 threat." },
+      { label:"T5", phase:"Build or Combo", body:"Both combo pieces: hold protection, fire when opponents tapped out. Wide board: set up T6 Triumph or Avenger. Neither: tutor. Vampiric EOT → Painter or Triumph on top. Emeritus if 2 creatures died → Demonic Tutor next turn." },
+      { label:"T6–7", phase:"Close It", body:"10+ mana, 5–15 tokens, a tutor, one protection spell. Pick your win: Triumph + swing (infect) → Avenger + fetch (30+ plants) → Painter/Grindstone (mill) → Akroma's Will mode 2 (double strike + pro all). Patience is over." },
+      { label:"WATCH OUT", phase:"Hate to track", body:"Bojuka Bog barely hurts — you don't rely on the graveyard. Stony Silence / Null Rod shuts off Sol Ring, Talismans, and Grindstone. See stax → switch to Triumph plan and hold Generous Gift for the hate piece. Keep a counter up if you've activated Grindstone once.", watch:true }
+    ],
+    decisions: [
+      { situation:"They target your Bitterblossom", action:"Counter it. Bitterblossom is your engine. Counterspell > Swan Song > Spell Pierce. Can't counter? Teferi's Protection phases you out to save it. Worth 3 mana of counter every time." },
+      { situation:"Wrath coming, you have 10+ tokens", action:"Akroma's Will mode 1 → board gets indestructible. OR hold back 2–3 tokens so Bitterblossom rebuilds immediately. Don't burn Teferi's Protection here unless you'd die." },
+      { situation:"Opp drops Rhystic Study / Smothering Tithe", action:"Answer immediately. Assassin's Trophy, Generous Gift, or Cyclonic Rift. Tax engines snowball hard if left alone — theirs hurts you more than yours hurts them." },
+      { situation:"You have Painter but no Grindstone", action:"Go get Grindstone. Enlightened Tutor is a 1-mana instant — cast EOT, don't wait. Painter alone is a 1/3 that does nothing." },
+      { situation:"You're approaching lethal life total", action:"Atraxa has lifelink — swing, one hit recovers 4. Still short? Toxic Deluge (Merciless Poisoning): pay life = biggest threat, wipe their board. Teferi's = emergencies only." },
+      { situation:"Stony Silence / Null Rod hits the table", action:"Abandon the combo — Grindstone taps, it's offline. Switch fully to Triumph plan. Keep Generous Gift / Assassin's Trophy for the Stony. Bitterblossom + elves still work. Build wide, kill with infect." }
+    ],
+    combos: [
+      { name:"Painter + Grindstone", note:"Your most reliable kill. Both tutorable by 6 cards. Fire when opponents tapped out or you hold a counter.", steps:[
+        "Cast Painter's Servant (3 mana). Name a color — white is universally safe.",
+        "Have Grindstone on the battlefield (1 mana; ideally down earlier).",
+        "Activate Grindstone {3}, tap: mill target's top 2. Painter makes every card share the color → trigger loops → entire library milled in one activation.",
+        "Repeat each opponent on later turns. Grindstone untaps naturally — no extra cost."
+      ]}
+    ],
+    keyCards: [
+      { name:"Bitterblossom", tag:"ENGINE", note:"Drop T2. One flying faerie per upkeep. The card opponents kill first — counter that removal." },
+      { name:"Bloom Tender", tag:"ENGINE", note:"1-mana 0/2 that taps for WUBG with Atraxa out. Best mana piece — never trade it in combat." },
+      { name:"Mondrak / Adrix and Nev", tag:"TOKEN", note:"Token doublers. Stack two before a big Avenger or Bitterblossom upkeep for exponential leads." },
+      { name:"Rhystic Study / Smothering Tithe", tag:"ENGINE", note:"Deploy T3. Opponents damned either way. Faerie Mastermind is the third tax piece." },
+      { name:"Vampiric / Enlightened Tutor", tag:"TUTOR", note:"Use proactively. Enlightened finds Painter, Grindstone, Bitterblossom, Tithe, Leyline." },
+      { name:"Teferi's Protection", tag:"SAVE", note:"Phase out vs wraths you can't counter or lethal damage. Not for single-target removal." }
+    ]
+  },
+  {
+    id: "chatterfang",
+    name: "Chatterfang, Squirrel General",
+    title: "The Undying Horde",
+    subtitle: "Squirrel Tribal · Token Aristocrats · BG Sacrifice Engine",
+    colors: ["B","G"],
+    accent: "#5bba78",
+    bracket: "4 — Optimized",
+    archetype: "Tokens + Drain",
+    winTurn: "T5–7",
+    startLife: 40,
+    counters: ["Squirrel token","Treasure","+1/+1","Storm count"],
+    winPaths: [
+      { name:"Scurry Oak Infinite", desc:"Scurry Oak + Ivy Lane Denizen + Chatterfang = infinite Squirrels. Most reliable line. Both halves findable via Natural Order or Worldly Tutor.", play:"Once infinite: attack for lethal, Altar of Dementia mills all, or drain via Blood Artist / Zulaport by sacrificing the horde." },
+      { name:"Craterhoof Behemoth", desc:"Wide token board + Craterhoof = trample alpha-strike. 20 squirrels → everyone gets +20/+20 trample. One swing.", play:"Natural Order finds Craterhoof directly. Best at end step of the player before you, with a Fog backup." },
+      { name:"Exquisite Blood + Sanguine Bond", desc:"Infinite drain loop. Any life gain → Sanguine deals damage → life loss → Exquisite gains → loop forever.", play:"Needs one trigger to start — a squirrel attack, Blood Artist, or Phyrexian Tower life. Both out = any drain kills the table." },
+      { name:"Altar of Dementia", desc:"Sac outlet that mills. Infinite squirrels = mill all libraries in one turn. Also a fog-in-response aristocrat piece.", play:"Doubles as draw pre-infinite. Sac tokens to mill yourself, recover via Regrowth / Eternal Witness." },
+      { name:"Drain Aristocrats", desc:"Blood Artist + Zulaport + Bastion + Nadier's all drain on deaths. Sac the swarm into Grave Pact and bleed the table.", play:"Warren Soultrader + Phyrexian Tower are the outlets. 4 drain pieces + 30 tokens kills without ever attacking." }
+    ],
+    mulligan: {
+      keep: [
+        "Forest + 1-mana dork + any payoff (Chatterfang T3)",
+        "Sol Ring + land + anything",
+        "Bitterblossom + land + green source (engine T2)",
+        "Natural Order + 2 lands + a green creature to sac (win T4)",
+        "Scurry Oak + Ivy Lane Denizen + 3 lands (combo T3)",
+        "Demonic / Vampiric Tutor + any 3 lands"
+      ],
+      ship: [
+        "0–1 lands",
+        "All black, no green (can't cast dorks or Chatterfang)",
+        "No creatures and no way to find them",
+        "5+ mana cards with no ramp",
+        "No token generation or no Chatterfang by T4"
+      ],
+      rule: "If you can't cast Chatterfang by T3–4 or assemble a combo piece, you're playing fair Magic in a deck not built for it. Ship and find a better 6."
+    },
+    turns: [
+      { label:"T1–2", phase:"Ramp", body:"Land → Sol Ring → 1-mana dork. T2: Three Visits / Nature's Lore for Overgrown Tomb. Drop Bitterblossom if you have black — tokens Chatterfang will copy. Black Market Connections is a T2 powerhouse (draw + token)." },
+      { label:"T3", phase:"Commander", body:"Cast Chatterfang. Equip Lightning Greaves if in hand (shroud + haste). Doubling Season this turn if held — ideally before Chatterfang so the first trigger quadruples. Every token now doubled for free." },
+      { label:"T4", phase:"Combo Setup", body:"Natural Order — sac smallest green creature, find Scurry Oak or Ivy Lane Denizen → T5 infinite. OR drop drain package: Blood Artist + Zulaport = every death drains 2. Grave Pact vs threats. Skullclamp a 1/1 = draw 2." },
+      { label:"T5", phase:"Go Infinite", body:"Fire the Scurry Oak loop → infinite squirrels. Pick a kill: Craterhoof swing, drain via Blood Artist sacrificing all to Altar/Warren Soultrader, or mill everyone. Hold Heroic Intervention open vs a Wrath." },
+      { label:"T6–7", phase:"Close It", body:"Cabal Coffers + Urborg = 8–12 black mana. Beledros untaps all lands for 10 life. Cast Exquisite Blood + Sanguine Bond for the drain loop. Or swing 40 squirrels with Beastmaster Ascension online." },
+      { label:"WATCH OUT", phase:"Hate to track", body:"Collector Ouphe is in YOUR deck — it shuts off your Sol Ring, Skullclamp, Altar; only play it when opponents need it more, and be ready to kill it. Opp Stony/Null Rod → Force of Vigor ready. Bojuka Bog is your gy hate; time it.", watch:true }
+    ],
+    decisions: [
+      { situation:"Someone tries to kill Chatterfang", action:"Heroic Intervention ({1}{G}, indestructible + hexproof). Two copies for this. Out of both? Deadly Rollick (free with your commander out) exiles the attacker. Last resort: Lightning Greaves = can't be targeted." },
+      { situation:"Opponent swings for lethal at you", action:"Fog / Darkness / Obscuring Haze. Obscuring Haze is free with your commander out. Arachnogenesis makes spiders + prevents damage. Fog early to buy time, Haze when tapped out and dying." },
+      { situation:"Loop pieces in hand, no creatures yet", action:"Natural Order — sac a dork, search either combo piece directly. Or Worldly Tutor EOT → draw T+1. Cast Chatterfang first so his doubling is active when the combo fires." },
+      { situation:"Opponent has Grave Pact / dictate effects", action:"Stop sacrificing — it backfires when they run it too. Maelstrom Pulse / Assassin's Trophy their Grave Pact before going wide, or win in one turn via Craterhoof (no sac needed)." },
+      { situation:"Exquisite Blood out, no Sanguine Bond", action:"Demonic / Vampiric Tutor finds it now. Exquisite alone does nothing. If you see it early, hold it — deploy both same turn or back-to-back with protection." },
+      { situation:"Your board is about to get wiped", action:"Sac into Altar of Dementia / Warren Soultrader first — convert to mill or resources, drain via Blood Artist on the way out. Then Regrowth / Eternal Witness recovers. Bitterblossom rebuilds immediately." }
+    ],
+    combos: [
+      { name:"Scurry Oak Infinite", note:"You'll fire it every game. Pieces: Scurry Oak + Ivy Lane Denizen + Chatterfang. Hold Heroic Intervention when firing.", steps:[
+        "Setup: Chatterfang + Scurry Oak + Ivy Lane Denizen in play. Scurry Oak needs a +1/+1 counter (or a green token enters to start it).",
+        "A green creature enters → Ivy Lane Denizen puts a +1/+1 counter on Scurry Oak.",
+        "Scurry Oak: counter placed → create a 1/1 green Squirrel.",
+        "Chatterfang: one+ tokens created → create that many Squirrels. Now 2 green creatures entered.",
+        "Each new squirrel re-triggers Ivy Lane → counter → squirrel → Chatterfang copies. Infinite. Stop when you choose.",
+        "Close: Craterhoof swing, sac to Altar (mill all), drain via Blood Artist/Zulaport, or Chatterfang -∞/-∞ on their board."
+      ]},
+      { name:"Exquisite Blood + Sanguine Bond", note:"Infinite drain. Deploy both, then trigger any life change.", steps:[
+        "Both enchantments in play.",
+        "Cause any life gain (or loss) — a squirrel attack, Blood Artist, Phyrexian Tower.",
+        "Sanguine Bond + Exquisite Blood loop life gain ↔ damage forever → table dies."
+      ]}
+    ],
+    keyCards: [
+      { name:"Bitterblossom", tag:"ENGINE", note:"1 token/upkeep, doubled by Chatterfang. Best T2 play with black." },
+      { name:"Black Market Connections", tag:"ENGINE", note:"Draw + 3/2 Shapeshifter each turn; Chatterfang doubles the token." },
+      { name:"Natural Order", tag:"COMBO", note:"Sac a green creature → any green creature. Finds combo pieces or Craterhoof." },
+      { name:"Blood Artist / Zulaport", tag:"DRAIN", note:"1 drain per death. Stack them; sac 30 tokens = 60 across the table." },
+      { name:"Skullclamp", tag:"ENGINE", note:"Equip a 1/1 squirrel, it dies, draw 2. Free card flow all game." },
+      { name:"Heroic Intervention", tag:"SAVE", note:"{1}{G} indestructible + hexproof. Protects Chatterfang or the combo from a Wrath." }
+    ]
+  },
+  {
+    id: "kess",
+    name: "Kess, Dissident Mage",
+    title: "Kess, Dissident Mage",
+    subtitle: "Grixis Spellslinger · Wraith Engine · Bracket IV",
+    colors: ["U","B","R"],
+    accent: "#9b6cff",
+    bracket: "IV",
+    archetype: "Spellslinger",
+    winTurn: "T6–8",
+    startLife: 40,
+    counters: ["Wraith token","Treasure","Storm count"],
+    winPaths: [
+      { name:"The Spellweaver's Triumph", desc:"Grind value with Kess's recursion, then unleash The Dawning Archaic — costs 0–2 mid-game, free-casts a buried spell on every attack.", play:"Fill yard with cantrips → drop Archaic → attack each turn free-casting removal/counters/wheels → snowball. Two recursion machines (Kess + Archaic)." },
+      { name:"The March of the Nine", desc:"Cast spells, fill the board. Nine Wraiths all become 9/9 menace — 81 power needing two blockers each.", play:"Land Lord of the Nazgûl T4–5 → cast cheap spells (Brainstorm = a free Wraith) → Veyran doubles every trigger → swing at 7+ Wraiths. You don't need all nine." },
+      { name:"The Mind Unmade", desc:"Mindcrank + Duskmantle Guildmage 2-card loop. Any damage mills, any mill drains, that loops infinitely.", play:"Both in play (or Guildmage's 2nd ability) → deal 1 damage / mill 1 → loop goes infinite. Tutor the missing half. Deploy as a surprise when opponents tap out." },
+      { name:"The Breach", desc:"Underworld Breach gives every card in your yard flashback. In a stocked graveyard, replay your whole hand for free.", play:"Yard at 10+ → cast Breach → replay tutors/counters/wheels → Past in Flames to chain. Hold for after a board wipe — the recovery turn is your win turn." },
+      { name:"The Dark Sovereigns", desc:"When other roads close: Bolas, Sheoldred, Sauron, Liliana. Raw value when combo lines get disrupted.", play:"Deploy when opponents tapped out after stopping your plan. These are 'I'm still in this game' pieces — never tutor for them unless out of better options." }
+    ],
+    mulligan: {
+      keep: [
+        "2–3 lands + Sol Ring or a mana rock",
+        "Lord of the Nazgûl or Veyran in hand",
+        "Rhystic Study or Mystic Remora as T2 play",
+        "Demonic Tutor + 4 mana by T3",
+        "2 lands + Brainstorm + cantrip chain",
+        "A counterspell + 3+ mana to hold up"
+      ],
+      ship: [
+        "0–1 lands (no exceptions)",
+        "5+ lands with no action",
+        "All spells, no lands or rocks",
+        "No blue mana in a double-blue hand",
+        "Underworld Breach but nothing to recur yet",
+        "Combo pieces with no tutor to complete them"
+      ],
+      rule: "You need blue mana by T1–2. This deck runs 9+ double-blue costs. A hand without early blue — even a 3-lander — often plays worse than a shipped 6. Can I cast Brainstorm T1? If not, consider the mull."
+    },
+    turns: [
+      { label:"T1–2", phase:"Setup", body:"Land + Sol Ring or a signet/talisman. Lead Rhystic Study or Mystic Remora if you have either — best card advantage in the deck. Don't deploy Lord yet — mana first, engine second. Hold a counterspell. Baral halves counter costs if he lands T2." },
+      { label:"T3–4", phase:"Engine", body:"Cast Kess if the table isn't gunning for you — your yard becomes a second hand. Drop Lord of the Nazgûl if you have him — every spell now makes a Wraith. Chain a cantrip to prove the engine; punish overreactions with a counter." },
+      { label:"T5–6", phase:"Fill the Board", body:"Cast spells for value, not just to play cards — each should draw/remove/counter/tutor, and each makes a Wraith with Lord out. Deploy Veyran now (two Wraiths per spell). Yard at 6+? Dawning Archaic likely costs 1–2 — deploy it." },
+      { label:"T7+", phase:"Close It", body:"5–9 Wraiths or a stocked yard or both. Pick a line: swing the army, assemble Mindcrank + Guildmage, or crack Underworld Breach. Board wiped? Past in Flames, rebuild 6 Wraiths in one turn. A sweeper doesn't eliminate you — you're two turns from winning again." },
+      { label:"WATCH OUT", phase:"Hate to track", body:"Graveyard hate kills you. Bojuka Bog, Rest in Peace, Leyline of the Void shut off Kess, Past in Flames, Breach, and Archaic at once. Hold a counter specifically for gy hate. If Rest in Peace resolves, removing it is priority above all else.", watch:true }
+    ],
+    decisions: [
+      { situation:"Someone plays Rest in Peace", action:"Counter it. Everything — Kess, Past in Flames, Breach, Archaic — relies on the yard. Your must-counter card above all. Float Force of Will. If it resolves: Feed the Swarm (only black card that hits enchantments)." },
+      { situation:"Board gets wiped", action:"Don't panic. Past in Flames next turn, replay the chain. You rebuild faster than the table — you're not a creature deck, a Wrath hurts you less than them." },
+      { situation:"Combo assembled (Mindcrank + Guildmage)", action:"Activate Guildmage ability 2 first. State it clearly, then deal 1 damage (any source). Triggers stack. The loop doesn't use the stack — it can't be interrupted once both abilities are in play." },
+      { situation:"When to cast Kess", action:"T3–4 when no one has open mana. She turns your graveyard into a hand every turn. Deploy when opponents are tapped down, not into three open Islands. Be ready to run her out twice." },
+      { situation:"Should I counter this?", action:"Yes if: targeted removal at Kess/Lord, gy hate, a combo finisher, or Cyclonic Rift. No if: a small value play, a creature you can remove later, or anything not threatening you in 2 turns." },
+      { situation:"Dawning Archaic is in hand", action:"Cast when your yard hits 6+ spells (4 mana or less). On attack it free-casts an instant/sorcery from the yard — exile the cast card. Priority: Demonic Tutor, Windfall, Toxic Deluge. Swings every turn for free." }
+    ],
+    combos: [
+      { name:"Mindcrank + Duskmantle Guildmage", note:"2-card infinite mill/drain. Best deployed as a surprise when opponents tap out.", steps:[
+        "Both in play (or activate Guildmage's second ability for the combo).",
+        "Deal any 1 damage to a player, or mill 1 card.",
+        "Mill → life loss → more mill → loops. The loop doesn't use the stack — can't be interrupted.",
+        "One opponent milled/drained out; repeat for each. Use Demonic Tutor / Liliana to find the missing half."
+      ]},
+      { name:"Underworld Breach turn", note:"Your 'I win this turn' button when the yard is stocked. Best after a sweeper clears your board.", steps:[
+        "Yard at 10+ spells.",
+        "Cast Underworld Breach.",
+        "Replay tutors, counters, wheels for their mana cost + exile 3 each.",
+        "Recast Past in Flames to chain further → find combo or win condition."
+      ]}
+    ],
+    keyCards: [
+      { name:"Kess, Dissident Mage", tag:"ENGINE", note:"Recast one instant/sorcery from your yard each of YOUR turns. Always recast the most powerful spell, not the cheapest." },
+      { name:"Lord of the Nazgûl", tag:"ENGINE", note:"Every instant/sorcery makes a 2/2 Wraith. Nine Wraiths → all become 9/9. Priority deploy T4–5." },
+      { name:"Veyran, Voice of Duality", tag:"ENGINE", note:"Doubles Magecraft / Lord triggers. Two Wraiths per spell. Deploy ASAP after Lord." },
+      { name:"The Dawning Archaic", tag:"WIN", note:"Costs 1 less per instant/sorcery in yard. On attack, free-cast a buried spell. Also triggers Lord." },
+      { name:"Rhystic Study / Mystic Remora", tag:"ENGINE", note:"Best T2 plays — 3–5 cards across a game and tax opponents." },
+      { name:"Force of Will", tag:"SAVE", note:"Free counter — pitch a blue card. Save for combo finishers and graveyard hate." }
+    ]
+  }
+];
+
+/* ---------- PERSISTENCE ---------- */
+const DECK_KEY = "spellbook-decks-v1";
+const GAME_KEY = "spellbook-games-v1";
+let decks = [];
+let games = {};       // keyed by deckId -> game state
+let current = null;   // current deck
+let curTab = "game";
+
+function uid(){ return "d"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+
+function loadDecks(){
+  try { const raw = localStorage.getItem(DECK_KEY); if(raw){ decks = JSON.parse(raw); return; } } catch(e){}
+  decks = clone(SEED_DECKS);
+  saveDecks();
+}
+function saveDecks(){ try { localStorage.setItem(DECK_KEY, JSON.stringify(decks)); } catch(e){} }
+function loadGames(){ try { const raw = localStorage.getItem(GAME_KEY); if(raw) games = JSON.parse(raw); } catch(e){ games = {}; } }
+function saveGames(){ try { localStorage.setItem(GAME_KEY, JSON.stringify(games)); } catch(e){} }
+
+function newGame(deck){
+  const start = deck.startLife || 40;
+  return {
+    seats: [
+      { name: "You", life: start, poison: 0, isYou: true },
+      { name: "Opponent 1", life: start, poison: 0 },
+      { name: "Opponent 2", life: start, poison: 0 },
+      { name: "Opponent 3", life: start, poison: 0 }
+    ],
+    cmdDmg: [0,0,0],          // commander damage TO you from opp 1,2,3
+    turnNum: 1,
+    phaseIdx: 0,
+    coachTurn: 0,
+    counters: (deck.counters||[]).map(c=>({name:c, val:0})),
+    activePath: 0,
+    activeTrigger: -1,
+    pathChecks: {},           // "pathIdx-stepIdx" -> bool (unused for paths w/o steps)
+    comboChecks: {},          // "comboIdx-stepIdx" -> bool
+    spells: 0,                // spell / storm counter (resets each turn)
+    roll: null,               // {label, value}
+    swing: { n:0, pow:1, anthem:0, hoof:false, ds:false },
+    hand: []                  // cards you've drawn this game
+  };
+}
+function gameFor(deck){
+  if(!games[deck.id]) { games[deck.id] = newGame(deck); saveGames(); }
+  const g = games[deck.id];
+  // forward-compat: backfill any fields missing from older saved games
+  if(!g.counters) g.counters = (deck.counters||[]).map(c=>({name:c,val:0}));
+  if(g.spells==null) g.spells = 0;
+  if(g.roll===undefined) g.roll = null;
+  if(!g.swing) g.swing = { n:0, pow:1, anthem:0, hoof:false, ds:false };
+  if(!g.hand) g.hand = [];
+  return g;
+}
+
+const PHASES = ["Untap","Upkeep","Draw","Main 1","Combat","Main 2","End"];
+
+/* ---------- helpers ---------- */
+const $ = (s,el=document)=>el.querySelector(s);
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+let toastT;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),1600); }
+function setAccent(c){ document.documentElement.style.setProperty("--accent", c||"#9b6cff"); document.documentElement.style.setProperty("--accent-soft", hexA(c||"#9b6cff",0.16)); }
+function hexA(hex,a){ const h=hex.replace("#",""); const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16); return `rgba(${r},${g},${b},${a})`; }
+
+/* ---------- NAVIGATION ---------- */
+function show(view){
+  ["home","companion","editor"].forEach(v=>$("#"+v).classList.add("hidden"));
+  $("#"+view).classList.remove("hidden");
+  $("#topbar").classList.toggle("hidden", view==="home");
+}
+function goHome(){ current=null; setAccent("#9b6cff"); show("home"); renderHome(); }
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  const grid = $("#deckGrid"); grid.innerHTML="";
+  decks.forEach(d=>{
+    const card = el("div","deck-card");
+    card.style.setProperty("--dc-accent", d.accent);
+    card.style.setProperty("--dc-glow", hexA(d.accent,0.18));
+    const pips = (d.colors||[]).map(c=>`<span class="pip ${c}"></span>`).join("");
+    card.innerHTML = `
+      <div class="dc-kicker">${esc(d.archetype||"Commander")}</div>
+      <div class="dc-name">${esc(d.title||d.name)}</div>
+      <div class="dc-sub">${esc(d.subtitle||d.name)}</div>
+      <div class="dc-meta">
+        <span class="dc-tag">${pips}</span>
+        <span class="dc-tag">Bracket ${esc(d.bracket||"—")}</span>
+        <span class="dc-tag">Win ${esc(d.winTurn||"—")}</span>
+      </div>
+      <button class="dc-edit" data-edit="${d.id}">✎ edit</button>`;
+    card.addEventListener("click",e=>{ if(e.target.closest("[data-edit]")) return; openDeck(d); });
+    card.querySelector("[data-edit]").addEventListener("click",e=>{ e.stopPropagation(); openEditor(d); });
+    grid.appendChild(card);
+  });
+  const add = el("div","add-card");
+  add.innerHTML = `<div class="plus">+</div><div class="lbl">Add a Deck</div>`;
+  add.addEventListener("click",()=>openEditor(null));
+  grid.appendChild(add);
+}
+
+function openDeck(d){
+  current = d; curTab="game";
+  setAccent(d.accent);
+  $("#tbTitle").textContent = d.title || d.name;
+  $("#tbSub").innerHTML = (d.colors||[]).map(c=>`<span class="pip ${c}"></span>`).join("") + " &nbsp;" + esc(d.archetype||"");
+  gameFor(d);
+  show("companion");
+  renderTabs();
+  renderTab();
+}
+
+/* ---------- TABS ---------- */
+const TABS = [
+  { id:"game",   label:"Table" },
+  { id:"hand",   label:"Hand" },
+  { id:"coach",  label:"Coach" },
+  { id:"combos", label:"Combos" },
+  { id:"ref",    label:"Reference" }
+];
+function renderTabs(){
+  const t = $("#tabs"); t.innerHTML="";
+  TABS.forEach(tb=>{
+    const b = el("button","tab"+(curTab===tb.id?" active":""),tb.label);
+    b.addEventListener("click",()=>{ curTab=tb.id; renderTabs(); renderTab(); window.scrollTo(0,0); });
+    t.appendChild(b);
+  });
+}
+function renderTab(){
+  const body = $("#tabBody"); body.innerHTML="";
+  if(curTab==="game") renderGame(body);
+  else if(curTab==="hand") renderHand(body);
+  else if(curTab==="coach") renderCoach(body);
+  else if(curTab==="combos") renderCombos(body);
+  else if(curTab==="ref") renderRef(body);
+}
+
+/* ============================================================
+   TABLE (life counter + tools)
+   ============================================================ */
+function renderGame(body){
+  const g = gameFor(current);
+
+  // seats
+  const seats = el("div","seats");
+  g.seats.forEach((s,i)=>{
+    const seat = el("div","seat"+(s.isYou?" you":""));
+    const low = s.life<=10;
+    seat.innerHTML = `
+      <input class="seat-name" value="${esc(s.name)}" data-seat="${i}" />
+      <div class="life-zone">
+        <button class="life-btn" data-life="${i}" data-d="-1">−</button>
+        <div class="life-num ${low?'low':''}">${s.life}</div>
+        <button class="life-btn" data-life="${i}" data-d="1">+</button>
+      </div>
+      <div class="seat-foot">
+        <button class="mini-btn" data-life="${i}" data-d="-5">−5</button>
+        <button class="mini-btn" data-life="${i}" data-d="5">+5</button>
+        <span class="mini-stat ${s.poison>=10?'danger':''}">☠ <b data-poison="${i}">${s.poison}</b></span>
+        <button class="mini-btn" data-poison="${i}" data-d="1">+pois</button>
+      </div>`;
+    seats.appendChild(seat);
+  });
+  body.appendChild(seats);
+
+  // commander damage to you
+  const cd = el("div","panel");
+  cd.innerHTML = `<div class="panel-h">⚔ Commander Damage to You <span class="muted" style="text-transform:none;letter-spacing:0;font-size:0.85em;margin-left:auto;">21 = lethal</span></div>`;
+  const cdRow = el("div");
+  g.cmdDmg.forEach((v,i)=>{
+    const r = el("div","counter-row");
+    const dead = v>=21;
+    r.innerHTML = `<div class="cr-name">${esc(g.seats[i+1].name)} ${dead?'<span style="color:var(--red)">☠</span>':''}</div>
+      <div class="counter-ctl">
+        <button data-cmd="${i}" data-d="-1">−</button>
+        <span class="cval" style="${dead?'color:var(--red)':''}">${v}</span>
+        <button data-cmd="${i}" data-d="1">+</button>
+      </div>`;
+    cdRow.appendChild(r);
+  });
+  cd.appendChild(cdRow);
+  body.appendChild(cd);
+
+  // tools grid: turn/phase + counters
+  const tools = el("div","gp-tools");
+
+  // turn & phase
+  const tp = el("div","panel");
+  tp.innerHTML = `<div class="panel-h">⏳ Turn &amp; Phase</div>
+    <div class="turn-counter">
+      <button class="mini-btn" data-turn="-1">− turn</button>
+      <div class="tc-num">Turn ${g.turnNum}</div>
+      <button class="mini-btn" data-turn="1">+ turn</button>
+    </div>
+    <div class="phase-row">${PHASES.map((p,i)=>`<span class="phase-chip${i===g.phaseIdx?' active':''}" data-phase="${i}">${p}</span>`).join("")}</div>
+    <div class="muted" style="margin-top:0.6em;">Advancing the turn also moves the coach plan forward.</div>`;
+  tools.appendChild(tp);
+
+  // counters / tokens
+  const ct = el("div","panel");
+  ct.innerHTML = `<div class="panel-h">🜚 Counters &amp; Tokens</div>`;
+  const ctBody = el("div");
+  (g.counters||[]).forEach((c,i)=>{
+    const r = el("div","counter-row");
+    r.innerHTML = `<div class="cr-name">${esc(c.name)}</div>
+      <div class="counter-ctl">
+        <button data-ctr="${i}" data-d="-1">−</button>
+        <span class="cval">${c.val}</span>
+        <button data-ctr="${i}" data-d="1">+</button>
+      </div>`;
+    ctBody.appendChild(r);
+  });
+  ct.appendChild(ctBody);
+  tools.appendChild(ct);
+  body.appendChild(tools);
+
+  // ---- spell counter + dice (second tool row) ----
+  const tools2 = el("div","gp-tools");
+
+  const sc = el("div","panel");
+  sc.innerHTML = `<div class="panel-h">✶ Spell / Storm Counter <span class="muted" style="margin-left:auto;text-transform:none;letter-spacing:0;font-size:0.85em;">resets each turn</span></div>
+    <div class="spell-big">
+      <button class="spell-tap" data-spell="-1">−</button>
+      <div class="sb-num">${g.spells}</div>
+      <button class="spell-tap" data-spell="1">+</button>
+    </div>
+    <div class="muted" style="text-align:center;margin-top:0.5em;">Tap per spell cast — storm count, Magecraft / Lord triggers, Wraiths made this turn.</div>`;
+  tools2.appendChild(sc);
+
+  const dice = el("div","panel");
+  const r = g.roll;
+  dice.innerHTML = `<div class="panel-h">🎲 Dice &amp; Coin</div>
+    <div class="big-roll">${r ? `${esc(String(r.value))}<small>${esc(r.label)}</small>` : `—<small>roll something</small>`}</div>
+    <div class="dice-row">
+      <button class="mini-btn" data-roll="coin">Coin</button>
+      <button class="mini-btn" data-roll="4">d4</button>
+      <button class="mini-btn" data-roll="6">d6</button>
+      <button class="mini-btn" data-roll="8">d8</button>
+      <button class="mini-btn" data-roll="10">d10</button>
+      <button class="mini-btn" data-roll="12">d12</button>
+      <button class="mini-btn" data-roll="20">d20</button>
+      <button class="mini-btn" data-roll="100">d100</button>
+    </div>`;
+  tools2.appendChild(dice);
+  body.appendChild(tools2);
+
+  // ---- swing math (alpha-strike calculator) ----
+  const sw = g.swing;
+  const swp = el("div","panel");
+  swp.innerHTML = `<div class="panel-h">🗡 Swing Math <span class="muted" style="margin-left:auto;text-transform:none;letter-spacing:0;font-size:0.85em;">assumes unblocked</span></div>
+    <div class="swing-grid">
+      <div class="swing-field"><label>Attackers</label><input type="number" inputmode="numeric" id="sw-n" value="${sw.n}" min="0"></div>
+      <div class="swing-field"><label>Power each</label><input type="number" inputmode="numeric" id="sw-pow" value="${sw.pow}" min="0"></div>
+      <div class="swing-field"><label>Anthem +N/+N</label><input type="number" inputmode="numeric" id="sw-anthem" value="${sw.anthem}" min="0"></div>
+    </div>
+    <div class="swing-toggles">
+      <div class="swing-toggle${sw.hoof?' on':''}" id="sw-hoof"><span class="sw-box">${sw.hoof?'✓':''}</span> Craterhoof (+N where N=attackers)</div>
+      <div class="swing-toggle${sw.ds?' on':''}" id="sw-ds"><span class="sw-box">${sw.ds?'✓':''}</span> Double strike (×2)</div>
+    </div>
+    <div class="swing-out" id="sw-out"></div>`;
+  body.appendChild(swp);
+
+  function recalcSwing(){
+    const per = Math.max(0, sw.pow + sw.anthem + (sw.hoof ? sw.n : 0));
+    let total = per * Math.max(0, sw.n);
+    if(sw.ds) total *= 2;
+    const opps = g.seats.slice(1);
+    const lethal = opps.map(o=>{
+      const ok = total >= o.life && o.life > 0;
+      return `<div class="lethal-line"><span>${esc(o.name)} <span class="muted">(${o.life})</span></span>${ok?'<span class="yes">✓ LETHAL</span>':`<span class="no">needs +${Math.max(0,o.life-total)}</span>`}</div>`;
+    }).join("");
+    const out = $("#sw-out");
+    if(out) out.innerHTML = `<div class="swing-total">${total} <span>total damage</span></div>
+      <div class="swing-per">${Math.max(0,sw.n)} attacker(s) × ${per} power${sw.ds?' × double strike':''}</div>
+      <div style="margin-top:0.7em;">${lethal}</div>`;
+  }
+  recalcSwing();
+
+  // reset
+  const reset = el("div","row-btns");
+  reset.style.marginTop = "0.4em";
+  const rb = el("button","btn danger","↺ New Game");
+  rb.addEventListener("click",()=>{ if(confirm("Reset life, counters and the coach plan for this deck?")){ games[current.id]=newGame(current); saveGames(); renderTab(); toast("New game"); } });
+  reset.appendChild(rb);
+  body.appendChild(reset);
+
+  // ---- listeners ----
+  body.querySelectorAll("[data-life]").forEach(b=>b.addEventListener("click",()=>{
+    const i=+b.dataset.life, d=+b.dataset.d; g.seats[i].life+=d; saveGames(); renderTab();
+  }));
+  body.querySelectorAll("[data-seat]").forEach(inp=>inp.addEventListener("change",()=>{
+    g.seats[+inp.dataset.seat].name = inp.value || ("Seat "+inp.dataset.seat); saveGames();
+  }));
+  body.querySelectorAll("[data-poison]").forEach(b=>{ if(b.dataset.d) b.addEventListener("click",()=>{
+    const i=+b.dataset.poison; g.seats[i].poison=Math.max(0,g.seats[i].poison+1); saveGames(); renderTab();
+  });});
+  body.querySelectorAll("[data-cmd]").forEach(b=>b.addEventListener("click",()=>{
+    const i=+b.dataset.cmd, d=+b.dataset.d; g.cmdDmg[i]=Math.max(0,g.cmdDmg[i]+d);
+    g.seats[0].life-=d; saveGames(); renderTab();
+  }));
+  body.querySelectorAll("[data-ctr]").forEach(b=>b.addEventListener("click",()=>{
+    const i=+b.dataset.ctr, d=+b.dataset.d; g.counters[i].val=Math.max(0,g.counters[i].val+d); saveGames(); renderTab();
+  }));
+  body.querySelectorAll("[data-turn]").forEach(b=>b.addEventListener("click",()=>{
+    const d=+b.dataset.turn; g.turnNum=Math.max(1,g.turnNum+d);
+    g.coachTurn = Math.min((current.turns||[]).filter(t=>!t.watch).length-1, Math.max(0, g.coachTurn+d));
+    g.spells = 0;   // storm/spell count resets each turn
+    saveGames(); renderTab();
+  }));
+  body.querySelectorAll("[data-phase]").forEach(c=>c.addEventListener("click",()=>{
+    g.phaseIdx=+c.dataset.phase; saveGames(); renderTab();
+  }));
+  body.querySelectorAll("[data-spell]").forEach(b=>b.addEventListener("click",()=>{
+    g.spells = Math.max(0, g.spells + (+b.dataset.spell)); saveGames(); renderTab();
+  }));
+  body.querySelectorAll("[data-roll]").forEach(b=>b.addEventListener("click",()=>{
+    const t=b.dataset.roll;
+    if(t==="coin"){ g.roll={ label:"Coin flip", value: Math.random()<0.5?"Heads":"Tails" }; }
+    else { const sides=+t; g.roll={ label:"d"+sides, value: Math.floor(Math.random()*sides)+1 }; }
+    saveGames(); renderTab();
+  }));
+  // swing math — update live without re-rendering (keeps input focus)
+  const bindSwing=(id,key)=>{ const inp=$("#"+id); if(inp) inp.addEventListener("input",()=>{ sw[key]=Math.max(0, parseInt(inp.value)||0); saveGames(); recalcSwing(); }); };
+  bindSwing("sw-n","n"); bindSwing("sw-pow","pow"); bindSwing("sw-anthem","anthem");
+  const hoofT=$("#sw-hoof"); if(hoofT) hoofT.addEventListener("click",()=>{ sw.hoof=!sw.hoof; hoofT.classList.toggle("on"); hoofT.querySelector(".sw-box").textContent=sw.hoof?"✓":""; saveGames(); recalcSwing(); });
+  const dsT=$("#sw-ds"); if(dsT) dsT.addEventListener("click",()=>{ sw.ds=!sw.ds; dsT.classList.toggle("on"); dsT.querySelector(".sw-box").textContent=sw.ds?"✓":""; saveGames(); recalcSwing(); });
+}
+
+/* ============================================================
+   HAND (what did I draw? -> keep/ship + card roles)
+   ============================================================ */
+function overlap(q,n){ if(q.length<3) return false; return n.includes(q) || q.includes(n); }
+function analyzeCard(deck, raw){
+  const q = raw.toLowerCase().trim();
+  const tags = [];
+  const isLand = /^(island|swamp|forest|plains|mountain|wastes)s?$/.test(q) || (q.includes("land") && q.length<14);
+  (deck.keyCards||[]).forEach(kc=>{
+    if(overlap(q, kc.name.toLowerCase())) tags.push({kind:"key", label:kc.tag||"KEY", note:kc.note||kc.name});
+  });
+  (deck.combos||[]).forEach(c=>{
+    const hay = (c.name+" "+((c.steps||[]).join(" "))+" "+(c.note||"")).toLowerCase();
+    if(q.length>=3 && hay.includes(q)) tags.push({kind:"combo", label:"COMBO", note:"Piece of: "+c.name});
+  });
+  (deck.mulligan&&deck.mulligan.keep||[]).forEach(k=>{ if(q.length>=3 && k.toLowerCase().includes(q)) tags.push({kind:"keep", label:"KEEP", note:k}); });
+  (deck.mulligan&&deck.mulligan.ship||[]).forEach(s=>{ if(q.length>=3 && s.toLowerCase().includes(q)) tags.push({kind:"ship", label:"SHIP", note:s}); });
+  return { isLand, tags };
+}
+function deckCardPool(deck){
+  const set = new Set();
+  const add = s=>{ s=(s||"").trim(); if(s) set.add(s); };
+  (deck.keyCards||[]).forEach(kc=>{ if(kc.name) kc.name.split(" / ").forEach(add); });
+  (deck.combos||[]).forEach(c=>{ if(c.name) c.name.split(" + ").forEach(add); });
+  return [...set].sort((a,b)=>a.localeCompare(b));
+}
+function handVerdict(deck, hand){
+  let lands=0, key=0, keep=0, ship=0;
+  hand.forEach(c=>{
+    const a = analyzeCard(deck, c);
+    if(a.isLand) lands++;
+    a.tags.forEach(t=>{ if(t.kind==="key"||t.kind==="combo") key++; else if(t.kind==="keep") keep++; else if(t.kind==="ship") ship++; });
+  });
+  let verdict, cls;
+  if(hand.length===0){ verdict="Add the cards in your hand below."; cls="muted"; }
+  else if(lands<2){ verdict="SHIP — too few lands (you want 2–3)"; cls="ship"; }
+  else if(lands>5){ verdict="LEAN SHIP — flooded, not enough action"; cls="ship"; }
+  else if(key>0 || keep>0){ verdict="KEEPABLE — lands + a payoff / keep signal"; cls="keep"; }
+  else { verdict="MARGINAL — lands but no clear payoff yet"; cls="warn"; }
+  return { verdict, cls, lands, key, keep, ship };
+}
+function renderHand(body){
+  const g = gameFor(current);
+  const v = handVerdict(current, g.hand);
+  const pool = deckCardPool(current);
+
+  const wrap = el("div","panel");
+  wrap.innerHTML = `<div class="panel-h">✋ Your Hand</div>
+    <div class="hand-in-row"><input id="hand-in" list="hand-cards" placeholder="Card you drew…" autocomplete="off" /><button class="mini-btn" id="hand-add">Add</button></div>
+    <datalist id="hand-cards">${pool.map(n=>`<option value="${esc(n)}"></option>`).join("")}</datalist>
+    <div class="hand-hint">Type each card as you draw it — opening 7 first, then every draw. ${g.hand.length} card${g.hand.length===1?"":"s"} · ${v.lands} land${v.lands===1?"":"s"} detected.</div>
+    <div class="hand-verdict ${v.cls}">${esc(v.verdict)}${g.hand.length?`<span class="vsub">${v.lands} lands · ${v.key} payoff · ${v.keep} keep-signal${v.ship?` · ${v.ship} ship-flag`:""}</span>`:""}</div>`;
+  body.appendChild(wrap);
+
+  const list = el("div");
+  g.hand.forEach((c,i)=>{
+    const a = analyzeCard(current, c);
+    const fresh = i===g.hand.length-1;
+    const chips = [];
+    if(a.isLand) chips.push({k:"land", l:"LAND", n:"Counts toward your land total."});
+    a.tags.forEach(t=>chips.push({k:t.kind, l:t.label, n:t.note}));
+    if(!chips.length) chips.push({k:"none", l:"—", n:"Not in this deck's key list — judge it by curve and role."});
+    const card = el("div","hand-card"+(fresh?" fresh":""));
+    card.innerHTML = `<div class="hc-top"><span class="hc-name">${esc(c)}</span>${fresh?'<span class="hc-fresh">← just drew</span>':""}<button class="hc-x" data-hx="${i}">✕</button></div>
+      <div class="hc-chips">${chips.map(ch=>`<span class="hc-chip ${ch.k}">${esc(ch.l)}</span>`).join("")}</div>
+      ${chips.map(ch=>`<div class="hc-note">${esc(ch.n)}</div>`).join("")}`;
+    list.appendChild(card);
+  });
+  body.appendChild(list);
+
+  if(current.mulligan && current.mulligan.rule){
+    body.appendChild(el("div","hand-rule",`<b>Mulligan rule:</b> ${esc(current.mulligan.rule)}`));
+  }
+
+  if(g.hand.length){
+    const clr = el("div","row-btns"); clr.style.marginTop="0.6em";
+    const cb = el("button","btn danger","↺ Clear hand");
+    cb.addEventListener("click",()=>{ g.hand=[]; saveGames(); renderTab(); });
+    clr.appendChild(cb); body.appendChild(clr);
+  }
+
+  const inp = $("#hand-in");
+  const add = ()=>{ const val=(inp.value||"").trim(); if(!val) return; g.hand.push(val); saveGames(); renderTab(); };
+  $("#hand-add").addEventListener("click", add);
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter") add(); });
+  body.querySelectorAll("[data-hx]").forEach(b=>b.addEventListener("click",()=>{ g.hand.splice(+b.dataset.hx,1); saveGames(); renderTab(); }));
+  inp.focus();
+}
+
+/* ============================================================
+   COACH (live turn plan + triggers + win path)
+   ============================================================ */
+function renderCoach(body){
+  const g = gameFor(current);
+  const planTurns = (current.turns||[]).filter(t=>!t.watch);
+  const watch = (current.turns||[]).find(t=>t.watch);
+
+  // NOW turn card
+  if(planTurns.length){
+    if(g.coachTurn>=planTurns.length) g.coachTurn=planTurns.length-1;
+    const t = planTurns[g.coachTurn];
+    const nt = el("div","now-turn");
+    nt.innerHTML = `
+      <div class="nt-top">
+        <span class="nt-label">${esc(t.label)}</span>
+        <span class="nt-phase">${esc(t.phase||"")} · step ${g.coachTurn+1}/${planTurns.length}</span>
+      </div>
+      <div class="nt-body">${esc(t.body)}</div>
+      <div class="nt-nav">
+        <button class="btn ghost" data-coach="-1">‹ Prev</button>
+        <button class="btn primary" data-coach="1" style="flex:1;">Next turn ›</button>
+      </div>
+      <div class="step-dots">
+        ${planTurns.map((_,i)=>`<span class="step-dot${i===g.coachTurn?' active':''}" data-jump="${i}"></span>`).join("")}
+        ${watch?`<span class="step-dot watch" data-watch="1" title="Watch out"></span>`:""}
+      </div>`;
+    body.appendChild(nt);
+    nt.querySelectorAll("[data-coach]").forEach(b=>b.addEventListener("click",()=>{
+      g.coachTurn=Math.min(planTurns.length-1,Math.max(0,g.coachTurn+ +b.dataset.coach)); saveGames(); renderTab();
+    }));
+    nt.querySelectorAll("[data-jump]").forEach(d=>d.addEventListener("click",()=>{ g.coachTurn=+d.dataset.jump; saveGames(); renderTab(); }));
+    const wb = nt.querySelector("[data-watch]"); if(wb) wb.addEventListener("click",()=>{ toast("See ⚠ Watch Out below"); });
+  }
+
+  // WATCH OUT
+  if(watch){
+    const w = el("div","panel");
+    w.style.borderColor = "rgba(255,90,60,0.4)";
+    w.innerHTML = `<div class="panel-h" style="color:var(--red)">⚠ Watch Out</div><div>${esc(watch.body)}</div>`;
+    body.appendChild(w);
+  }
+
+  // SITUATION TRIGGERS
+  const trg = el("div","panel");
+  trg.innerHTML = `<div class="panel-h">⚡ What's Happening? <span class="muted" style="margin-left:auto;text-transform:none;letter-spacing:0;font-size:0.85em;">tap a situation</span></div>`;
+  const grid = el("div","trigger-grid");
+  (current.decisions||[]).forEach((d,i)=>{
+    const b = el("button","trigger"+(g.activeTrigger===i?" active":""), esc(d.situation));
+    b.addEventListener("click",()=>{ g.activeTrigger = g.activeTrigger===i?-1:i; saveGames(); renderTab(); });
+    grid.appendChild(b);
+  });
+  trg.appendChild(grid);
+  if(g.activeTrigger>-1 && current.decisions[g.activeTrigger]){
+    const d = current.decisions[g.activeTrigger];
+    const ans = el("div","trigger-answer");
+    ans.innerHTML = `<div class="ta-q">${esc(d.situation)}</div><div>${esc(d.action)}</div>`;
+    trg.appendChild(ans);
+  }
+  body.appendChild(trg);
+
+  // WIN PATH TRACKER
+  const wp = el("div","panel");
+  wp.innerHTML = `<div class="panel-h">🏆 Win Path</div>`;
+  const pick = el("div","path-pick");
+  (current.winPaths||[]).forEach((p,i)=>{
+    const b = el("button","pp"+(g.activePath===i?" active":""), esc(p.name));
+    b.addEventListener("click",()=>{ g.activePath=i; saveGames(); renderTab(); });
+    pick.appendChild(b);
+  });
+  wp.appendChild(pick);
+  const p = (current.winPaths||[])[g.activePath];
+  if(p){
+    const det = el("div","path-detail");
+    det.innerHTML = `<div class="pd-desc">${esc(p.desc)}</div><div class="pd-play"><b>Execute:</b> ${esc(p.play)}</div>`;
+    wp.appendChild(det);
+  }
+  body.appendChild(wp);
+}
+
+/* ============================================================
+   COMBOS (interactive checklists)
+   ============================================================ */
+function renderCombos(body){
+  const g = gameFor(current);
+  const combos = current.combos||[];
+  if(!combos.length){ body.appendChild(el("div","panel muted","No combos recorded for this deck yet. Add them in the deck editor.")); return; }
+  combos.forEach((c,ci)=>{
+    const done = (c.steps||[]).every((_,si)=>g.comboChecks[ci+"-"+si]);
+    const panel = el("div","panel");
+    panel.innerHTML = `<div class="panel-h">🔮 ${esc(c.name)} ${done?'<span style="color:var(--green);margin-left:auto;">✓ assembled</span>':''}</div>
+      ${c.note?`<div class="muted" style="margin-bottom:0.6em;">${esc(c.note)}</div>`:""}`;
+    (c.steps||[]).forEach((s,si)=>{
+      const key = ci+"-"+si;
+      const item = el("div","check-item"+(g.comboChecks[key]?" done":""));
+      item.innerHTML = `<span class="check-box">${g.comboChecks[key]?"✓":""}</span><span class="ci-num">${si+1}.</span><span class="ci-text">${esc(s)}</span>`;
+      item.addEventListener("click",()=>{ g.comboChecks[key]=!g.comboChecks[key]; saveGames(); renderTab(); });
+      panel.appendChild(item);
+    });
+    const clr = el("button","btn ghost","↺ Reset");
+    clr.style.marginTop="0.7em";
+    clr.addEventListener("click",()=>{ (c.steps||[]).forEach((_,si)=>delete g.comboChecks[ci+"-"+si]); saveGames(); renderTab(); });
+    panel.appendChild(clr);
+    body.appendChild(panel);
+  });
+}
+
+/* ============================================================
+   REFERENCE (mulligan + key cards + win paths)
+   ============================================================ */
+function renderRef(body){
+  const d = current;
+  // stat strip
+  const st = el("div","panel");
+  st.innerHTML = `<div class="panel-h">📜 ${esc(d.name)}</div>
+    <div class="ref-cols">
+      <div><span class="muted">Colors</span><br>${(d.colors||[]).map(c=>`<span class="pip ${c}"></span>`).join("")}</div>
+      <div><span class="muted">Archetype</span><br>${esc(d.archetype||"—")}</div>
+      <div><span class="muted">Bracket</span><br>${esc(d.bracket||"—")}</div>
+      <div><span class="muted">Avg Win</span><br>${esc(d.winTurn||"—")}</div>
+    </div>`;
+  body.appendChild(st);
+
+  // mulligan
+  if(d.mulligan){
+    const m = el("div","panel");
+    m.innerHTML = `<div class="panel-h">✋ Mulligan</div>
+      <div class="ref-cols">
+        <div><div style="color:var(--green);font-family:'Cinzel',serif;font-size:0.72em;letter-spacing:1px;margin-bottom:0.4em;">✓ KEEP</div>
+          <ul class="ref-list">${(d.mulligan.keep||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+        <div><div style="color:var(--red);font-family:'Cinzel',serif;font-size:0.72em;letter-spacing:1px;margin-bottom:0.4em;">✗ SHIP</div>
+          <ul class="ref-list ship">${(d.mulligan.ship||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+      </div>
+      ${d.mulligan.rule?`<div style="margin-top:0.8em;border-top:1px solid var(--edge);padding-top:0.7em;font-size:0.92em;"><b class="gold-text">Golden Rule:</b> ${esc(d.mulligan.rule)}</div>`:""}`;
+    body.appendChild(m);
+  }
+
+  // win paths
+  if((d.winPaths||[]).length){
+    const w = el("div","panel");
+    w.innerHTML = `<div class="panel-h">🏆 Paths to Victory</div>`;
+    d.winPaths.forEach((p,i)=>{
+      const row = el("div");
+      row.style.cssText="padding:0.5em 0;border-bottom:1px solid rgba(46,34,64,0.5);";
+      row.innerHTML = `<b class="gold-text">${i+1}. ${esc(p.name)}</b><div style="font-size:0.92em;margin-top:0.2em;">${esc(p.desc)}</div>`;
+      w.appendChild(row);
+    });
+    body.appendChild(w);
+  }
+
+  // key cards
+  if((d.keyCards||[]).length){
+    const k = el("div","panel");
+    k.innerHTML = `<div class="panel-h">🗝 Key Cards</div>`;
+    d.keyCards.forEach(c=>{
+      const row = el("div","keycard");
+      row.innerHTML = `<b>${esc(c.name)}</b>${c.tag?`<span class="kc-tag">${esc(c.tag)}</span>`:""}<div style="font-size:0.9em;color:var(--text);margin-top:0.15em;">${esc(c.note||"")}</div>`;
+      k.appendChild(row);
+    });
+    body.appendChild(k);
+  }
+
+  // edit button
+  const eb = el("button","btn","✎ Edit this deck");
+  eb.addEventListener("click",()=>openEditor(d));
+  body.appendChild(eb);
+}
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+let draft = null;
+const COLORS = ["W","U","B","G","R"];
+const ACCENTS = ["#9b6cff","#6fdfb8","#5bba78","#4aa3d9","#ff5a3c","#d9b65a","#e85aa0","#f0d384"];
+
+function openEditor(deck){
+  draft = deck ? clone(deck) : {
+    id: uid(), name:"", title:"", subtitle:"", colors:["U"], accent:"#9b6cff",
+    bracket:"", archetype:"", winTurn:"", startLife:40,
+    counters:["+1/+1","Treasure"], winPaths:[], mulligan:{keep:[],ship:[],rule:""},
+    turns:[], decisions:[], combos:[], keyCards:[]
+  };
+  draft._isNew = !deck;
+  setAccent(draft.accent);
+  show("editor");
+  $("#topbar").classList.remove("hidden");
+  $("#tbTitle").textContent = deck ? "Edit Deck" : "New Deck";
+  $("#tbSub").textContent = "";
+  renderEditor();
+}
+
+function renderEditor(){
+  const b = $("#editorBody"); b.innerHTML="";
+
+  // basics
+  const basics = el("div","panel");
+  basics.innerHTML = `
+    <div class="panel-h">Deck Basics</div>
+    <div class="field"><label>Commander</label><input id="f-name" value="${esc(draft.name)}" placeholder="e.g. Atraxa, Praetors' Voice"></div>
+    <div class="field"><label>Display Title</label><input id="f-title" value="${esc(draft.title)}" placeholder="e.g. The Swarm Ascendant"></div>
+    <div class="field"><label>Subtitle</label><input id="f-subtitle" value="${esc(draft.subtitle)}" placeholder="Token Tribal · Combo · ..."></div>
+    <div class="field-row">
+      <div class="field"><label>Archetype</label><input id="f-archetype" value="${esc(draft.archetype)}"></div>
+      <div class="field"><label>Bracket</label><input id="f-bracket" value="${esc(draft.bracket)}"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Avg Win Turn</label><input id="f-winTurn" value="${esc(draft.winTurn)}" placeholder="T6–8"></div>
+      <div class="field"><label>Starting Life</label><input id="f-startLife" type="number" value="${draft.startLife||40}"></div>
+    </div>
+    <div class="field"><label>Colors</label><div class="color-pick" id="f-colors"></div></div>
+    <div class="field"><label>Theme Accent</label><div class="color-pick" id="f-accent"></div></div>`;
+  b.appendChild(basics);
+
+  // colors
+  const cp = basics.querySelector("#f-colors");
+  COLORS.forEach(c=>{
+    const dot=el("div","cp"+(draft.colors.includes(c)?" on":"")); dot.style.background={W:"#f8f3d6",U:"#3b82c4",B:"#3a2a45",G:"#46a05a",R:"#d3492f"}[c]; dot.title=c;
+    dot.addEventListener("click",()=>{ const i=draft.colors.indexOf(c); if(i>-1)draft.colors.splice(i,1); else draft.colors.push(c); dot.classList.toggle("on"); });
+    cp.appendChild(dot);
+  });
+  // accent
+  const ap = basics.querySelector("#f-accent");
+  ACCENTS.forEach(c=>{
+    const dot=el("div","cp"+(draft.accent===c?" on":"")); dot.style.background=c;
+    dot.addEventListener("click",()=>{ draft.accent=c; setAccent(c); ap.querySelectorAll(".cp").forEach(x=>x.classList.remove("on")); dot.classList.add("on"); });
+    ap.appendChild(dot);
+  });
+
+  // counters (simple comma list)
+  const cnt = el("div","panel");
+  cnt.innerHTML = `<div class="panel-h">Counters &amp; Token Types</div>
+    <div class="field"><label>Comma-separated (shown on the Table tab)</label>
+    <input id="f-counters" value="${esc((draft.counters||[]).join(', '))}" placeholder="Squirrel token, Treasure, +1/+1"></div>`;
+  b.appendChild(cnt);
+
+  // turn plan
+  b.appendChild(listEditor("Turn-by-Turn Plan","turns",["label","phase","body"],
+    {label:"Label (T1–2, WATCH OUT)",phase:"Phase name",body:"What to do this turn"},["body"],
+    "Tip: add a row with label “WATCH OUT” for the hate-to-track card; it shows as a red alert in the coach."));
+
+  // decisions / triggers
+  b.appendChild(listEditor("Situation Triggers","decisions",["situation","action"],
+    {situation:"Situation (the button label)",action:"What to do"},["action"]));
+
+  // win paths
+  b.appendChild(listEditor("Win Paths","winPaths",["name","desc","play"],
+    {name:"Path name",desc:"What it does",play:"How to execute"},["desc","play"]));
+
+  // combos
+  b.appendChild(comboEditor());
+
+  // key cards
+  b.appendChild(listEditor("Key Cards","keyCards",["name","tag","note"],
+    {name:"Card name",tag:"Tag (ENGINE, WIN…)",note:"Note"},["note"]));
+
+  // mulligan
+  const mull = el("div","panel");
+  mull.innerHTML = `<div class="panel-h">Mulligan</div>
+    <div class="field"><label>Keep hands (one per line)</label><textarea id="f-keep" rows="5">${esc((draft.mulligan?.keep||[]).join("\n"))}</textarea></div>
+    <div class="field"><label>Ship hands (one per line)</label><textarea id="f-ship" rows="5">${esc((draft.mulligan?.ship||[]).join("\n"))}</textarea></div>
+    <div class="field"><label>Golden rule</label><textarea id="f-rule" rows="2">${esc(draft.mulligan?.rule||"")}</textarea></div>`;
+  b.appendChild(mull);
+
+  // actions
+  const act = el("div","row-btns"); act.style.cssText="margin-top:1.2em;flex-wrap:wrap;";
+  const save = el("button","btn primary","✓ Save Deck");
+  save.addEventListener("click",saveDraft);
+  const cancel = el("button","btn ghost","Cancel");
+  cancel.addEventListener("click",goHome);
+  const exp = el("button","btn","⤓ Export JSON");
+  exp.addEventListener("click",exportDraft);
+  const imp = el("button","btn","⤒ Import JSON");
+  imp.addEventListener("click",importDraft);
+  act.appendChild(save); act.appendChild(cancel); act.appendChild(exp); act.appendChild(imp);
+  if(!draft._isNew){
+    const del = el("button","btn danger","🗑 Delete");
+    del.addEventListener("click",deleteDraft);
+    act.appendChild(del);
+  }
+  b.appendChild(act);
+  b.appendChild(el("div","muted","Everything saves to this browser (localStorage). Use Export to back a deck up or move it to another device."));
+}
+
+/* generic list-of-objects editor; longFields render as textareas */
+function listEditor(title, key, fields, ph, longFields, hint){
+  if(!draft[key]) draft[key]=[];
+  const panel = el("div","panel");
+  panel.innerHTML = `<div class="panel-h">${esc(title)}</div>${hint?`<div class="muted" style="margin-bottom:0.6em;">${esc(hint)}</div>`:""}`;
+  const wrapEl = el("div");
+  draft[key].forEach((item,idx)=>{
+    const se = el("div","sub-edit");
+    se.innerHTML = `<button class="se-del">✕ remove</button>`;
+    fields.forEach(f=>{
+      const fl = el("div","field");
+      const long = longFields.includes(f);
+      fl.innerHTML = `<label>${esc(ph[f]||f)}</label>` + (long
+        ? `<textarea rows="2">${esc(item[f]||"")}</textarea>`
+        : `<input value="${esc(item[f]||"")}">`);
+      const inp = fl.querySelector(long?"textarea":"input");
+      inp.addEventListener("input",()=>{ item[f]=inp.value; });
+      se.appendChild(fl);
+    });
+    se.querySelector(".se-del").addEventListener("click",()=>{ draft[key].splice(idx,1); reflowEditor(); });
+    wrapEl.appendChild(se);
+  });
+  panel.appendChild(wrapEl);
+  const add = el("button","btn ghost","+ Add");
+  add.addEventListener("click",()=>{ const o={}; fields.forEach(f=>o[f]=""); draft[key].push(o); reflowEditor(); });
+  panel.appendChild(add);
+  return panel;
+}
+
+/* combos have nested steps */
+function comboEditor(){
+  if(!draft.combos) draft.combos=[];
+  const panel = el("div","panel");
+  panel.innerHTML = `<div class="panel-h">Combos (with step checklists)</div>`;
+  const wrapEl = el("div");
+  draft.combos.forEach((c,ci)=>{
+    const se = el("div","sub-edit");
+    se.innerHTML = `<button class="se-del">✕ remove</button>
+      <div class="field"><label>Combo name</label><input value="${esc(c.name||"")}" data-cf="name"></div>
+      <div class="field"><label>Note</label><textarea rows="2" data-cf="note">${esc(c.note||"")}</textarea></div>
+      <div class="field"><label>Steps (one per line)</label><textarea rows="4" data-cf="steps">${esc((c.steps||[]).join("\n"))}</textarea></div>`;
+    se.querySelector("[data-cf='name']").addEventListener("input",e=>c.name=e.target.value);
+    se.querySelector("[data-cf='note']").addEventListener("input",e=>c.note=e.target.value);
+    se.querySelector("[data-cf='steps']").addEventListener("input",e=>c.steps=e.target.value.split("\n").map(s=>s.trim()).filter(Boolean));
+    se.querySelector(".se-del").addEventListener("click",()=>{ draft.combos.splice(ci,1); reflowEditor(); });
+    wrapEl.appendChild(se);
+  });
+  panel.appendChild(wrapEl);
+  const add = el("button","btn ghost","+ Add combo");
+  add.addEventListener("click",()=>{ draft.combos.push({name:"",note:"",steps:[]}); reflowEditor(); });
+  panel.appendChild(add);
+  return panel;
+}
+
+/* capture current form state, then re-render (keeps Basics fields from being lost) */
+function reflowEditor(){ collectDraft(); renderEditor(); }
+function collectDraft(){
+  if(!$("#f-name")) return;   // form not mounted
+  draft.name = $("#f-name").value.trim();
+  draft.title = $("#f-title").value.trim();
+  draft.subtitle = $("#f-subtitle").value.trim();
+  draft.archetype = $("#f-archetype").value.trim();
+  draft.bracket = $("#f-bracket").value.trim();
+  draft.winTurn = $("#f-winTurn").value.trim();
+  draft.startLife = parseInt($("#f-startLife").value)||40;
+  draft.counters = $("#f-counters").value.split(",").map(s=>s.trim()).filter(Boolean);
+  draft.mulligan = {
+    keep: $("#f-keep").value.split("\n").map(s=>s.trim()).filter(Boolean),
+    ship: $("#f-ship").value.split("\n").map(s=>s.trim()).filter(Boolean),
+    rule: $("#f-rule").value.trim()
+  };
+}
+function saveDraft(){
+  collectDraft();
+  if(!draft.name){ toast("Give the deck a commander name"); return; }
+  if(!draft.title) draft.title = draft.name;
+  delete draft._isNew;
+  const i = decks.findIndex(d=>d.id===draft.id);
+  if(i>-1) decks[i]=draft; else decks.push(draft);
+  saveDecks();
+  // reset stale game counters if counter set changed
+  if(games[draft.id]){ games[draft.id].counters = draft.counters.map(c=>{ const ex=(games[draft.id].counters||[]).find(x=>x.name===c); return {name:c,val:ex?ex.val:0}; }); saveGames(); }
+  toast("Deck saved");
+  goHome();
+}
+function deleteDraft(){
+  if(!confirm("Delete this deck permanently?")) return;
+  decks = decks.filter(d=>d.id!==draft.id);
+  delete games[draft.id];
+  saveDecks(); saveGames();
+  toast("Deck deleted");
+  goHome();
+}
+function exportDraft(){
+  collectDraft();
+  const blob = new Blob([JSON.stringify(draft,null,2)],{type:"application/json"});
+  const a = el("a"); a.href=URL.createObjectURL(blob); a.download=(draft.name||"deck").replace(/[^a-z0-9]+/gi,"-").toLowerCase()+".json";
+  a.click(); URL.revokeObjectURL(a.href); toast("Exported");
+}
+function importDraft(){
+  const inp = el("input"); inp.type="file"; inp.accept="application/json,.json";
+  inp.addEventListener("change",()=>{ const f=inp.files[0]; if(!f) return;
+    const r=new FileReader(); r.onload=()=>{ try{ const o=JSON.parse(r.result); o.id=draft.id; draft=Object.assign(draft,o); draft._isNew = draft._isNew; setAccent(draft.accent); renderEditor(); toast("Imported — review & Save"); }catch(e){ toast("Invalid JSON file"); } };
+    r.readAsText(f);
+  });
+  inp.click();
+}
+
+/* ---------- BOOT ---------- */
+$("#backBtn").addEventListener("click",goHome);
+loadDecks();
+loadGames();
+goHome();
+
+
+<\/script>
+</body>
+</html>
+
 </script>
 </body>
 </html>
