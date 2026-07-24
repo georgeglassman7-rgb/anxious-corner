@@ -258,9 +258,22 @@ html.calm .deck-mark{filter:none;opacity:.13}
 .df-bracket .b-num{font-family:'Cinzel',serif;font-size:1em;letter-spacing:1px;color:var(--accent-bright);font-weight:600}
 .df-bracket .b-note{font-size:.7em;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px}
 .df-arch{font-family:'Cinzel',serif;font-size:.98em;letter-spacing:1.5px;text-transform:uppercase;color:var(--bone-bright);margin:.15em 0 .8em;line-height:1.4}
+/* Why this bracket — the honest, card-driven reason shown right under the rating */
+.df-why{font-size:.92em;color:var(--steel);line-height:1.55;margin:0 0 .9em}
+.df-why .why-label{font-family:'Cinzel',serif;font-size:.6em;letter-spacing:2px;text-transform:uppercase;color:var(--accent-bright);margin-right:.6em}
 .df-win{border-top:1px solid var(--panel-edge);padding-top:.8em}
 .df-win .w-label{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:2px;text-transform:uppercase;color:var(--accent-bright);display:block;margin-bottom:.35em}
 .df-win .w-text{color:var(--text);line-height:1.6;font-size:1.04em;display:block}
+/* The character (A) — the full voice a deck earns once you keep it forever.
+   Seed decks always show it; a pasted deck shows it after you press Keep Forever.
+   Upright (not italic) prose for easy reading, generous line-height. */
+.df-character{border-top:1px solid var(--panel-edge);padding-top:.85em;margin-top:.9em}
+.df-character .c-label{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:2px;text-transform:uppercase;color:var(--accent-bright);display:block;margin-bottom:.4em}
+.df-character .c-text{color:var(--text);line-height:1.72;font-size:1.03em;display:block;max-width:60ch}
+/* Keep Forever — a warm, obvious promote button that earns the deck its character. */
+.df-keep-row{margin-top:.9em;border-top:1px solid var(--panel-edge);padding-top:.85em;display:flex;align-items:center;gap:.8em;flex-wrap:wrap}
+.df-keep-row .keep-note{font-size:.9em;color:var(--steel);line-height:1.5}
+.btn.keep{border-color:var(--accent-bright);color:var(--accent-bright)}
 
 /* ============ SECTION HEADERS & RUNE DIVIDERS ============ */
 h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);color:var(--bone-bright);
@@ -1607,8 +1620,8 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
 const SPLINTER_DECK = {
   name: "Splinter, Radical Rat",
   flavor: "Strike twice. Every ninja hits like it attacked two turns in a row.",
-  bracket: "4 — Optimized",
   winLine: "Sneak an evasive attacker in, ninjutsu a bigger threat into its place, and double strike makes every hit count twice. Commander damage closes games before the table steadies.",
+  character: "Master Splinter in rat form, full sensei mode. He never rushes. He waits in the dark, reads the table, and moves only when the hit is certain. Every ninja he sends in comes back bigger — ninjutsu swaps the small attacker for the real threat once the blockers are gone. Quiet, patient, then suddenly over. One doubled strike and the lesson ends.",
   colors: "Esper (W/U/B)",
   commander: "Splinter, Radical Rat",
   kicker: "Commander . Esper Ninjutsu",
@@ -1620,8 +1633,8 @@ const SPLINTER_DECK = {
 const URTET_DECK = {
   name: "Urtet, Remnant of Memnarch",
   flavor: "Every Myr is another Urtet trigger. The swarm remembers.",
-  bracket: "4 — Optimized",
   winLine: "Flood the board with Myr, untap them with Urtet for a pile of mana, then empty it into an overrun or a game-ending X spell.",
+  character: "What is left of Memnarch, rebuilt as a swarm. Urtet copies itself and calls the copies family. Every Myr is another trigger, another point of mana, another body. It untaps the swarm, the mana pool balloons, then empties into one thing the table cannot survive. Cold, patient, endless. The swarm remembers, and it does not stop.",
   colors: "Five-Color (W/U/B/R/G)",
   commander: "Urtet, Remnant of Memnarch",
   kicker: "Commander . Five-Color Myr Tribal",
@@ -1703,8 +1716,8 @@ const URTET_DECK = {
 const CHATTERFANG_DECK = {
   name: "Chatterfang, Squirrel General",
   flavor: "Every token comes with a squirrel. Every squirrel is a life total problem.",
-  bracket: "4 — Optimized",
   winLine: "Go wide on squirrels, then sacrifice the swarm into your drain payoffs. Blood Artist and friends bleed the whole table out — no attack required.",
+  character: "A squirrel general who grows an army instead of leading one. Every token you make, Chatterfang answers with a squirrel — the board doubles while you look away, then doubles again. He stays cheerful about it, which somehow makes it worse. When the swarm is wide enough the life totals just slide: every point you gain is a point they lose. He wins by kindness and arithmetic.",
   colors: "Golgari (B/G)",
   commander: "Chatterfang, Squirrel General",
   kicker: "Commander . Golgari Squirrel Tokens",
@@ -1776,8 +1789,8 @@ const CHATTERFANG_DECK = {
 const KESS_DECK = {
   name: "Kess, Dissident Mage",
   flavor: "Every spell comes back. The graveyard is hand number two.",
-  bracket: "4 — Optimized",
   winLine: "Recast your spells out of the graveyard, out-card the room, and close with a big burn or a storm turn once they are buried in card advantage.",
+  character: "Kess casts everything twice. Play the spell, then play it again from the graveyard — she treats the yard as a second hand and never really runs dry. She counters what matters, wipes what does not, and chips the table down while she waits. Bookish, patient, a little ruthless. By the time the game feels decided, she decided it a few turns ago.",
   colors: "Grixis (U/B/R)",
   commander: "Kess, Dissident Mage",
   kicker: "Commander . Grixis Spellslinger",
@@ -2766,18 +2779,143 @@ function deckWinLine(deck){
   if (arch && arch.personality) return arch.personality;
   return deck.flavor || "";
 }
-function deckBracket(deck){
-  if (deck.bracket) return deck.bracket;               // explicit (seed decks)
-  const b = DECK_CACHE.get(ACTIVE_KEY);
-  const arch = b && b.archetype;
-  if (!arch) return null;
-  const c = arch.counts || {};
-  const fin = (arch.finisherNames || []).length;
-  const combo = (arch.finisherNames || []).some(f => f.kind === "alt-win");
+/* ============================================================
+   REAL BRACKET — read the ACTUAL cards, rate the deck 1–5 honestly,
+   and show why. Grounded in Wizards' official "Game Changers" list
+   (53 cards, matched to Scryfall is:gamechanger). No hard-coded number,
+   no guessing — every rating is earned from the cards in the deck.
+   ============================================================ */
+const GAME_CHANGERS = new Set([
+  "ad nauseam","ancient tomb","aura shards","biorhythm","bolas's citadel",
+  "braids, cabal minion","chrome mox","coalition victory","consecrated sphinx",
+  "crop rotation","cyclonic rift","demonic tutor","drannith magistrate",
+  "enlightened tutor","farewell","field of the dead","fierce guardianship",
+  "force of will","gaea's cradle","gamble","gifts ungiven","glacial chasm",
+  "grand arbiter augustin iv","grim monolith","humility","imperial seal",
+  "intuition","jeska's will","lion's eye diamond","mana vault","mishra's workshop",
+  "mox diamond","mystical tutor","narset, parter of veils","natural order",
+  "necropotence","notion thief","opposition agent","orcish bowmasters",
+  "panoptic mirror","rhystic study","seedborn muse","serra's sanctum",
+  "smothering tithe","survival of the fittest","teferi's protection",
+  "tergrid, god of fright // tergrid's lantern","thassa's oracle","the one ring",
+  "the tabernacle at pendrell vale","underworld breach","vampiric tutor","worldly tutor"
+]);
+const GC_FRONTS = new Set(Array.from(GAME_CHANGERS).map(s => s.split(" // ")[0].trim()));
+function isGameChanger(name){
+  if (!name) return false;
+  const n = name.toLowerCase();
+  return GAME_CHANGERS.has(n) || GC_FRONTS.has(n.split(" // ")[0].trim());
+}
+/* Notorious two-card infinite combos — both halves in the deck = a real
+   bracket-4 win. Names in display case; matched case-insensitively. */
+const KNOWN_COMBOS = [
+  ["Thassa's Oracle","Demonic Consultation"],["Thassa's Oracle","Tainted Pact"],
+  ["Laboratory Maniac","Demonic Consultation"],["Jace, Wielder of Mysteries","Demonic Consultation"],
+  ["Kiki-Jiki, Mirror Breaker","Zealous Conscripts"],["Kiki-Jiki, Mirror Breaker","Restoration Angel"],
+  ["Kiki-Jiki, Mirror Breaker","Felidar Guardian"],["Splinter Twin","Deceiver Exarch"],
+  ["Splinter Twin","Pestermite"],["Mikaeus, the Unhallowed","Triskelion"],
+  ["Mikaeus, the Unhallowed","Walking Ballista"],["Heliod, Sun-Crowned","Walking Ballista"],
+  ["Isochron Scepter","Dramatic Reversal"],["Godo, Bandit Warlord","Helm of the Host"],
+  ["Sanguine Bond","Exquisite Blood"],["Food Chain","Squee, the Immortal"],
+  ["Food Chain","Misthollow Griffin"],["Dockside Extortionist","Temur Sabertooth"],
+  ["Worldgorger Dragon","Animate Dead"],["Deadeye Navigator","Peregrine Drake"],
+  ["Basalt Monolith","Rings of Brighthearth"],["Grand Architect","Pili-Pala"],
+  ["Devoted Druid","Swift Reconfiguration"],["Devoted Druid","Vizier of Remedies"]
+];
+/* Mass land denial — Armageddon-style. Brackets 1–3 avoid it. */
+const LAND_DENIAL_NAMES = new Set([
+  "armageddon","ravages of war","catastrophe","jokulhaups","obliterate",
+  "decree of annihilation","impending disaster","devastation","cataclysm",
+  "burning of xinye","wildfire","fall of the thran","desolation","death cloud","boom // bust"
+]);
+const BRACKET_LABELS = { 1:"Exhibition", 2:"Core", 3:"Upgraded", 4:"Optimized", 5:"cEDH" };
+
+/* The engine: read every card's real rules text and rate the deck with reasons.
+   Returns null until Scryfall data is loaded, so we NEVER show a fake number. */
+function computeBracket(deck, cardData, arch){
+  if (!cardData) return null;
+  const nameQty = uniqueNamesWithQty(deck);
+  const present = new Set();
+  const gc = [], tutors = [], extraTurns = [], landDenial = [];
+  nameQty.forEach((qty, name) => {
+    if (BASICS.includes(name)) return;
+    const card = cardData[name.toLowerCase()];
+    if (!card) return;
+    const cn = card.name;
+    const low = cn.toLowerCase();
+    const front = low.split(" // ")[0].trim();
+    present.add(low); present.add(front);
+    const oracle = (card.oracle_text || "").toLowerCase();
+    const type = (card.type_line || "").toLowerCase();
+    if (isGameChanger(cn)) gc.push(cn.split(" // ")[0].trim());
+    // Tutor = "search your library for a (non-land) card". Skips land ramp &
+    // fetchlands (Nature's Lore/Farseek name a basic type, not the word "land").
+    if (/search your library for/.test(oracle) && !type.includes("land")
+        && !/search your library for[^.]{0,60}\b(lands?|basic|plains|island|swamp|mountain|forest|wastes|gate|snow)\b/.test(oracle)) tutors.push(cn);
+    if (/take an extra turn/.test(oracle)) extraTurns.push(cn.split(" // ")[0].trim());
+    if (LAND_DENIAL_NAMES.has(low) || /destroy all lands/.test(oracle)
+        || /destroy all nonbasic lands/.test(oracle)) landDenial.push(cn.split(" // ")[0].trim());
+  });
+  const combos = [];
+  KNOWN_COMBOS.forEach(pair => {
+    if (present.has(pair[0].toLowerCase()) && present.has(pair[1].toLowerCase())) combos.push(pair);
+  });
+
+  // ---- score: start at Core (a normal, fair deck), raise for real power ----
   let n = 2;
-  if (combo || fin >= 4) n = 4;
-  else if (fin >= 2 || (c.instantsSorceries||0) >= 20 || (c.rampCount||0) >= 12) n = 3;
-  return n + " — estimate";
+  if (gc.length >= 1) n = Math.max(n, 3);
+  if (gc.length >= 4) n = Math.max(n, 4);
+  if (tutors.length >= 4) n = Math.max(n, 3);
+  if (extraTurns.length >= 2) n = Math.max(n, 3);
+  if (landDenial.length >= 1) n = Math.max(n, 4);
+  if (combos.length >= 1) n = Math.max(n, 4);
+  // featherweight, purely themed build → Exhibition
+  if (n === 2 && gc.length === 0 && tutors.length <= 1 && extraTurns.length === 0
+      && landDenial.length === 0 && combos.length === 0){
+    const c = (arch && arch.counts) || {};
+    const removal = (arch && arch.removalNames ? arch.removalNames.length : 0);
+    const fin = (arch && arch.finisherNames ? arch.finisherNames.length : 0);
+    if ((c.wipes||0) === 0 && removal <= 2 && fin <= 3 && (c.instantsSorceries||0) < 15) n = 1;
+  }
+
+  // ---- reasons: named and specific, straight from the deck's own cards ----
+  const uniq = a => Array.from(new Set(a));
+  const nameList = a => { const u = uniq(a);
+    return u.slice(0,3).join(", ") + (u.length > 3 ? " +" + (u.length-3) + " more" : ""); };
+  const reasons = [];
+  if (gc.length) reasons.push({ w:100, t: uniq(gc).length + " Game Changer" + (uniq(gc).length!==1?"s":"") + " — " + nameList(gc) });
+  if (combos.length) reasons.push({ w:95, t: "Two-card combo: " + combos[0][0] + " + " + combos[0][1] });
+  if (landDenial.length) reasons.push({ w:90, t: "Mass land denial — " + nameList(landDenial) });
+  if (extraTurns.length >= 2) reasons.push({ w:60, t: uniq(extraTurns).length + " extra-turn spells" });
+  if (tutors.length >= 4) reasons.push({ w:55, t: tutors.length + " tutors that dig up your best card" });
+  reasons.sort((a,b)=> b.w - a.w);
+  let reasonLine;
+  if (reasons.length) reasonLine = reasons.slice(0,2).map(r=>r.t).join(" · ");
+  else if (n <= 1) reasonLine = "A light, themed build — no power cards flagged.";
+  else reasonLine = "No Game Changers, no combos — a fair, focused build.";
+
+  return { n, label: BRACKET_LABELS[n], text: n + " — " + BRACKET_LABELS[n],
+           reasonLine, reasons: reasons.map(r=>r.t),
+           gc: uniq(gc), tutors: tutors.length, extraTurns: uniq(extraTurns),
+           landDenial: uniq(landDenial), combos };
+}
+
+/* Bracket info for the active deck: label + why. Card-driven; only falls back
+   to a stored value while the cards are still loading. */
+function bracketFor(deck){
+  const b = DECK_CACHE.get(ACTIVE_KEY);
+  const info = computeBracket(deck, b && b.cardData, b && b.archetype);
+  if (info) return info;
+  if (deck && deck.bracket){
+    const parts = deck.bracket.split(/\s*—\s*|\s+-\s+/);
+    const n = parseInt(parts[0]) || null;
+    return { n, label: (parts[1]||"").trim(), text: deck.bracket, reasonLine: "", reasons: [] };
+  }
+  return null;
+}
+function deckBracket(deck){
+  const info = bracketFor(deck);
+  return info ? info.text : null;
 }
 function renderDeckFront(deck){
   const host = document.getElementById("deckFront");
@@ -2786,9 +2924,13 @@ function renderDeckFront(deck){
   const pips = ci.length ? colorPips(ci) : "";
   let arch = (deck.kicker || "").replace(/^\s*Commander\s*[.·•—-]\s*/i, "").trim();
   if (!arch){ const b = DECK_CACHE.get(ACTIVE_KEY); arch = (b && b.archetype && b.archetype.personality) || ""; }
-  const brk = deckBracket(deck);
+  const binfo = bracketFor(deck);
+  const brk = binfo ? binfo.text : null;
+  const why = binfo ? binfo.reasonLine : "";
   const win = deckWinLine(deck);
-  if (!pips && !brk && !arch && !win){ host.innerHTML = ""; return; }
+  const isSeed = SEED_KEYS.has(ACTIVE_KEY);
+  const isKept = isSeed || !!deck.kept;
+  if (!pips && !brk && !arch && !win && !(isKept && deck.character)){ host.innerHTML = ""; return; }
   let html = '<div class="df-top">';
   if (pips) html += '<span class="df-pips">' + pips + '</span>';
   if (brk){
@@ -2797,9 +2939,94 @@ function renderDeckFront(deck){
             (parts[1] ? '<span class="b-note">' + esc(parts[1].trim()) + '</span>' : '') + '</span>';
   }
   html += '</div>';
+  if (why) html += '<div class="df-why"><span class="why-label">Why</span>' + esc(why) + '</div>';
   if (arch) html += '<div class="df-arch">' + esc(arch) + '</div>';
   if (win)  html += '<div class="df-win"><span class="w-label">How you win</span><span class="w-text">' + esc(win) + '</span></div>';
+  // The character (A): shown once a deck is kept forever (seeds are always kept).
+  // A pasted deck that is not kept yet gets a gentle prompt to earn it instead.
+  if (isKept && deck.character){
+    html += '<div class="df-character"><span class="c-label">The character</span><span class="c-text">' + esc(deck.character) + '</span></div>';
+  } else if (!isSeed && deck.commander){
+    html += '<div class="df-keep-row"><span class="keep-note">Keeping this one? Give it its full character — a longer read in the commander’s own voice.</span>' +
+            '<button class="btn keep small" id="keepForeverBtn">Keep Forever</button></div>';
+  }
   host.innerHTML = html;
+  const kb = document.getElementById("keepForeverBtn");
+  if (kb) kb.addEventListener("click", keepDeckForever);
+}
+
+/* ============================================================
+   THE CHARACTER (A) — the longer, in-voice read a deck earns once you
+   keep it forever. Seed decks ship with a hand-written character. A pasted
+   deck you decide to keep gets one built from its commander's real card
+   (type line + Wizards flavor text) wrapped around its actual plan.
+   ============================================================ */
+function buildCharacter(deck, cardData, arch){
+  const cmdName = (deck.commander || deck.name || "").trim();
+  const shortName = (cmdName.split(",")[0] || "").trim() || "This commander";
+  const card = (cardData && cmdName) ? cardData[cmdName.toLowerCase()] : null;
+
+  // Subtypes from the commander's type line, e.g. "Legendary Creature — Rat Ninja"
+  let subs = [];
+  if (card && card.type_line){
+    const afterDash = card.type_line.split("—")[1] || "";
+    subs = afterDash.trim().split(/\s+/).filter(Boolean);
+  }
+
+  // 1) Who they are — plain, straight from the real card.
+  const who = subs.length
+    ? (shortName + " leads from the front — a " + subs.join(" ").toLowerCase() + " the whole deck is built around.")
+    : (shortName + " sets the tone for the whole deck.");
+
+  // 2) The plan — reuse the grounded read; it already names real counts + the closer.
+  const plan = (arch && arch.personality) ? arch.personality
+             : (deck.winLine || deck.flavor || "");
+
+  // 3) The card's own Wizards flavor text, if any — literally its character.
+  // Strip any quotes the card already carries (lots of flavor is quoted dialogue)
+  // so we never double them up, then present it as one clean quoted line. This
+  // reads right whether the flavor is dialogue or a plain descriptive tagline.
+  let flavor = "";
+  if (card && card.flavor_text){
+    let ft = String(card.flavor_text).replace(/\s+/g, " ").trim();
+    ft = ft.replace(/^[«»"“”'‘’]+\s*/, "").replace(/\s*[«»"“”'‘’]+$/, "").trim();
+    if (ft) flavor = "“" + ft + "”";
+  }
+
+  return [who, plan, flavor].filter(Boolean).join(" ");
+}
+
+/* Write ONLY the kept flag + character onto the stored baseline, leaving the
+   imported list and its change log untouched. (Swaps live in the log; overwriting
+   the whole baseline would double-apply that log on the next reload.) */
+function persistKeptCharacter(key){
+  if (!STORAGE_OK) return;
+  const meta = DECK_META[key];
+  if (!meta || meta.seed || !meta.storageKey) return;
+  const users = loadUserDecks();
+  const base = users[meta.storageKey];
+  if (!base) return;
+  base.kept = true;
+  base.character = (DECKS[key] && DECKS[key].character) ? DECKS[key].character : "";
+  saveUserDecks(users);
+}
+
+/* Keep this deck forever: build its character, mark it kept, save, and re-show. */
+async function keepDeckForever(){
+  const key = ACTIVE_KEY;
+  const deck = ACTIVE_DECK;
+  if (!deck || SEED_KEYS.has(key)) return;
+  const btn = document.getElementById("keepForeverBtn");
+  if (btn){ btn.disabled = true; btn.textContent = "Keeping…"; }
+  try { await ensureDeckAnalysis(key, deck); } catch(e){}
+  const bundle = DECK_CACHE.get(key);
+  const cardData = bundle && bundle.cardData;
+  const arch = bundle && bundle.archetype;
+  deck.character = buildCharacter(deck, cardData, arch);
+  deck.kept = true;
+  persistKeptCharacter(key);
+  renderShowcase(deck, cardData);
+  flashSavedToast();
 }
 
 function renderShowcase(deck, cardData){
@@ -3226,10 +3453,79 @@ function detectArchetype(deck, cardData){
   signals.sort((a,b)=> b.strength - a.strength);
   const top = signals.slice(0,2);
 
+  // ---- Grounded read (B): one accurate, card-driven sentence that names THIS
+  // deck's real plan and its real closer. Deterministic per deck, so the same
+  // list always reads the same way — but two different decks never read alike.
+  const finRanked = finisherNames.slice().sort((a,b)=>{
+    const r=(FINISHER_RANK[a.kind]!=null?FINISHER_RANK[a.kind]:9)-(FINISHER_RANK[b.kind]!=null?FINISHER_RANK[b.kind]:9);
+    return r!==0 ? r : (b.cmc - a.cmc);
+  });
+  const fin0 = finRanked[0] || null;
+  function pickVariant(arr, seed){
+    let h = 0; const s = String(seed);
+    for (let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+    return arr[h % arr.length];
+  }
+  function planOpener(sig){
+    const q = sig.strength;
+    const tribe = tribalHits.length ? tribalHits[0].type : "creatures";
+    switch(sig.key){
+      case "tribal":       return cap(tribe) + " tribal — " + q + " of them, each one making the next hit harder.";
+      case "spellslinger": return "A spell engine — " + q + " instants and sorceries, cast then cast again.";
+      case "aristocrats":  return "Sacrifice and drain — " + q + " cards turn dying creatures into damage.";
+      case "counters":     return "Counters snowball here — " + q + " cards pile on +1/+1s until the board runs away.";
+      case "graveyard":    return "The graveyard is a second hand — " + q + " cards bring things back.";
+      case "tokens":       return "Goes wide fast — " + q + " cards make bodies until the board tips over.";
+      case "artifacts":    return "An artifact machine — " + q + " of them, all feeding the payoffs.";
+      case "voltron":      return "Voltron — " + q + " auras and equipment stack onto one threat.";
+      case "control":      return "Control — answers the table's best turns, then wins on its own clock.";
+      case "ramp":         return "Big mana — ramps two turns ahead and slams the top of the curve early.";
+      default:             return cap(sig.label) + ".";
+    }
+  }
+  function texture(sig){
+    switch(sig.key){
+      case "tribal":       return " leaning on the creature count";
+      case "spellslinger": return " that keeps the cards flowing";
+      case "aristocrats":  return " with steady sacrifice fuel";
+      case "counters":     return " snowballing counters";
+      case "graveyard":    return " refueling from the yard";
+      case "tokens":       return " on a board that keeps widening";
+      case "artifacts":    return " over an artifact base";
+      case "voltron":      return " behind one suited-up threat";
+      case "control":      return " backed by counters and wipes";
+      case "ramp":         return " with big mana behind it";
+      default:             return "";
+    }
+  }
+  function closeLine(f){
+    const nm = f.name;
+    switch(f.kind){
+      case "alt-win":       return pickVariant([nm + " just ends the game outright.", nm + " wins on the spot once it goes off."], nm);
+      case "drain":         return pickVariant([nm + " bleeds the whole table out.", nm + " drains everyone down at once.", nm + " closes by draining life, not swinging."], nm);
+      case "overrun":       return pickVariant([nm + " turns the board into one lethal swing.", nm + " sends the whole team in for the kill."], nm);
+      case "extra-combat":  return pickVariant([nm + " buys an extra combat to finish.", nm + " swings twice to seal it."], nm);
+      case "doubler":       return pickVariant([nm + " doubles the damage for lethal.", nm + " pushes the hit to twice as hard."], nm);
+      case "big-burn":      return pickVariant([nm + " points the damage straight at a face.", nm + " burns them out from across the table."], nm);
+      case "x-spell":       return pickVariant([nm + " dumps all your mana into lethal.", nm + " scales with your mana to close."], nm);
+      case "evasive":       return pickVariant([nm + " slips the last points in unblocked.", nm + " gets there through the air."], nm);
+      case "double-strike": return pickVariant([nm + " doubles every hit it lands.", nm + " connects for twice the damage."], nm);
+      case "big-body":      return pickVariant([nm + " is the biggest thing in the room.", nm + " ends games by just being too big to handle."], nm);
+      default:              return nm + " closes the game.";
+    }
+  }
+
   let personality;
-  if (top.length === 0) personality = "Good stuff. This deck plays the best cards in its colors and wins on quality.";
-  else if (top.length === 1) personality = cap(top[0].label) + " deck.";
-  else personality = cap(top[0].label) + " with a " + top[1].short + ".";
+  if (top.length === 0){
+    personality = fin0
+      ? "No one loud theme — it plays the best cards in its colors and closes with " + fin0.name + "."
+      : "Good stuff — the best cards in its colors, winning on quality.";
+  } else {
+    let s = planOpener(top[0]);
+    if (top[1]) s = s.replace(/\.$/, "") + texture(top[1]) + ".";
+    if (fin0) s += " " + closeLine(fin0);
+    personality = s;
+  }
 
   return {
     signals,
@@ -8125,7 +8421,6 @@ const SEED_DECKS = [
     subtitle: "Token Tribal · Painter Combo · 4-Color Faerie Engine",
     colors: ["W","U","B","G"],
     accent: "#6fdfb8",
-    bracket: "4 — Optimized",
     archetype: "Token + Combo",
     winTurn: "T6–8",
     startLife: 40,
@@ -8196,7 +8491,6 @@ const SEED_DECKS = [
     subtitle: "Squirrel Tribal · Token Aristocrats · BG Sacrifice Engine",
     colors: ["B","G"],
     accent: "#5bba78",
-    bracket: "4 — Optimized",
     archetype: "Tokens + Drain",
     winTurn: "T5–7",
     startLife: 40,
