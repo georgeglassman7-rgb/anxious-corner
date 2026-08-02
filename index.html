@@ -2487,11 +2487,114 @@ const COLOR_THEMES = {
   "BGRUW":  { name:"Five-Color",     flavor:"Every rainbow, every option.",            accent:"#c4b0ff", accent2:"#9fe9f5", glow:"rgba(196,176,255,0.36)", glowSoft:"rgba(196,176,255,0.13)", glow2:"rgba(159,233,245,0.10)" }
 };
 
+/* ============ PER-DECK SKINS ============
+   Color identity alone was not enough. Sheoldred and the Ghoul are both mono-black,
+   so they got the exact same paint, and Kess sat right beside them -- three decks,
+   one look. These entries override the COLORS for a named deck so each one looks
+   like what it IS, not just which mana it spends. Colors here are free to leave
+   the five and often do.
+
+   Each one also gets its own line for the color badge. The generic ones were fine
+   until two mono-black decks both had to say "anything the graveyard remembers" --
+   true of both, interesting about neither. These lines say what the colors mean for
+   THAT deck specifically.
+
+   What a skin can NEVER change is the facts: the guild name, the color pips and the
+   mana symbols still come from the real color identity underneath. This layer moves
+   paint and prose, never truth.
+
+   A deck with no entry here just uses its color identity like always, so pasted
+   decks behave exactly as they did before, and so does the Look Up tab. */
+const DECK_THEMES = {
+
+  /* Splinter -- a rat sensei who only moves in the dark. Ink-blue shadow for walls,
+     the red of his robe on top, and cold moonlight where a blade catches. */
+  splinter: {
+    flavor:"Three patient colors, and one of them is a knife.",
+    accent:"#e85c3c", accentBright:"#ff8a63", accent2:"#7fd0e4", accent2Bright:"#a8e8f5",
+    glow:"rgba(232,92,60,0.34)", glowSoft:"rgba(232,92,60,0.11)", glow2:"rgba(127,208,228,0.10)",
+    surface:{ void:"#04070c", void2:"#080d16", shadow:"#0d1420", panel:"#121b2a", panelEdge:"#2e4761",
+              ink:"#cfdbe8", inkDim:"#8794a6", inkBright:"#f4f9ff",
+              panelRgb:"18,27,42", voidRgb:"8,13,22" } },
+
+  /* Urtet -- a swarm of Myr, so this deck is literally made of metal. Cold gunmetal
+     walls, and the accent is verdigris: the green that copper turns into after it
+     has been sitting somewhere damp for a few hundred years. Plain silver was the
+     first try and it lost -- it washed out against the text and against Splinter. */
+  urtet: {
+    flavor:"Five colors, and all five of them are made of metal.",
+    accent:"#3fc4ae", accentBright:"#78e8d5", accent2:"#d99a4e", accent2Bright:"#f2bd76",
+    glow:"rgba(63,196,174,0.32)", glowSoft:"rgba(63,196,174,0.10)", glow2:"rgba(217,154,78,0.11)",
+    surface:{ void:"#06090a", void2:"#0b1012", shadow:"#12191b", panel:"#192326", panelEdge:"#3f5a5e",
+              ink:"#d3dfe0", inkDim:"#8b9b9d", inkBright:"#f4fbfc",
+              panelRgb:"25,35,38", voidRgb:"11,16,18" } },
+
+  /* Chatterfang -- a squirrel, but the dangerous kind. Forest floor after dark:
+     loam and leaf mold for walls, a bright poison green, a rust-colored acorn. */
+  chatterfang: {
+    flavor:"Green grows the swarm. Black cashes it in.",
+    accent:"#8ed14f", accentBright:"#b6e97e", accent2:"#c26a35", accent2Bright:"#e39258",
+    glow:"rgba(142,209,79,0.32)", glowSoft:"rgba(142,209,79,0.10)", glow2:"rgba(194,106,53,0.11)",
+    surface:{ void:"#070903", void2:"#0c1006", shadow:"#12180a", panel:"#1a2110", panelEdge:"#405230",
+              ink:"#dee2c9", inkDim:"#95a082", inkBright:"#f6f9e8",
+              panelRgb:"26,33,16", voidRgb:"12,16,6" } },
+
+  /* Kess -- she casts everything twice. Arcane, not gory: plum and indigo walls,
+     a violet charge running through it, cyan where the spell actually goes off. */
+  kess: {
+    flavor:"Blue finds it, black pays for it, red ends it.",
+    accent:"#a878ff", accentBright:"#c9a6ff", accent2:"#4fd6e0", accent2Bright:"#8af0f7",
+    glow:"rgba(168,120,255,0.36)", glowSoft:"rgba(168,120,255,0.12)", glow2:"rgba(79,214,224,0.10)",
+    surface:{ void:"#0a0614", void2:"#100821", shadow:"#180d2c", panel:"#20143a", panelEdge:"#54357e",
+              ink:"#dcd0f2", inkDim:"#998cbc", inkBright:"#faf6ff",
+              panelRgb:"32,20,58", voidRgb:"16,8,33" } },
+
+  /* Sheoldred -- evil, and specifically Phyrexian evil. Everything here is under
+     oil: green-black walls, sick flesh pink for the accent, infection green under it.
+     Nothing warm, nothing kind. */
+  sheoldred: {
+    flavor:"One color, and it is the one that takes.",
+    accent:"#d8688f", accentBright:"#f492b3", accent2:"#67b391", accent2Bright:"#93d9b6",
+    glow:"rgba(216,104,143,0.34)", glowSoft:"rgba(216,104,143,0.11)", glow2:"rgba(103,179,145,0.10)",
+    surface:{ void:"#040806", void2:"#08110b", shadow:"#0e1a12", panel:"#14211a", panelEdge:"#3d5c48",
+              ink:"#d8dccd", inkDim:"#8e968a", inkBright:"#f3f6ec",
+              panelRgb:"20,33,26", voidRgb:"8,17,11" } },
+
+  /* The Ghoul -- the gunslinger. Warm where the others are cold, because the whole
+     point of him is that you like him. Sun-bleached dust and leather for walls,
+     a friendly whiskey gold on top, and just enough rad-green to remind you what
+     he actually is. */
+  ghoul: {
+    flavor:"Black, but easy about it. Nobody really leaves.",
+    accent:"#e8b45c", accentBright:"#ffd487", accent2:"#9ec94f", accent2Bright:"#c6e77e",
+    glow:"rgba(232,180,92,0.34)", glowSoft:"rgba(232,180,92,0.11)", glow2:"rgba(158,201,79,0.10)",
+    surface:{ void:"#0c0805", void2:"#130d07", shadow:"#1b130b", panel:"#251a10", panelEdge:"#5c4426",
+              ink:"#e8dac0", inkDim:"#a4917a", inkBright:"#fdf4e2",
+              panelRgb:"37,26,16", voidRgb:"19,13,7" } }
+};
+
 /* Take a color_identity array (like ["W","U","B"]), return the theme entry. */
 function themeForIdentity(ci){
   if (!ci || ci.length === 0) return COLOR_THEMES[""];
   const key = ci.slice().sort().join("");
   return COLOR_THEMES[key] || COLOR_THEMES["BGRUW"];
+}
+
+/* The identity theme with that deck's own paint and prose layered over it.
+   `name` is deliberately re-pinned after the merge: a skin is allowed to change how
+   a deck looks and how it reads, but never what it IS. Golgari stays Golgari. */
+function skinTheme(base, key){
+  const skin = (key && DECK_THEMES[key]) ? DECK_THEMES[key] : null;
+  if (!skin) return base;
+  const merged = Object.assign({}, base, skin);
+  merged.name = base.name;
+  return merged;
+}
+
+/* Deck key first, color identity as the fallback. */
+function themeForDeck(key, deck){
+  const idStr = (deck && deck.identity) ? deck.identity : "";
+  return skinTheme(themeForIdentity(identityStringToArray(idStr)), key);
 }
 
 /* The original fixed surface. Any theme without its own `surface` block gets
@@ -2503,9 +2606,12 @@ const DEFAULT_SURFACE = {
   panelRgb:"18,21,48", voidRgb:"8,10,22"
 };
 
-/* Apply theme by writing CSS custom properties on :root. */
-function applyTheme(ci){
-  const theme = themeForIdentity(ci);
+/* Apply theme by writing CSS custom properties on :root.
+   Pass the deck key as well and that deck's own skin wins over its color identity.
+   Leave the key off (the "try colors" chooser does) and you get the plain identity
+   palette, which is exactly what a manual color pick should show. */
+function applyTheme(ci, key){
+  const theme = skinTheme(themeForIdentity(ci), key);
   const r = document.documentElement.style;
   r.setProperty("--accent", theme.accent);
   r.setProperty("--accent-bright", theme.accentBright || theme.accent);
@@ -2627,7 +2733,7 @@ function renderDeckHeader(deck){
     // Job 5: this deck's real identity is the baseline the color chooser resets to.
     THEME_BASE = ci.slice();
     THEME_PICK = null;
-    paintGuildBadge(ci);
+    paintGuildBadge(ci, deckKeyFor(deck));
     // No commander detected yet -> hide the guild identity (the "Which card is your
     // commander?" prompt takes over) instead of pretending a blank list is five-color.
     badge.hidden = !deck.commander;
@@ -2645,9 +2751,12 @@ function renderDeckHeader(deck){
 let THEME_PICK = null;   // null = following the deck; array = a manual color pick
 let THEME_BASE = [];     // the active deck's real color-identity array
 
-/* Repaint the guild badge (pips + name + flavor) for a given color array. */
-function paintGuildBadge(ci){
-  const theme = themeForIdentity(ci);
+/* Repaint the guild badge (pips + name + flavor) for a given color array.
+   Pass the deck key too and the badge uses that deck's own line instead of the
+   generic one for its colors -- which is the whole reason Sheoldred and the Ghoul
+   no longer say the same sentence. The name and the pips never change either way. */
+function paintGuildBadge(ci, key){
+  const theme = skinTheme(themeForIdentity(ci), key);
   const pips = document.getElementById("guildPips");
   const nm = document.getElementById("guildName");
   const fl = document.getElementById("guildFlavor");
@@ -2672,8 +2781,8 @@ function syncThemeChips(ci){
    must never relabel the deck -- the guild name, tribe/flavor, color pips and mana symbols
    all stay true to the real commander (Splinter is always Esper). Only a blank, commanderless
    list lets the badge follow the colors you pick. */
-function applyThemePick(ci){
-  applyTheme(ci);
+function applyThemePick(ci, key){
+  applyTheme(ci, key);
   const hasCommander = !!(ACTIVE_DECK && ACTIVE_DECK.commander);
   if (!hasCommander) paintGuildBadge(ci);   // blank deck: label may follow the pick
   syncThemeChips(ci);
@@ -2687,10 +2796,11 @@ function toggleThemeColor(c){
   applyThemePick(cur);
 }
 
-/* Snap the theme back to the deck's real colors. */
+/* Snap the theme back to the deck's real colors -- including its own skin, so
+   reset lands you back on the deck you were actually looking at. */
 function resetThemePick(){
   THEME_PICK = null;
-  applyThemePick(THEME_BASE.slice());
+  applyThemePick(THEME_BASE.slice(), ACTIVE_KEY);
 }
 
 /* Open / close the color chooser under the guild badge. */
@@ -3294,7 +3404,7 @@ function showResetSeedConfirm(){
     rebuildRegistry();
     ACTIVE_DECK = DECKS[key];
     DECK_CACHE.delete(key);
-    applyTheme(identityStringToArray(ACTIVE_DECK.identity));
+    applyTheme(identityStringToArray(ACTIVE_DECK.identity), key);
     renderShowcase(ACTIVE_DECK);
     renderSwitcher();
     renderShowcaseActions();
@@ -3374,7 +3484,7 @@ function importBackupFromText(text){
   const wantActive = obj.activeDeck && DECKS[obj.activeDeck] ? obj.activeDeck : ACTIVE_KEY;
   ACTIVE_KEY = DECKS[wantActive] ? wantActive : "splinter";
   ACTIVE_DECK = DECKS[ACTIVE_KEY];
-  applyTheme(identityStringToArray(ACTIVE_DECK.identity));
+  applyTheme(identityStringToArray(ACTIVE_DECK.identity), ACTIVE_KEY);
   renderShowcase(ACTIVE_DECK);
   renderSwitcher();
   renderShowcaseActions();
@@ -3451,7 +3561,7 @@ function showRemoveConfirm(){
     ACTIVE_KEY = firstSeed;
     ACTIVE_DECK = DECKS[firstSeed];
     saveStoredActive(firstSeed);
-    applyTheme(identityStringToArray(ACTIVE_DECK.identity));
+    applyTheme(identityStringToArray(ACTIVE_DECK.identity), firstSeed);
     renderShowcase(ACTIVE_DECK);
     renderSwitcher();
     renderShowcaseActions();
@@ -5764,7 +5874,7 @@ function rebuildDeckFromStorage(key){
     const s = SESSION.get(key);
     s.swaps = []; s.snapshots = []; s.excludes = new Map();
   }
-  applyTheme(identityStringToArray(ACTIVE_DECK.identity));
+  applyTheme(identityStringToArray(ACTIVE_DECK.identity), key);
   renderShowcase(ACTIVE_DECK);
   if (typeof renderSwitcher === "function") renderSwitcher();
   if (typeof renderShowcaseActions === "function") renderShowcaseActions();
@@ -6438,7 +6548,7 @@ async function scoreDeck(deck){
   try {
     const bundle = await ensureDeckAnalysis(ACTIVE_KEY, deck);
     const cmd = bundle.cardData[deck.commander ? deck.commander.toLowerCase() : ""];
-    if (cmd && cmd.color_identity) applyTheme(cmd.color_identity);
+    if (cmd && cmd.color_identity) applyTheme(cmd.color_identity, ACTIVE_KEY);
     renderDeckHeader(deck);
     renderValidation(deck, bundle.cardData);
     bundle.coach = renderGradePanel(deck, bundle.grade, bundle.notFound, bundle.archetype, bundle.suggMap);
@@ -6676,7 +6786,7 @@ function registerImportedDeck(newDeck, cardBundle, reuseKey){
 
   // theme
   const ci = identityStringToArray(newDeck.identity);
-  applyTheme(ci);
+  applyTheme(ci, key);
 
   // analyze from provided card data (skip the fetch)
   const nameQty = uniqueNamesWithQty(newDeck);
@@ -6758,8 +6868,9 @@ function renderSwitcher(){
   keys.forEach(k => {
     const d = DECKS[k];
     const shortName = (d.commander ? d.commander.split(",")[0] : d.name.split(",")[0]).trim();
-    // per-deck hint tokens: computed from that deck's own identity theme.
-    const dTheme = themeForIdentity(identityStringToArray(d.identity));
+    // per-deck hint tokens: that deck's own skin if it has one, its colors if not.
+    // This is the row you scan on a phone, so no two decks should share a dot.
+    const dTheme = themeForDeck(k, d);
     const hintStyle =
       '--dh-hint:' + dTheme.accent + ';' +
       '--dh-edge:' + dTheme.glow + ';' +
@@ -6780,14 +6891,14 @@ function renderSwitcher(){
     if (DECK_CACHE.has(key)) {
       const b2 = DECK_CACHE.get(key);
       const cmd = ACTIVE_DECK.commander ? b2.cardData[ACTIVE_DECK.commander.toLowerCase()] : null;
-      if (cmd && cmd.color_identity) applyTheme(cmd.color_identity);
+      if (cmd && cmd.color_identity) applyTheme(cmd.color_identity, key);
       renderShowcase(ACTIVE_DECK, b2.cardData);
       if (!b2.coach) b2.coach = coachRead(b2.grade, ACTIVE_DECK);
       renderPlaybook(ACTIVE_DECK, b2.grade, b2.archetype);
       renderStrategy(ACTIVE_DECK, b2.grade, b2.archetype);
       renderWhere(ACTIVE_DECK, b2.grade, b2.coach, b2.archetype, b2.suggMap);
     } else {
-      applyTheme(identityStringToArray(ACTIVE_DECK.identity));
+      applyTheme(identityStringToArray(ACTIVE_DECK.identity), key);
       warmShowcase(key);
     }
     switchView("showcase");
@@ -9019,9 +9130,9 @@ function boot(){
     note.textContent = "";
   }
 
-  // Theme from seed identity
+  // Theme from the deck's own skin, falling back to its color identity.
   const seedCi = identityStringToArray(ACTIVE_DECK.identity);
-  applyTheme(seedCi);
+  applyTheme(seedCi, ACTIVE_KEY);
 
   // Ambient background drips
   seedDrips();
