@@ -16,6 +16,15 @@
   --crimson:#e05577; --crimson-bright:#ff7a98; --gold:#d7b25a;
   --text:#c4c8ea; --text-dim:#8186b6;
 
+  /* surface tokens the theme engine may retint per deck. Defaults match the
+     fixed palette above, so a deck with no surface block looks exactly as before.
+     panel-rgb / void-rgb are bare triplets so panels can keep their own alpha. */
+  --ink-bright:#f7f8ff;
+  --panel-rgb:18,21,48;
+  --void-rgb:8,10,22;
+  --chrome:rgba(var(--panel-rgb),0.72);
+  --chrome-2:rgba(var(--void-rgb),0.55);
+
   /* live theme tokens. rewritten by the theme engine when a deck loads. */
   --accent:#9b79ff;
   --accent-bright:#c4b0ff;
@@ -73,8 +82,11 @@ body{
 /* ============ APP BAR ============ */
 .appbar{display:flex;align-items:center;gap:1em;flex-wrap:wrap;padding:.9em 0 1.5em;border-bottom:1px solid var(--panel-edge);margin-bottom:1.6em;position:relative}
 .appbar::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.55}
-.appname{font-family:'Cinzel',serif;font-weight:900;font-size:1.25em;letter-spacing:2.5px;color:var(--bone-bright);
-  border:1px solid var(--panel-edge);border-radius:6px;padding:.28em .95em;background:linear-gradient(160deg,rgba(18,21,48,0.72),rgba(8,10,22,0.55));box-shadow:0 0 18px var(--glow-soft)}
+/* The title is the north-star: its box, its border and its ink are all live
+   theme tokens, so whatever you see here is the palette the rest of the page uses. */
+.appname{font-family:'Cinzel',serif;font-weight:900;font-size:1.25em;letter-spacing:2.5px;color:var(--ink-bright);
+  border:1px solid var(--panel-edge);border-radius:6px;padding:.28em .95em;background:linear-gradient(160deg,var(--chrome),var(--chrome-2));box-shadow:0 0 18px var(--glow-soft);
+  transition:background .35s ease,border-color .35s ease,color .35s ease,box-shadow .35s ease}
 .appname .ph{color:var(--accent-bright);text-shadow:0 0 14px var(--glow)}
 .appname .amp{color:var(--dim);font-weight:500;margin:0 .12em}
 .appbar .note{font-size:.85em;color:var(--text-dim);font-style:italic}
@@ -222,7 +234,7 @@ html.calm .deck-mark{filter:none;opacity:.13}
 /* Combos view — engines + closers as stacked rows inside jade/gold panels */
 .combo-list{display:flex;flex-direction:column;gap:.7em;margin-top:.7em}
 .combo-row{padding:.75em .9em;border-radius:7px;border:1px solid var(--panel-edge);
-  background:linear-gradient(160deg,rgba(18,21,48,0.55),rgba(8,10,22,0.4))}
+  background:linear-gradient(160deg,rgba(var(--panel-rgb),0.55),rgba(var(--void-rgb),0.4))}
 .combo-name{font-size:1.08em;font-weight:600;color:var(--bone-bright);margin-bottom:.28em;line-height:1.35}
 .combo-why{font-size:.95em;color:var(--steel);line-height:1.55}
 
@@ -246,7 +258,7 @@ html.calm .deck-mark{filter:none;opacity:.13}
 .s-value{font-size:1.1em;color:var(--bone-bright);margin-top:.3em;font-weight:500}
 
 /* ============ DECK FRONT PAGE (bracket + how-you-win hero) ============ */
-.deck-front{background:linear-gradient(165deg,rgba(18,21,48,0.92),rgba(8,10,22,0.95));
+.deck-front{background:linear-gradient(165deg,rgba(var(--panel-rgb),0.92),rgba(var(--void-rgb),0.95));
   border:1px solid var(--panel-edge);border-radius:12px;padding:1.15em 1.2em 1.25em;margin:.2em 0 1.8em;
   box-shadow:0 2px 24px rgba(0,0,0,0.34)}
 .deck-front:empty{display:none}
@@ -279,7 +291,7 @@ html.calm .deck-mark{filter:none;opacity:.13}
    Shown only for decks that share a physical box (see MODULAR_PAIRS). The
    summary line is always visible; the swap list sits behind a native <details>
    so the page stays calm until you ask for it. */
-.two-thrones{background:linear-gradient(165deg,rgba(18,21,48,0.92),rgba(8,10,22,0.95));
+.two-thrones{background:linear-gradient(165deg,rgba(var(--panel-rgb),0.92),rgba(var(--void-rgb),0.95));
   border:1px solid var(--panel-edge);border-radius:12px;padding:1.05em 1.15em 1.15em;margin:0 0 1.8em;
   box-shadow:0 2px 24px rgba(0,0,0,0.34)}
 .two-thrones:empty{display:none}
@@ -340,6 +352,83 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .deck-block li.star a{color:var(--bone-bright)}
 .deck-block li a:hover{color:var(--accent-2-bright);border-bottom-color:var(--accent-2);text-shadow:0 0 10px var(--glow-2)}
 
+/* A plain-language line under each group heading saying what the group is for.
+   Not italic, so it reads as part of the heading rather than as a card note. */
+.bk-sub{display:block;font-size:.86em;line-height:1.5;color:var(--text-dim);margin:-.2em 0 .75em}
+
+/* The land group is always the longest block on a phone -- fifteen rows of "Taps for {B}"
+   stacked in a single line. Split it into as many ~150px columns as actually fit, a touch
+   smaller, and never let one card break across the gap. Using a column WIDTH rather than a
+   column count means it drops back to one column by itself on a very narrow screen. */
+.deck-block.lands ul{columns:150px;column-gap:1.15em}
+.deck-block.lands li{font-size:.86em;padding-bottom:.55em;
+  break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid}
+
+/* One-line "why this card is here", read from the card's own text. */
+.deck-block li{padding-bottom:.45em}
+.dl-why{display:block;font-size:.83em;line-height:1.45;color:var(--text-dim);font-style:italic;margin-top:.1em}
+.dl-why .cw{color:var(--accent-2-bright);font-style:normal}
+.deck-block li .tg{font-size:.68em;font-family:'Cinzel',serif;letter-spacing:.5px;margin-left:5px;
+  padding:0 .38em;border-radius:3px;text-transform:uppercase;white-space:nowrap;vertical-align:1px}
+.deck-block li .tg.combo{color:var(--accent-2-bright);border:1px solid var(--accent-2);background:var(--glow-2)}
+.deck-block li .tg.gc{color:var(--gold);border:1px solid rgba(215,178,90,0.45);background:rgba(215,178,90,0.09)}
+
+/* ============ LOOK UP A COMMANDER ============ */
+.lk-box{display:flex;gap:.6em;flex-wrap:wrap;margin:1.1em 0 .4em}
+.lk-box input{flex:1;min-width:200px;background:var(--void-2);border:1px solid var(--panel-edge);border-radius:8px;
+  padding:.75em 1em;color:var(--bone);font-family:var(--ui-font);font-size:1.05em}
+.lk-box input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--glow-soft)}
+.lk-sugg{border:1px solid var(--panel-edge);border-radius:8px;background:rgba(var(--panel-rgb),0.96);
+  margin-bottom:.7em;overflow:hidden}
+.lk-sugg button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--panel-edge);
+  color:var(--text);font-family:var(--ui-font);font-size:1em;padding:.7em 1em;cursor:pointer}
+.lk-sugg button:last-child{border-bottom:0}
+.lk-sugg button:hover,.lk-sugg button:focus{background:var(--glow-soft);color:var(--bone-bright);outline:none}
+
+.lk-card{border:1px solid var(--panel-edge);border-radius:12px;margin-top:1em;overflow:hidden;
+  background:linear-gradient(160deg,rgba(var(--panel-rgb),0.7),rgba(var(--void-rgb),0.5))}
+.lk-head{display:flex;gap:1em;padding:1.1em;flex-wrap:wrap;align-items:flex-start}
+.lk-art{width:150px;border-radius:9px;flex-shrink:0;border:1px solid var(--panel-edge)}
+.lk-id{flex:1;min-width:190px}
+.lk-id h3{font-family:'Cinzel',serif;font-size:1.15em;color:var(--bone-bright);margin:0 0 .15em;line-height:1.25}
+.lk-cost{font-size:.92em;color:var(--text-dim);margin-bottom:.55em}
+.lk-colors{font-family:'Cinzel',serif;font-size:.95em;color:var(--accent-bright);letter-spacing:.6px;margin-bottom:.3em}
+.lk-flavor{font-size:.92em;color:var(--text-dim);font-style:italic;line-height:1.5}
+.lk-warn{margin:.6em 1.1em;padding:.7em .9em;border-radius:8px;font-size:.92em;line-height:1.5;
+  color:var(--gold);border:1px solid rgba(215,178,90,0.45);background:rgba(215,178,90,0.09)}
+.lk-sec{padding:0 1.1em 1.1em}
+.lk-sec h4{font-family:'Cinzel',serif;font-size:.8em;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);
+  border-bottom:1px solid var(--panel-edge);padding-bottom:.35em;margin:1em 0 .6em}
+.lk-oracle{font-size:.95em;line-height:1.65;white-space:pre-wrap}
+.lk-links{display:flex;gap:.6em;flex-wrap:wrap;padding:0 1.1em 1.2em}
+.lk-links a{font-family:'Cinzel',serif;font-size:.78em;letter-spacing:.8px;text-transform:uppercase;text-decoration:none;
+  color:var(--accent-2-bright);border:1px solid var(--accent-2);background:var(--glow-2);
+  border-radius:6px;padding:.5em .9em}
+.lk-links a:hover{background:var(--glow-soft);color:var(--bone-bright)}
+
+/* ============ POWER MODULES (auto-found combos) ============ */
+.mods{margin:1.4em 0 .6em}
+.mod-grp{margin-bottom:1.5em}
+.mod-grp h4{font-family:'Cinzel',serif;font-size:.82em;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);
+  border-bottom:1px solid var(--panel-edge);padding-bottom:.35em;margin-bottom:.7em;text-shadow:0 0 12px var(--glow-soft)}
+.mod-row{border:1px solid var(--panel-edge);border-left:3px solid var(--accent-2);border-radius:8px;
+  background:linear-gradient(160deg,rgba(var(--panel-rgb),0.55),rgba(var(--void-rgb),0.4));
+  padding:.75em .9em;margin-bottom:.7em}
+.mod-row.away{border-left-color:var(--gold)}
+.mod-row .mr-top{display:flex;align-items:baseline;gap:.5em;flex-wrap:wrap;margin-bottom:.25em}
+.mod-row .mr-makes{font-family:'Cinzel',serif;font-size:.92em;color:var(--bone-bright);letter-spacing:.4px}
+.mod-row .mr-flag{font-size:.66em;font-family:'Cinzel',serif;letter-spacing:.8px;text-transform:uppercase;
+  padding:.1em .45em;border-radius:3px;color:var(--accent-2-bright);border:1px solid var(--accent-2);background:var(--glow-2)}
+.mod-row.away .mr-flag{color:var(--gold);border-color:rgba(215,178,90,0.45);background:rgba(215,178,90,0.09)}
+.mod-row .mr-pieces{font-size:.9em;margin:.15em 0 .3em}
+.mod-row .mr-pieces a{color:var(--text);text-decoration:none;border-bottom:1px dotted transparent}
+.mod-row .mr-pieces a:hover{color:var(--accent-2-bright);border-bottom-color:var(--accent-2)}
+.mod-row .mr-pieces .miss{color:var(--gold);font-weight:600}
+.mod-row .mr-pieces .miss a{color:var(--gold)}
+.mod-row .mr-note{font-size:.86em;color:var(--text-dim);font-style:italic;line-height:1.5}
+.mod-empty{color:var(--text-dim);font-style:italic;font-size:.95em;background:rgba(var(--panel-rgb),0.4);
+  border:1px dashed var(--panel-edge);border-radius:10px;padding:1em 1.1em;line-height:1.6}
+
 .mantra{text-align:center;font-family:'Cinzel',serif;font-size:clamp(1.05em,3vw,1.4em);color:var(--bone-bright);letter-spacing:1.2px;margin:3em auto 1em;max-width:780px;
   text-shadow:0 0 24px var(--glow),0 0 48px var(--glow-2);font-style:italic}
 .foot{text-align:center;color:var(--dim);font-size:.82em;font-style:italic;margin-top:1.8em}
@@ -379,7 +468,7 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .file-slot input[type="file"]{display:none}
 
 /* ============ COACH / GRADE PANEL (tome-treatment) ============ */
-.grade-panel{background:linear-gradient(165deg,rgba(18,21,48,0.92),rgba(8,10,22,0.95));
+.grade-panel{background:linear-gradient(165deg,rgba(var(--panel-rgb),0.92),rgba(var(--void-rgb),0.95));
   border:1px solid var(--panel-edge);border-left:3px solid var(--accent);
   border-radius:8px;padding:1.4em 1.6em;margin:0 0 2em;
   box-shadow:0 0 40px rgba(0,0,0,0.45) inset,0 0 24px var(--glow-soft)}
@@ -412,7 +501,7 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .sugg-loading{font-size:.82em;color:var(--text-dim);font-style:italic;animation:softPulse 1.6s ease-in-out infinite}
 
 /* ============ DROPZONE ============ */
-.dropzone{background:linear-gradient(165deg,rgba(18,21,48,0.92),rgba(8,10,22,0.95));
+.dropzone{background:linear-gradient(165deg,rgba(var(--panel-rgb),0.92),rgba(var(--void-rgb),0.95));
   border:1px solid var(--panel-edge);border-left:3px solid var(--accent-2);
   border-radius:8px;padding:1.4em 1.6em;margin:2.5em 0 1em;
   box-shadow:0 0 40px rgba(0,0,0,0.4) inset}
@@ -433,7 +522,7 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
   background:linear-gradient(165deg,var(--panel),var(--shadow));box-shadow:0 0 60px var(--glow) inset}
 
 /* ============ TOME PANELS (Playbook / Strategy / Where I'm At) ============ */
-.panel{background:linear-gradient(165deg,rgba(18,21,48,0.92),rgba(8,10,22,0.95));
+.panel{background:linear-gradient(165deg,rgba(var(--panel-rgb),0.92),rgba(var(--void-rgb),0.95));
   border:1px solid var(--panel-edge);border-radius:6px;
   padding:1.5em 1.7em;margin:1em 0;
   box-shadow:0 0 30px rgba(0,0,0,0.35) inset}
@@ -517,7 +606,7 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .swap-momentum{font-size:.86em;color:var(--jade-bright);font-style:italic;padding:.55em .95em;margin:0 0 1em;border-left:3px solid var(--jade);background:linear-gradient(160deg,rgba(92,224,142,0.08),rgba(92,224,142,0.02));border-radius:0 6px 6px 0;line-height:1.5}
 .swap-momentum:empty{display:none}
 .swap-block{margin-top:.75em;padding:.85em 1em;border-radius:6px;
-  background:linear-gradient(165deg,rgba(18,21,48,0.75),rgba(8,10,22,0.85));
+  background:linear-gradient(165deg,rgba(var(--panel-rgb),0.75),rgba(var(--void-rgb),0.85));
   border:1px solid var(--panel-edge);border-left:3px solid var(--accent-2);
   box-shadow:0 0 18px rgba(0,0,0,0.35) inset;line-height:1.7}
 .swap-row{display:flex;gap:.6em;flex-wrap:wrap;align-items:center;margin-bottom:.55em}
@@ -712,7 +801,7 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .chip-tag.cl-pain{color:var(--crimson-bright);border-color:rgba(255,122,152,0.5)}
 .chip-tag.cl-tap{color:#e6b06a;border-color:rgba(230,176,106,0.5)}
 .chip-tag.cl-util{color:var(--gold);border-color:rgba(215,178,90,0.5)}
-.hand-panel{background:linear-gradient(160deg,rgba(18,21,48,0.55),rgba(8,10,22,0.4));border:1px solid var(--panel-edge);border-radius:12px;padding:1em 1.1em 1.1em;margin:.2em 0 1.5em}
+.hand-panel{background:linear-gradient(160deg,rgba(var(--panel-rgb),0.55),rgba(var(--void-rgb),0.4));border:1px solid var(--panel-edge);border-radius:12px;padding:1em 1.1em 1.1em;margin:.2em 0 1.5em}
 .hand-bar{display:flex;align-items:center;gap:.7em;flex-wrap:wrap}
 .hand-count{font-family:'Cinzel',serif;font-size:.82em;letter-spacing:1.5px;text-transform:uppercase;color:var(--steel);margin-right:auto}
 .btn.sm{font-size:.78em;padding:.45em .9em;min-height:40px}
@@ -751,14 +840,14 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .wbtn.empty:hover{color:var(--steel);border-color:var(--panel-edge)}
 .wcount{font-family:'EB Garamond',Georgia,serif;font-size:.9em;letter-spacing:0;background:rgba(5,6,13,0.45);border-radius:20px;padding:.02em .5em;color:inherit}
 .wbtn.on .wcount{background:rgba(0,0,0,0.28)}
-.walker-panel{background:linear-gradient(160deg,rgba(18,21,48,0.5),rgba(8,10,22,0.4));border:1px solid var(--panel-edge);border-left:3px solid var(--accent);border-radius:10px;padding:.9em 1em 1em;margin-bottom:1.5em}
+.walker-panel{background:linear-gradient(160deg,rgba(var(--panel-rgb),0.5),rgba(var(--void-rgb),0.4));border:1px solid var(--panel-edge);border-left:3px solid var(--accent);border-radius:10px;padding:.9em 1em 1em;margin-bottom:1.5em}
 .walker-panel.combat{border-left-color:var(--crimson)}
 .walker-panel.end{border-left-color:var(--gold)}
 .walker-panel.cast{border-left-color:var(--accent-2)}
 .walker-panel.landfall{border-left-color:var(--jade)}
 .walker-empty{color:var(--text-dim);font-style:italic;font-size:.96em;line-height:1.5}
 .trig-star{color:var(--gold);margin-right:.25em;font-size:.85em}
-.trig-empty{color:var(--text-dim);font-style:italic;font-size:.95em;background:rgba(18,21,48,0.4);border:1px dashed var(--panel-edge);border-radius:10px;padding:1em 1.1em;margin:.2em 0 1.4em;line-height:1.5}
+.trig-empty{color:var(--text-dim);font-style:italic;font-size:.95em;background:rgba(var(--panel-rgb),0.4);border:1px dashed var(--panel-edge);border-radius:10px;padding:1em 1.1em;margin:.2em 0 1.4em;line-height:1.5}
 .plan-cards a.inhand{border-color:var(--gold);box-shadow:0 0 8px rgba(215,178,90,0.25)}
 
 /* ============ LIFE TABLE (multiplayer pod) ============ */
@@ -1502,7 +1591,7 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
     <div class="settings-pop" id="settingsPop" hidden>
       <div class="sp-head">Comfort &amp; display</div>
       <div class="sp-row"><span class="sp-lbl">Text size</span><div class="sp-seg"><button class="sp-btn" data-size="16" type="button" title="Smaller">A</button><button class="sp-btn" data-size="18" type="button" title="Default">A</button><button class="sp-btn" data-size="20" type="button" title="Larger">A</button><button class="sp-btn" data-size="22" type="button" title="Largest">A</button></div></div>
-      <div class="sp-row"><span class="sp-lbl">Reading font</span><div class="sp-seg"><button class="sp-btn" data-font="atkinson" type="button">Atkinson</button><button class="sp-btn" data-font="lexend" type="button">Lexend</button><button class="sp-btn" data-font="dyslexic" type="button">Dyslexic</button><button class="sp-btn" data-font="system" type="button">System</button></div></div>
+      <div class="sp-row"><span class="sp-lbl">Reading font</span><div class="sp-seg"><button class="sp-btn" data-font="atkinson" type="button">Atkinson</button><button class="sp-btn" data-font="lexend" type="button">Lexend</button><button class="sp-btn" data-font="dyslexic" type="button">Dyslexic</button><button class="sp-btn" data-font="system" type="button">System</button><button class="sp-btn" data-font="classic" type="button">Classic</button></div></div>
       <div class="sp-row"><span class="sp-lbl">Calm mode</span><button class="sp-toggle" id="calmToggle" type="button" role="switch" aria-checked="false" title="Dim motion and glow for focused reading"><span class="sp-knob"></span></button></div>
       <p class="sp-note">Quietly tunes readability. Remembered on this table.</p>
     </div>
@@ -1552,6 +1641,7 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
     <div class="tab" data-view="station">Station</div>
     <div class="tab" data-view="table">Life Table</div>
     <div class="tab" data-view="play">Playtest</div>
+    <div class="tab" data-view="lookup">Look Up</div>
   </div>
 
   <!-- ============ SHOWCASE VIEW ============ -->
@@ -1564,8 +1654,13 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
     <div class="stats" id="stats"></div>
 
     <div class="rune-div"><span>&#9670; &#9670; &#9670;</span></div>
+    <h2>Power Modules</h2>
+    <p class="section-sub">Combo lines found by reading your actual 100 cards. Nothing here is hand-written per deck — it is checked fresh every time the list changes, and anything outside your colors is never shown.</p>
+    <div id="powerModules"></div>
+
+    <div class="rune-div"><span>&#9670; &#9670; &#9670;</span></div>
     <h2>The 100-Card List</h2>
-    <p class="section-sub">Stars are the cards you protect and prioritize. <span style="color:var(--jade)">NEW</span> = added. Every card links to Scryfall. Buckets and counts come straight from the deck object.</p>
+    <p class="section-sub">Every card says what it does, read from its own printed text. Stars are the cards you protect. <span style="color:var(--jade)">NEW</span> = added. Every name links to Scryfall.</p>
     <div class="deck-cols" id="decklist"></div>
     <div class="rune-div"><span>&#9670; &#9670; &#9670;</span></div>
     <p class="mantra" id="mantra"></p>
@@ -1584,6 +1679,21 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
   <!-- ============ PLAYTEST VIEW ============ -->
   <div class="view" id="view-play">
     <div id="playBody"><div class="load-line">Shuffling up...</div></div>
+  </div>
+
+  <!-- ============ LOOK UP VIEW ============
+       A commander lookup that works for ANY commander, not just the decks in this app.
+       Hand the phone to whoever you are playing against and let them type their own. -->
+  <div class="view" id="view-lookup">
+    <h2>Look Up A Commander</h2>
+    <p class="section-sub">Type any commander. It searches every card ever printed, then tells you what colors they can play and which combo lines are legal for them. Nothing here changes your decks.</p>
+    <div class="lk-box">
+      <input type="text" id="lookupInput" placeholder="Commander name&hellip;" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Commander name">
+      <button class="btn" id="lookupBtn" type="button">Look Up</button>
+    </div>
+    <div class="lk-sugg" id="lookupSugg" hidden></div>
+    <div class="status" id="lookupStatus"></div>
+    <div id="lookupResult"></div>
   </div>
 
   <!-- ============ SPELLBOOK VIEW (the deck-brain hub: Coach / Playbook / Strategy / Where / Combos) ============ -->
@@ -2335,7 +2445,14 @@ const COLOR_THEMES = {
   "":       { name:"Colorless",      flavor:"Metal and mana. Neutral craft.",          accent:"#c0c5e6", accent2:"#8fb6c8", glow:"rgba(192,197,230,0.32)", glowSoft:"rgba(192,197,230,0.10)", glow2:"rgba(143,182,200,0.08)" },
   "W":      { name:"Mono-White",     flavor:"Order, light, the small army.",          accent:"#f4e7c6", accent2:"#d7b25a", glow:"rgba(244,231,198,0.32)", glowSoft:"rgba(244,231,198,0.10)", glow2:"rgba(215,178,90,0.09)" },
   "U":      { name:"Mono-Blue",      flavor:"Read the board. Answer everything.",     accent:"#58a7ff", accent2:"#9fe9f5", glow:"rgba(88,167,255,0.36)",  glowSoft:"rgba(88,167,255,0.12)",  glow2:"rgba(95,208,230,0.10)" },
-  "B":      { name:"Mono-Black",     flavor:"Anything the graveyard remembers.",      accent:"#c4a9e6", accent2:"#8186b6", glow:"rgba(196,169,230,0.32)", glowSoft:"rgba(196,169,230,0.10)", glow2:"rgba(129,134,182,0.10)" },
+  /* Mono-Black is the first deck with its own walls. Swamp, not amethyst:
+     charcoal surfaces, bone text, one blood accent. */
+  "B":      { name:"Mono-Black",     flavor:"Anything the graveyard remembers.",
+              accent:"#c0455f", accentBright:"#ef7a92", accent2:"#c9b79e", accent2Bright:"#e8dcc6",
+              glow:"rgba(192,69,95,0.34)", glowSoft:"rgba(192,69,95,0.11)", glow2:"rgba(201,183,158,0.09)",
+              surface:{ void:"#0a0709", void2:"#0f0b0d", shadow:"#171214", panel:"#211a1d", panelEdge:"#4d3f43",
+                        ink:"#dbd4c8", inkDim:"#9a9086", inkBright:"#f6f1e6",
+                        panelRgb:"33,26,29", voidRgb:"15,11,13" } },
   "R":      { name:"Mono-Red",       flavor:"Fast, loud, decisive.",                  accent:"#e89b8c", accent2:"#e05577", glow:"rgba(232,155,140,0.34)", glowSoft:"rgba(232,155,140,0.12)", glow2:"rgba(224,85,119,0.10)" },
   "G":      { name:"Mono-Green",     flavor:"Bigger creatures, faster mana.",         accent:"#9fe0a0", accent2:"#5ce08e", glow:"rgba(159,224,160,0.34)", glowSoft:"rgba(159,224,160,0.12)", glow2:"rgba(92,224,142,0.10)" },
 
@@ -2377,17 +2494,39 @@ function themeForIdentity(ci){
   return COLOR_THEMES[key] || COLOR_THEMES["BGRUW"];
 }
 
+/* The original fixed surface. Any theme without its own `surface` block gets
+   these back, so a tinted deck can never leave its walls behind on the next
+   deck you click. Values match the :root defaults exactly. */
+const DEFAULT_SURFACE = {
+  void:"#05060d", void2:"#080a16", shadow:"#0c0f1f", panel:"#121530", panelEdge:"#2a2c52",
+  ink:"#c4c8ea", inkDim:"#8186b6", inkBright:"#f7f8ff",
+  panelRgb:"18,21,48", voidRgb:"8,10,22"
+};
+
 /* Apply theme by writing CSS custom properties on :root. */
 function applyTheme(ci){
   const theme = themeForIdentity(ci);
   const r = document.documentElement.style;
   r.setProperty("--accent", theme.accent);
-  r.setProperty("--accent-bright", theme.accent);
+  r.setProperty("--accent-bright", theme.accentBright || theme.accent);
   r.setProperty("--accent-2", theme.accent2);
-  r.setProperty("--accent-2-bright", theme.accent2);
+  r.setProperty("--accent-2-bright", theme.accent2Bright || theme.accent2);
   r.setProperty("--glow", theme.glow);
   r.setProperty("--glow-soft", theme.glowSoft);
   r.setProperty("--glow-2", theme.glow2);
+
+  // Surfaces. A theme may tint its own walls; everything else resets to default.
+  const s = theme.surface || DEFAULT_SURFACE;
+  r.setProperty("--void", s.void);
+  r.setProperty("--void-2", s.void2);
+  r.setProperty("--shadow", s.shadow);
+  r.setProperty("--panel", s.panel);
+  r.setProperty("--panel-edge", s.panelEdge);
+  r.setProperty("--text", s.ink);
+  r.setProperty("--text-dim", s.inkDim);
+  r.setProperty("--ink-bright", s.inkBright);
+  r.setProperty("--panel-rgb", s.panelRgb);
+  r.setProperty("--void-rgb", s.voidRgb);
   return theme;
 }
 
@@ -2588,14 +2727,392 @@ function renderStats(deck){
   });
 }
 
-function renderDecklist(deck){
+/* ============ POWER MODULES: known combos, matched against your list ============
+   This is a lookup table, not a rules engine. The app never tries to invent a combo
+   by reading oracle text -- that produces confident nonsense. Instead it checks your
+   100 cards against combos that are already known to work, and reports two things:
+   what you already have, and what you are one card short of.
+   `ci` is the color identity the combo needs. Anything outside your commander's
+   colors is filtered out before you ever see it, so nothing illegal is suggested. */
+const COMBOS = [
+  { ci:"",   makes:"Infinite colorless mana", pieces:["basalt monolith","rings of brighthearth"],
+    note:"Untap Basalt with its own ability and copy the untap with Rings. Every loop nets you mana." },
+  { ci:"U",  makes:"Infinite colorless mana", pieces:["basalt monolith","power artifact"],
+    note:"Power Artifact drops the untap cost below what Basalt taps for." },
+  { ci:"U",  makes:"Infinite colorless mana", pieces:["grim monolith","power artifact"],
+    note:"Same trick as Basalt, one mana cheaper to set up." },
+  { ci:"U",  makes:"Infinite mana", pieces:["isochron scepter","dramatic reversal"],
+    note:"Imprint Reversal. Two mana untaps everything. Infinite if your rocks make three or more." },
+  { ci:"U",  makes:"Infinite mana", pieces:["grand architect","pili-pala"],
+    note:"Architect taps Pili-Pala for two, Pili-Pala turns it into any color. Repeat forever." },
+  { ci:"",   makes:"Infinite colorless mana", pieces:["myr galvanizer","palladium myr"],
+    note:"Wants a second Galvanizer. Palladium makes two, Galvanizer untaps your other Myr for one." },
+  { ci:"U",  makes:"Infinite mana", pieces:["deadeye navigator","peregrine drake"],
+    note:"Soulbond the Drake, blink it for two, untap five lands. Nets three every loop." },
+  { ci:"U",  makes:"Infinite mana", pieces:["deadeye navigator","palinchron"],
+    note:"Blink Palinchron over and over, untapping seven lands each time." },
+  { ci:"GU", makes:"Infinite mana", pieces:["bloom tender","freed from the real"],
+    note:"Untap Bloom Tender for one blue. Profits the moment you have three colors on board." },
+  { ci:"GU", makes:"Infinite green mana", pieces:["priest of titania","freed from the real"],
+    note:"Wants a few Elves out. Untap the Priest for one, tap it for more than you spent." },
+  { ci:"GW", makes:"Infinite green mana", pieces:["devoted druid","vizier of remedies"],
+    note:"Vizier cancels the minus-one counter, so the Druid untaps as many times as you like." },
+  { ci:"GW", makes:"Infinite green mana", pieces:["devoted druid","swift reconfiguration"],
+    note:"Same as Vizier. The Druid stops taking the counter and untaps forever." },
+  { ci:"RG", makes:"Infinite treasure", pieces:["dockside extortionist","temur sabertooth"],
+    note:"Wants three or more artifacts and enchantments across the table. Bounce Dockside, recast, repeat." },
+
+  { ci:"B",  makes:"Infinite damage", pieces:["mikaeus, the unhallowed","walking ballista"],
+    note:"Ballista pings, dies, and undying hands it back a counter. Point it at each player in turn." },
+  { ci:"B",  makes:"Infinite damage", pieces:["mikaeus, the unhallowed","triskelion"],
+    note:"Trike pings three times, dies, comes back bigger. Drains the table in one go." },
+  { ci:"W",  makes:"Infinite damage", pieces:["heliod, sun-crowned","walking ballista"],
+    note:"Heliod gives Ballista lifelink, so every ping gains life and Heliod puts the counter back." },
+  { ci:"R",  makes:"Infinite hasty attackers", pieces:["kiki-jiki, mirror breaker","zealous conscripts"],
+    note:"Kiki copies Conscripts, the copy untaps Kiki. Make as many as you need and swing." },
+  { ci:"R",  makes:"Infinite combat steps", pieces:["kiki-jiki, mirror breaker","combat celebrant"],
+    note:"Each copy exerts for another combat. The table only gets one turn." },
+
+  { ci:"BW", makes:"Infinite drain", pieces:["exquisite blood","sanguine bond"],
+    note:"Gain one life and the loop starts. It does not stop until the table is at zero." },
+  { ci:"B",  makes:"Infinite drain", pieces:["exquisite blood","vito, thorn of the dusk rose"],
+    note:"The Sanguine Bond loop in mono-black. One point of lifegain ends the game." },
+  { ci:"B",  makes:"Infinite drain", pieces:["exquisite blood","marauding blight-priest"],
+    note:"Same loop again, on a cheap body you can actually cast early." },
+  { ci:"B",  makes:"Infinite drain", pieces:["exquisite blood","cliffhaven vampire"],
+    note:"Third copy of the Sanguine Bond half, this one flies." },
+
+  { ci:"UB", makes:"Wins on the spot", pieces:["thassa's oracle","demonic consultation"],
+    note:"Consult naming a card you do not run, exile your library, and the Oracle trigger wins." },
+  { ci:"UB", makes:"Wins on the spot", pieces:["thassa's oracle","tainted pact"],
+    note:"Pact exiles the library, Oracle sees zero cards left and takes the game." },
+  { ci:"UB", makes:"Wins on the spot", pieces:["jace, wielder of mysteries","demonic consultation"],
+    note:"Empty library plus a draw. Jace turns decking out into a win." },
+  { ci:"UB", makes:"Wins on the spot", pieces:["laboratory maniac","demonic consultation"],
+    note:"Exile the library, then draw a card. The Maniac flips the loss into a win." },
+
+  { ci:"B",  makes:"Lethal life gun", pieces:["bolas's citadel","sensei's divining top","aetherflux reservoir"],
+    note:"Citadel casts Top off the library for one life, Top redraws itself, and the Reservoir climbs until you fire fifty." },
+  { ci:"WB", makes:"Draw your whole deck", pieces:["ad nauseam","angel's grace"],
+    note:"Grace stops you dying at zero, so Ad Nauseam takes the entire library in one cast." },
+  { ci:"UR", makes:"Mills the table out", pieces:["underworld breach","brain freeze","lion's eye diamond"],
+    note:"Breach escapes Brain Freeze off Diamond mana as many times as you need." },
+
+  { ci:"B",  makes:"Infinite sacrifice loop", pieces:["gravecrawler","phyrexian altar"],
+    note:"Wants one more Zombie on board. Altar pays for the recast, Gravecrawler comes straight back." },
+  { ci:"UB", makes:"Infinite Zombie casts", pieces:["gravecrawler","rooftop storm"],
+    note:"Rooftop Storm makes Gravecrawler free, and it recasts itself from the yard all day. Add a sac outlet." },
+  { ci:"B",  makes:"Drains the table out", pieces:["gravecrawler","phyrexian altar","blood artist"],
+    note:"The free Gravecrawler loop with a drain attached. Every pass costs each opponent a life." },
+  { ci:"B",  makes:"Drains the table out", pieces:["gravecrawler","phyrexian altar","zulaport cutthroat"],
+    note:"Same loop, second copy of the drain half." },
+  { ci:"B",  makes:"Endless sac fodder", pieces:["reassembling skeleton","phyrexian altar"],
+    note:"Not infinite on its own, but the Skeleton keeps coming back to feed your drains." },
+  { ci:"B",  makes:"Infinite draw and drain", pieces:["yawgmoth, thran physician","geralf's messenger"],
+    note:"Undying puts the counter back that Yawgmoth takes off. Draw your deck, drain them out." },
+  { ci:"BG", makes:"Infinite damage", pieces:["necrotic ooze","devoted druid","walking ballista"],
+    note:"The Ooze borrows the Druid's untap and the Ballista's ping straight out of your graveyard." },
+  { ci:"BG", makes:"Infinite life", pieces:["melira, sylvok outcast","kitchen finks"],
+    note:"Melira turns off the persist counter, so the Finks comes back every single time." },
+  { ci:"W",  makes:"Infinite recursion", pieces:["karmic guide","reveillark"],
+    note:"Wants a free sac outlet. The two of them return each other for as long as you like." },
+  { ci:"",   makes:"Infinite draw", pieces:["sensei's divining top","mystic forge"],
+    note:"Forge casts Top off the library and Top puts itself back. Wants one artifact cost reducer to run free." }
+];
+
+/* Combo pieces are stored lowercase for matching. Put them back into card-name case
+   without mangling possessives ("bolas's" must not become "Bolas'S") or hyphens. */
+const NAME_SMALL = new Set(["of","the","and","from","to","in","a","an","on"]);
+function niceCardName(p){
+  return String(p).split(" ").map((w, i) => {
+    if (i > 0 && NAME_SMALL.has(w)) return w;
+    return w.split("-").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join("-");
+  }).join(" ");
+}
+
+/* Build a lookup of every card name in the deck, lowercased. */
+function deckNameSet(deck){
+  const s = new Set();
+  uniqueNamesWithQty(deck).forEach((q, n) => s.add(String(n).toLowerCase()));
+  return s;
+}
+
+/* Match COMBOS against the list. Returns { have, away } — away is exactly one piece short.
+   Combos needing colors outside the deck's identity are dropped, never shown. */
+function findCombos(deck, cardData){
+  const have = [], away = [];
+  const names = deckNameSet(deck);
+  // `identity` is a lowercase string like "b" or "wubrg". If a pasted list has none,
+  // read the real identity off the cards themselves so the filter still holds.
+  const idSet = new Set();
+  if (deck && deck.identity){
+    String(deck.identity).toUpperCase().split("").forEach(c => { if ("WUBRG".includes(c)) idSet.add(c); });
+  } else if (cardData){
+    const all = (cardData instanceof Map) ? [...cardData.values()] : Object.values(cardData);
+    all.forEach(c => (c && c.color_identity || []).forEach(x => idSet.add(String(x).toUpperCase())));
+  }
+  COMBOS.forEach(cb => {
+    // Color legality first. Every color the combo needs must be in the deck's identity.
+    const need = String(cb.ci || "").split("").filter(Boolean);
+    if (need.some(c => !idSet.has(c))) return;
+    const missing = cb.pieces.filter(p => !names.has(p));
+    if (missing.length === 0) have.push({ combo: cb, missing: [] });
+    else if (missing.length === 1) away.push({ combo: cb, missing: missing });
+  });
+  return { have: have, away: away };
+}
+
+/* Which cards in the list take part in a combo we found? Used to tag the decklist. */
+function comboTagMap(found){
+  const m = new Map();
+  found.have.forEach(f => f.combo.pieces.forEach(p => {
+    if (!m.has(p)) m.set(p, { kind:"have", makes: f.combo.makes });
+  }));
+  return m;
+}
+
+/* ============ ONE-LINE "WHY" PER CARD ============
+   Read from the card's own printed text. Short on purpose -- this sits under every
+   one of 100 rows, so a sentence per card would be a wall. Phrases, not paragraphs. */
+function manaAdded(o){
+  const m = o.match(/add ((\{[wubrgcx0-9/]+\}\s*)+)/i);
+  return m ? m[1].replace(/\s+/g, "").toUpperCase() : null;
+}
+
+/* The card's own first meaningful line, trimmed to fit under a name. Lines that are
+   only reminder text in brackets are skipped -- Dismember opens with one, and stripping
+   it leaves nothing to say. */
+function firstOracleLine(card){
+  const lines = String(card.oracle_text || card.oracle || "").split("\n");
+  for (let i = 0; i < lines.length; i++){
+    const clean = lines[i].replace(/\s*\([^)]*\)\s*/g, " ").replace(/\s+/g, " ").trim();
+    if (!clean) continue;
+    if (clean.length <= 74) return clean;
+    const cut = clean.slice(0, 70);
+    const sp = cut.lastIndexOf(" ");
+    return (sp > 34 ? cut.slice(0, sp) : cut) + "…";
+  }
+  return "";
+}
+
+/* Double-faced cards keep all their text on the faces, so the top-level oracle is
+   empty and every rule below would miss. Read the FRONT face — that is the side you
+   cast — and say when the back is a land, because "a spell that can be a land instead"
+   is the entire reason those cards make a deck. */
+function cardOneLiner(card, deck){
+  if (!card) return "";
+  const faces = card.card_faces;
+  if (!String(card.oracle_text || card.oracle || "").trim() && faces && faces.length){
+    const front = { name: faces[0].name, oracle_text: faces[0].oracle_text,
+                    type_line: faces[0].type_line, mana_cost: faces[0].mana_cost,
+                    keywords: card.keywords, cmc: card.cmc };
+    const line = cardOneLinerCore(front, deck);
+    const backLand = faces[1] && /land/i.test(String(faces[1].type_line || ""));
+    if (line) return backLand ? line + " Or play it as a land." : line;
+    return backLand ? "A spell you can play as a land instead." : "";
+  }
+  return cardOneLinerCore(card, deck);
+}
+
+function cardOneLinerCore(card, deck){
+  if (!card) return "";
+  const o = String(card.oracle_text || card.oracle || "").toLowerCase();
+  const t = String(card.type_line || card.type || "").toLowerCase();
+  const first = String(card.oracle_text || card.oracle || "").split("\n")[0].trim();
+
+  // Lands: say what they tap for, nothing more. Double-faced cards whose back is a
+  // land ("Fell the Profane // Fell Mire") are judged on their front face instead —
+  // that is the side you actually cast.
+  if (t.includes("land") && !t.includes("//")){
+    if (/^(plains|island|swamp|mountain|forest)$/.test(String(card.name||"").toLowerCase()))
+      return "Basic land.";
+    const add = manaAdded(o);
+    if (/enters .*tapped/.test(o) && add) return "Taps for " + add + ". Comes in tapped.";
+    if (add) return "Taps for " + add + ".";
+    if (/search your library/.test(o)) return "Fetches a land.";
+    // A utility land that makes no mana still does something. Say what, rather
+    // than printing the word "Land." under it.
+    return firstOracleLine(card) || "Land.";
+  }
+
+  // Mana first — rocks, dorks and rituals are the backbone of most lists.
+  const add = manaAdded(o);
+  if (add && /\{t\}/.test(o)) return "Taps for " + add + ".";
+  if (add && (t.includes("instant") || t.includes("sorcery"))) return "Adds " + add + " right now.";
+  if (add) return "Adds " + add + ".";
+
+  if (/search your library for .*(land|plains|island|swamp|mountain|forest)/.test(o)) return "Ramps a land out of the deck.";
+  if (/search your library for an artifact/.test(o)) return "Finds any artifact.";
+  if (/search your library for a creature/.test(o)) return "Finds any creature.";
+  if (/search your library for a card/.test(o)) return "Finds any card in the deck.";
+  if (/search your library/.test(o)) return "Tutors a card out of the deck.";
+
+  if (/counter target spell/.test(o)) return "Says no to one spell.";
+  if (/destroy all|exile all|each creature gets -|destroy each/.test(o)) return "Board wipe.";
+  if (/(destroy|exile) target creature/.test(o)) return "Kills a creature.";
+  if (/(destroy|exile) target/.test(o)) return "Removal.";
+  if (/target (player|opponent) sacrifices/.test(o)) return "Forces a sacrifice.";
+  if (/each opponent (loses|sacrifices|discards)/.test(o)) return "Hits every opponent at once.";
+
+  if (/return target creature card from your graveyard to the battlefield/.test(o)) return "Reanimates a creature.";
+  if (/return .*from your graveyard to (your hand|the battlefield)/.test(o)) return "Buys a card back from the yard.";
+
+  // Sac outlets and self-recursion define a card far more than a rider does,
+  // so they get asked about before the draw and counter rules.
+  if (/sacrifice (a|another) creature:/.test(o)) return "Free sacrifice outlet.";
+  if (/you may cast .* from your graveyard/.test(o)) return "Recasts itself out of the graveyard.";
+  if (/when this creature dies, return it to the battlefield/.test(o)) return "Saves a creature the turn it would die.";
+  if (/have undying/.test(o)) return "Your creatures come back bigger when they die.";
+  if (/have persist/.test(o)) return "Your creatures come back once more after they die.";
+  if (/whenever an opponent draws a card/.test(o)) return "Taxes the table every time they draw.";
+
+  if (/draw (a|two|three|four|five|\w+) cards?/.test(o) && /whenever|at the beginning/.test(o)) return "Draws you extra cards every turn.";
+  if (/draw (two|three|four|five|\w+) cards/.test(o)) return "Draws you a fistful of cards.";
+  if (/draw a card/.test(o)) return "Draws a card.";
+  if (/scry|surveil|look at the top/.test(o)) return "Smooths your next few draws.";
+
+  if (/create .*token/.test(o) && /whenever|at the beginning/.test(o)) return "Makes a body every turn.";
+  if (/create .*token/.test(o)) return "Makes bodies.";
+  if (/creatures you control get \+/.test(o)) return "Pumps the whole team.";
+  if (/\+1\/\+1 counter/.test(o)) return "Grows your board.";
+  if (/whenever .*(dies|creature you control dies)/.test(o)) return "Pays you off when your creatures die.";
+  if (/lifelink/.test(o) && t.includes("creature")) return "A body that gains you life back.";
+  if (/hexproof|indestructible|protection from|can't be countered/.test(o)) return "Protection.";
+  if (/extra turn/.test(o)) return "Takes an extra turn.";
+  if (/costs? \{?\d?\}? ?less/.test(o)) return "Makes your spells cheaper.";
+
+  // Nothing matched, so fall back to the card's own printed text.
+  const own = firstOracleLine(card);
+  if (own) return own;
+  if (t.includes("creature")) return "A creature for the board.";
+  return "";
+}
+
+/* Basics are skipped by the Scryfall fetch (there is nothing to look up), so their
+   one-liner is written here instead of read off a card. */
+const BASIC_TAPS = { plains:"{W}", island:"{U}", swamp:"{B}", mountain:"{R}", forest:"{G}", wastes:"{C}" };
+function basicLandLine(name){
+  const k = String(name || "").toLowerCase().replace(/^snow-covered /, "");
+  if (!BASIC_TAPS[k]) return "";
+  return (k === "wastes" ? "Taps for " : "Basic land. Taps for ") + BASIC_TAPS[k] + ".";
+}
+
+/* ============ GROUP SUBTITLES ============
+   One plain-language line under each group heading saying what that group is doing in
+   THIS deck. Every number is counted off the real cards, so a pasted list gets the same
+   treatment as a seed deck and nothing has to be hand-written per deck. */
+function topCreatureType(recs){
+  const tally = {};
+  recs.forEach(r => {
+    const tl = String(r.type_line || "");
+    if (!/creature/i.test(tl)) return;
+    const tail = tl.split("—")[1] || tl.split("—")[1];
+    if (!tail) return;
+    tail.trim().split(/\s+/).forEach(w => { tally[w] = (tally[w] || 0) + 1; });
+  });
+  let best = null, bestN = 0;
+  Object.keys(tally).forEach(k => { if (tally[k] > bestN){ best = k; bestN = tally[k]; } });
+  return bestN >= 3 ? { type: best, count: bestN } : null;
+}
+
+function bucketSubtitle(bucketName, cards, lookup, tagMap){
+  const nm = String(bucketName || "").toLowerCase();
+  const n = cards.reduce((t,c) => t + qtyOf(c.n), 0);
+  const recs = cards.map(c => lookup(c.n)).filter(Boolean);
+  const spells = recs.filter(r => !/land/i.test(String(r.type_line || "")));
+  const avg = spells.length ? spells.reduce((t,r) => t + (r.cmc || 0), 0) / spells.length : 0;
+  const cost = avg ? " Average cost " + avg.toFixed(1) + "." : "";
+  const basics = cards.filter(c => BASICS.includes(stripQty(decodeName(c.n))))
+                      .reduce((t,c) => t + qtyOf(c.n), 0);
+  const combo = tagMap ? cards.filter(c => tagMap.has(stripQty(decodeName(c.n)).toLowerCase())).length : 0;
+
+  // Order matters. The more specific a group name is, the earlier it gets asked about.
+  let line;
+  if (/commander/.test(nm))
+    line = "The card the whole deck is built around. It is always waiting in the command zone.";
+  else if (/^lands?\b|\blands \(|\bland\b/.test(nm))
+    line = n + " lands" + (basics ? ", " + basics + " of them basic" : "") + ". This is the deck's entire mana base.";
+  else if (/tutor|selection|top control/.test(nm))
+    line = n + " ways to go and find the exact card you need. This is why the deck plays out the same way most games.";
+  else if (/combo|kill package|finish/.test(nm))
+    line = n + " cards that end the game rather than improve your board. Handle them carefully.";
+  else if (/sac|altar|drain|aristocrat/.test(nm))
+    line = n + " outlets and payoffs. Your own creatures dying is the plan, not an accident.";
+  else if (/ramp|mana|ritual|rock|dork/.test(nm))
+    line = n + " ways to make mana ahead of schedule. This is how the deck gets a turn or two in front of the table." + cost;
+  else if (/removal|sweeper|interaction|counter|fog/.test(nm))
+    line = n + " answers for what everyone else is doing." + cost;
+  else if (/draw|wheel|card engine|engines? &|cantrip/.test(nm))
+    line = n + " cards that keep your hand full. A deck this fast runs out of gas without them.";
+  else if (/reanimat|recursion|graveyard/.test(nm))
+    line = n + " ways to buy cards back out of the graveyard. Nothing you lose stays lost.";
+  else if (/protect|anti-wrath|hexproof|resilien/.test(nm))
+    line = n + " cards that keep the deck alive through a board wipe or a targeted kill.";
+  else if (/disruption|hate|stax|tax|lock/.test(nm))
+    line = n + " cards that slow the rest of the table down.";
+  else if (/token|go-wide|anthem|amplifi|lord|doubler/.test(nm))
+    line = n + " cards that make bodies or make the bodies you have bigger.";
+  else if (/artifact|artificer/.test(nm))
+    line = n + " artifact payoffs. The more artifacts on board, the better each one gets.";
+  else if (/bomb|haymaker|enchantment/.test(nm))
+    line = n + " heavy hitters. Cards that take the game over if they stay on the board.";
+  else if (/equipment|gear/.test(nm))
+    line = n + " things to suit a creature up with.";
+  else if (/spell/.test(nm))
+    line = n + " cards that pay you off for casting spells.";
+  else if (/evasive|unblockable|ride|connect/.test(nm))
+    line = n + " creatures built to get through. Each one is a way to connect." + cost;
+  else if (/value|utility/.test(nm))
+    line = n + " cards that trade up. Each one does more work than it costs." + cost;
+  else {
+    // No idea from the name, so describe the cards themselves. Only claim a tribe
+    // when it is actually most of the group -- "mostly Wraiths" for four of nine is a lie.
+    const tribe = topCreatureType(recs);
+    const creatures = recs.filter(r => /creature/i.test(String(r.type_line || ""))).length;
+    if (tribe && tribe.count * 2 >= n) line = "The creature core of the deck. Mostly " + tribe.type + "s.";
+    else if (creatures >= 3 && creatures * 2 >= recs.length) line = n + " creatures." + cost;
+    else line = n + " cards." + cost;
+  }
+
+  if (combo) line += " " + combo + (combo === 1 ? " of them shows up" : " of them show up") + " in a Power Module above.";
+  return line;
+}
+
+function renderDecklist(deck, cardData){
   const list = document.getElementById("decklist");
   list.innerHTML = "";
+  // cardData is the Scryfall payload keyed by lowercase name. When it has not
+  // arrived yet we just render names, exactly as before -- no blank why-lines.
+  const cd = cardData || null;
+  const lookup = n => {
+    if (!cd) return null;
+    const k = stripQty(decodeName(n)).toLowerCase();
+    return (cd instanceof Map) ? cd.get(k) : cd[k];
+  };
+  const tags = cd ? comboTagMap(findCombos(deck, cd)) : new Map();
+
   deck.buckets.forEach(b => {
     const qty = b.cards.reduce((t,c)=> t + qtyOf(c.n), 0);
     const block = document.createElement("div"); block.className = "deck-block";
+    // Mark the land group so it can lay out in two columns. Decided from the cards
+    // themselves where possible, so a pasted deck with an oddly named land group still
+    // gets it; falls back to the group's name before the card data has arrived.
+    const landish = b.cards.filter(c => {
+      const r = lookup(c.n);
+      if (r) return /land/i.test(String(r.type_line || ""));
+      return BASICS.includes(stripQty(decodeName(c.n)));
+    }).length;
+    if (b.cards.length >= 6 && (landish >= b.cards.length * 0.7 || (!cd && /\bland/i.test(b.bucket))))
+      block.classList.add("lands");
     const h = document.createElement("h4"); h.textContent = b.bucket.replace(/\s*\(\d+\)$/,"") + " (" + qty + ")";
     block.appendChild(h);
+    // Say what this group is for, in plain words, before listing anything.
+    // Only once the cards have loaded -- a subtitle built on no data would be wrong.
+    if (cd){
+      const sub = document.createElement("div"); sub.className = "bk-sub";
+      sub.textContent = bucketSubtitle(b.bucket, b.cards, lookup, tags);
+      block.appendChild(sub);
+    }
     const ul = document.createElement("ul");
     b.cards.forEach(c => {
       const li = document.createElement("li");
@@ -2606,6 +3123,31 @@ function renderDecklist(deck){
       a.dataset.card = stripQty(decodeName(c.n));
       li.appendChild(a);
       if (c.new) { const s = document.createElement("span"); s.className = "nw"; s.textContent = "NEW"; li.appendChild(s); }
+
+      const card = lookup(c.n);
+      const key = stripQty(decodeName(c.n)).toLowerCase();
+      // Official Commander bracket "game changer" list, straight off the card.
+      if (card && card.game_changer){
+        const g = document.createElement("span"); g.className = "tg gc"; g.textContent = "Game changer"; li.appendChild(g);
+      }
+      const tag = tags.get(key);
+      if (tag){
+        const s = document.createElement("span"); s.className = "tg combo"; s.textContent = "Combo"; li.appendChild(s);
+      }
+      // Basics are never fetched from Scryfall, so they have no card record to read.
+      // They still deserve a line — an empty row under a name looks like a bug.
+      let why = card ? cardOneLiner(card, deck) : "";
+      if (!why) why = basicLandLine(stripQty(decodeName(c.n)));
+      if (why || tag){
+        const w = document.createElement("span"); w.className = "dl-why";
+        w.textContent = why;
+        if (tag){
+          const cw = document.createElement("span"); cw.className = "cw";
+          cw.textContent = (why ? " " : "") + "Combos here: " + tag.makes + ".";
+          w.appendChild(cw);
+        }
+        li.appendChild(w);
+      }
       ul.appendChild(li);
     });
     block.appendChild(ul);
@@ -3446,15 +3988,259 @@ async function keepDeckForever(){
   flashSavedToast();
 }
 
+/* Read the deck's cards in the background, then repaint the showcase so the
+   why-lines and power modules fill in. Silent: if the fetch fails or the user has
+   already clicked a different deck, nothing happens and the page stays as it was. */
+function warmShowcase(key){
+  if (!key || !DECKS[key]) return;
+  ensureDeckAnalysis(key, DECKS[key]).then(bundle => {
+    if (ACTIVE_KEY !== key || !bundle) return;
+    renderShowcase(DECKS[key], bundle.cardData);
+  }).catch(() => {});
+}
+
 function renderShowcase(deck, cardData){
+  // Most callers do not bother passing cardData. Fall back to whatever the analysis
+  // cache already holds for this deck, so the why-lines and combo modules show up
+  // no matter which path re-rendered the page.
+  if (!cardData){
+    const cached = DECK_CACHE.get(deckKeyFor(deck));
+    if (cached && cached.cardData) cardData = cached.cardData;
+  }
   renderDeckHeader(deck);
   renderDeckFront(deck);
   renderTwoThrones(deck);
   updateCommanderPrompt(deck);
   renderValidation(deck, cardData);
   renderStats(deck);
-  renderDecklist(deck);
+  renderPowerModules(deck, cardData);
+  renderDecklist(deck, cardData);
   renderShowcaseActions();
+}
+
+/* The combos your list already contains, and the ones it is a single card short of.
+   Everything here is computed at load from the real 100 cards -- nothing per-deck to edit. */
+function renderPowerModules(deck, cardData){
+  const host = document.getElementById("powerModules");
+  if (!host) return;
+  host.innerHTML = "";
+  if (!cardData) return;
+  const found = findCombos(deck, cardData);
+  if (!found.have.length && !found.away.length){
+    host.innerHTML = '<div class="mod-grp"><h4>Power modules</h4>' +
+      '<div class="mod-empty">No known combo lines in this list yet. That is not a problem — ' +
+      'plenty of strong decks win on damage and value. If you want one, tell me and I will find a package that fits your colors.</div></div>';
+    return;
+  }
+  const pieceHtml = (cb, missing) => cb.pieces.map(p => {
+    const nm = niceCardName(p);
+    const isMissing = missing.indexOf(p) >= 0;
+    const link = '<a href="' + scry(nm) + '" target="_blank" rel="noopener">' + esc(nm) + '</a>';
+    return isMissing ? '<span class="miss">' + link + ' &larr; add this</span>' : link;
+  }).join(" &nbsp;+&nbsp; ");
+
+  // Several combos can produce the same result off the same cards you already own
+  // (three different Sanguine Bond halves, for instance). Show that once, with the
+  // alternatives named, instead of three rows that look like a bug.
+  const dedupe = arr => {
+    const groups = [];
+    arr.forEach(f => {
+      const owned = f.combo.pieces.filter(p => f.missing.indexOf(p) < 0).sort().join("|");
+      const sig = f.combo.makes + "::" + owned;
+      const g = groups.find(x => x.sig === sig);
+      if (g){ f.missing.forEach(m => { if (g.alts.indexOf(m) < 0) g.alts.push(m); }); }
+      else groups.push({ sig: sig, first: f, alts: [] });
+    });
+    return groups;
+  };
+  const rows = (arr, cls, flag) => dedupe(arr).map(g => {
+    const f = g.first;
+    const alt = g.alts.length
+      ? '<div class="mr-note">Or use instead: ' + g.alts.map(a => esc(niceCardName(a))).join(", ") + '.</div>'
+      : "";
+    return '<div class="mod-row ' + cls + '">' +
+      '<div class="mr-top"><span class="mr-makes">' + esc(f.combo.makes) + '</span>' +
+        '<span class="mr-flag">' + flag + '</span></div>' +
+      '<div class="mr-pieces">' + pieceHtml(f.combo, f.missing) + '</div>' +
+      '<div class="mr-note">' + esc(f.combo.note) + '</div>' + alt +
+    '</div>';
+  }).join("");
+
+  let html = '<div class="mods">';
+  if (found.have.length){
+    html += '<div class="mod-grp"><h4>Already in the deck (' + dedupe(found.have).length + ')</h4>' +
+            rows(found.have, "", "You have it") + '</div>';
+  }
+  if (found.away.length){
+    html += '<div class="mod-grp"><h4>One card away (' + dedupe(found.away).length + ')</h4>' +
+            rows(found.away, "away", "Add one") + '</div>';
+  }
+  html += '</div>';
+  host.innerHTML = html;
+}
+
+/* ============ LOOK UP A COMMANDER ============
+   A lookup that works for any commander ever printed, not just the decks saved here.
+   It reads nothing from your decks and writes nothing back -- safe to hand the phone
+   to someone across the table. Two Scryfall endpoints, both public and key-free:
+   `autocomplete` for the name suggestions, `named?fuzzy` for the card itself. */
+
+/* Every known combo line that is legal inside a given colour identity. Same table the
+   Power Modules use, just filtered by colour instead of by what you own. */
+function combosForIdentity(idArr){
+  const idSet = new Set((idArr || []).map(c => String(c).toUpperCase()));
+  return COMBOS
+    .filter(cb => String(cb.ci || "").split("").filter(Boolean).every(c => idSet.has(c)))
+    // Most colour-specific first. A colourless combo is available to every deck at the
+    // table, so it is the least interesting thing to tell someone about their commander.
+    .sort((a,b) => (b.ci || "").length - (a.ci || "").length);
+}
+
+let LOOKUP_BOUND = false, LOOKUP_TIMER = null, LOOKUP_SEQ = 0;
+
+function enterLookup(){
+  const inp = document.getElementById("lookupInput");
+  if (!inp) return;
+  if (!LOOKUP_BOUND){
+    LOOKUP_BOUND = true;
+    document.getElementById("lookupBtn").addEventListener("click", () => runLookup(inp.value));
+    inp.addEventListener("keydown", e => {
+      if (e.key === "Enter"){ e.preventDefault(); hideSugg(); runLookup(inp.value); }
+      if (e.key === "Escape") hideSugg();
+    });
+    // Typing shows name suggestions. Debounced so a fast typist sends one request,
+    // not one per keystroke.
+    inp.addEventListener("input", () => {
+      clearTimeout(LOOKUP_TIMER);
+      const q = inp.value.trim();
+      if (q.length < 3){ hideSugg(); return; }
+      LOOKUP_TIMER = setTimeout(() => suggestNames(q), 220);
+    });
+  }
+  inp.focus();
+}
+
+function hideSugg(){
+  const s = document.getElementById("lookupSugg");
+  if (s){ s.hidden = true; s.innerHTML = ""; }
+}
+
+async function suggestNames(q){
+  const seq = ++LOOKUP_SEQ;
+  let names = [];
+  try {
+    const res = await fetch("https://api.scryfall.com/cards/autocomplete?q=" + encodeURIComponent(q));
+    if (res.ok) names = (await res.json()).data || [];
+  } catch(e){ /* offline: the Look Up button still works, so stay quiet */ }
+  if (seq !== LOOKUP_SEQ) return;          // a newer keystroke already won
+  const host = document.getElementById("lookupSugg");
+  if (!host) return;
+  if (!names.length){ hideSugg(); return; }
+  host.innerHTML = "";
+  names.slice(0, 7).forEach(n => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = n;
+    b.addEventListener("click", () => {
+      document.getElementById("lookupInput").value = n;
+      hideSugg(); runLookup(n);
+    });
+    host.appendChild(b);
+  });
+  host.hidden = false;
+}
+
+async function runLookup(raw){
+  const name = String(raw || "").trim();
+  const st = document.getElementById("lookupStatus");
+  const out = document.getElementById("lookupResult");
+  if (!name){
+    st.textContent = "Type a commander's name first."; st.className = "status err";
+    out.innerHTML = ""; return;
+  }
+  hideSugg();
+  st.textContent = "Looking up " + name + "…"; st.className = "status";
+  out.innerHTML = "";
+  const seq = ++LOOKUP_SEQ;
+  try {
+    const res = await fetch("https://api.scryfall.com/cards/named?fuzzy=" + encodeURIComponent(name));
+    if (seq !== LOOKUP_SEQ) return;
+    if (!res.ok){
+      st.textContent = "No card found for “" + name + "”. Check the spelling, or type three letters and pick from the list.";
+      st.className = "status err";
+      return;
+    }
+    const card = await res.json();
+    if (seq !== LOOKUP_SEQ) return;
+    st.textContent = ""; st.className = "status";
+    renderLookupResult(card);
+  } catch(e){
+    if (seq !== LOOKUP_SEQ) return;
+    st.textContent = "Could not reach Scryfall. Check your connection and try again.";
+    st.className = "status err";
+  }
+}
+
+function renderLookupResult(card){
+  const out = document.getElementById("lookupResult");
+  const face = (card.card_faces && card.card_faces[0]) || card;
+  const img = (card.image_uris && card.image_uris.normal) ||
+              (face.image_uris && face.image_uris.normal) || "";
+  const ci = card.color_identity || [];
+  const theme = themeForIdentity(ci);
+  // Show pips in WUBRG order, the way the cards themselves are written -- Scryfall
+  // returns them alphabetically, which reads as gibberish to anyone who plays.
+  const WUBRG = "WUBRG";
+  const pips = ci.length
+    ? ci.slice().sort((a,b) => WUBRG.indexOf(a) - WUBRG.indexOf(b)).join("")
+    : "C";
+
+  // Is this actually legal as a commander? Say so plainly instead of refusing to show it.
+  const tl = String(card.type_line || "");
+  const ora = String(card.oracle_text || face.oracle_text || "");
+  const canLead = /Legendary/.test(tl) && /Creature/.test(tl) || /can be your commander/i.test(ora);
+  const banned = card.legalities && card.legalities.commander && card.legalities.commander !== "legal";
+
+  let h = '<div class="lk-card">';
+  h += '<div class="lk-head">';
+  if (img) h += '<img class="lk-art" src="' + esc(img) + '" alt="' + esc(card.name) + '" loading="lazy">';
+  h += '<div class="lk-id">';
+  h += '<h3>' + esc(card.name) + '</h3>';
+  h += '<div class="lk-cost">' + esc(card.mana_cost || face.mana_cost || "") + (card.cmc != null ? '  &middot;  mana value ' + card.cmc : '') + '</div>';
+  h += '<div class="lk-colors">' + esc(theme.name) + '  (' + esc(pips) + ')</div>';
+  h += '<div class="lk-flavor">' + esc(theme.flavor || "") + '</div>';
+  h += '<div class="lk-cost" style="margin-top:.5em">' + esc(tl) + '</div>';
+  h += '</div></div>';
+
+  if (!canLead) h += '<div class="lk-warn">This is not a legendary creature, so it cannot lead a deck on its own.</div>';
+  else if (banned) h += '<div class="lk-warn">Careful: Scryfall lists this as ' + esc(card.legalities.commander.replace(/_/g," ")) + ' in Commander.</div>';
+
+  if (ora){
+    h += '<div class="lk-sec"><h4>What it does</h4><div class="lk-oracle">' + esc(ora) + '</div></div>';
+  }
+
+  // The part Scryfall will not tell you: which known combo lines these colours allow.
+  const legal = combosForIdentity(ci);
+  h += '<div class="lk-sec"><h4>Combo lines these colors allow (' + legal.length + ')</h4>';
+  if (!legal.length){
+    h += '<div class="lk-oracle" style="color:var(--text-dim)">None in this app’s list yet. That is a gap here, not a problem with the commander.</div>';
+  } else {
+    h += '<div class="mods">';
+    legal.slice(0, 8).forEach(cb => {
+      h += '<div class="mod-row"><div class="mr-top"><span class="mr-makes">' + esc(cb.makes) + '</span></div>';
+      h += '<div class="mr-pieces">' + cb.pieces.map(p => '<a href="' + esc(scry(niceCardName(p))) + '" target="_blank" rel="noopener">' + esc(niceCardName(p)) + '</a>').join("  +  ") + '</div>';
+      h += '<div class="mr-note">' + esc(cb.note) + '</div></div>';
+    });
+    h += '</div>';
+    if (legal.length > 8) h += '<div class="lk-oracle" style="color:var(--text-dim)">Showing the first 8 of ' + legal.length + '.</div>';
+  }
+  h += '</div>';
+
+  h += '<div class="lk-links">';
+  if (card.scryfall_uri) h += '<a href="' + esc(card.scryfall_uri) + '" target="_blank" rel="noopener">Scryfall</a>';
+  h += '<a href="https://edhrec.com/commanders/' + encodeURIComponent(String(card.name).toLowerCase().replace(/[^a-z0-9 ]/gi,"").replace(/\s+/g,"-")) + '" target="_blank" rel="noopener">EDHREC</a>';
+  h += '</div></div>';
+
+  out.innerHTML = h;
 }
 
 /* Show the "Which card is your commander?" box only when the active deck has no commander
@@ -5512,6 +6298,7 @@ async function switchView(name){
   if (name === "table") { enterTable(); return; }
   if (name === "play") { await enterPlay(); return; }
   if (name === "sb") { await enterSpellbook(); return; }
+  if (name === "lookup") { enterLookup(); return; }
 }
 
 /* ============ SPELLBOOK HUB ============
@@ -6001,6 +6788,7 @@ function renderSwitcher(){
       renderWhere(ACTIVE_DECK, b2.grade, b2.coach, b2.archetype, b2.suggMap);
     } else {
       applyTheme(identityStringToArray(ACTIVE_DECK.identity));
+      warmShowcase(key);
     }
     switchView("showcase");
   }));
@@ -8240,6 +9028,8 @@ function boot(){
 
   renderShowcase(ACTIVE_DECK);
   renderSwitcher();
+  // Fill in the why-lines and power modules for the deck you land on.
+  warmShowcase(ACTIVE_KEY);
 
   document.getElementById("scoreBtn").addEventListener("click", () => scoreDeck(ACTIVE_DECK));
   document.getElementById("readBtn").addEventListener("click", readDroppedDeck);
@@ -8303,7 +9093,11 @@ boot();
     atkinson:"'Atkinson Hyperlegible','Lexend',system-ui,-apple-system,'Segoe UI',sans-serif",
     lexend:"'Lexend','Atkinson Hyperlegible',system-ui,sans-serif",
     dyslexic:"'OpenDyslexic','Atkinson Hyperlegible',system-ui,sans-serif",
-    system:"system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
+    system:"system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",
+    /* The old storybook serif. It is the nicest-looking option and it is the one the
+       Urtet reference page uses -- but it is a serif, which is the harder read.
+       Offered, never the default. */
+    classic:"'EB Garamond',Georgia,serif"
   };
   var K={size:'tac_a11y_size',font:'tac_a11y_font',calm:'tac_a11y_calm'};
   function g(k,d){try{return localStorage.getItem(k)||d;}catch(e){return d;}}
