@@ -275,6 +275,44 @@ html.calm .deck-mark{filter:none;opacity:.13}
 .df-keep-row .keep-note{font-size:.9em;color:var(--steel);line-height:1.5}
 .btn.keep{border-color:var(--accent-bright);color:var(--accent-bright)}
 
+/* ============ TWO THRONES — one box, two decks ============
+   Shown only for decks that share a physical box (see MODULAR_PAIRS). The
+   summary line is always visible; the swap list sits behind a native <details>
+   so the page stays calm until you ask for it. */
+.two-thrones{background:linear-gradient(165deg,rgba(18,21,48,0.92),rgba(8,10,22,0.95));
+  border:1px solid var(--panel-edge);border-radius:12px;padding:1.05em 1.15em 1.15em;margin:0 0 1.8em;
+  box-shadow:0 2px 24px rgba(0,0,0,0.34)}
+.two-thrones:empty{display:none}
+.tt-label{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:2px;text-transform:uppercase;
+  color:var(--accent-bright);display:block;margin-bottom:.45em}
+.tt-lead{color:var(--text);line-height:1.68;font-size:1.03em;margin:0 0 .8em;max-width:60ch}
+.tt-count{color:var(--bone-bright);font-weight:600}
+.tt-mode{font-size:.95em;color:var(--steel);line-height:1.6;margin:0 0 .3em}
+.tt-mode .tt-you{color:var(--bone-bright)}
+.tt-swaps{margin-top:.9em;border-top:1px solid var(--panel-edge);padding-top:.35em}
+.tt-swaps summary{cursor:pointer;font-family:'Cinzel',serif;font-size:.72em;letter-spacing:1.6px;
+  text-transform:uppercase;color:var(--accent-bright);padding:.55em 0;list-style:none}
+.tt-swaps summary::-webkit-details-marker{display:none}
+.tt-swaps summary::before{content:"\25B8";display:inline-block;margin-right:.6em;transition:transform .15s ease}
+.tt-swaps[open] summary::before{transform:rotate(90deg)}
+.tt-row{padding:.65em 0;border-top:1px solid rgba(255,255,255,0.05)}
+.tt-row:first-of-type{border-top:none}
+.tt-cards{line-height:1.55;font-size:1.01em}
+.tt-out{color:var(--crimson-bright)}
+.tt-in{color:var(--jade-bright)}
+.tt-arrow{color:var(--dim);margin:0 .5em}
+.tt-why{font-size:.9em;color:var(--steel);line-height:1.55;max-width:58ch;margin-top:.15em}
+.tt-extra{font-size:.9em;color:var(--text-dim);line-height:1.55;margin-top:.7em}
+/* Box note on a coach swap — says whether the cut touches the shared core
+   (and so lengthens the conversion) or only this mode. Paired decks only. */
+.swap-box-note{margin:.55em 0 .2em;padding:.6em .75em;border-radius:8px;line-height:1.55;font-size:.93em;
+  color:var(--steel);border:1px solid var(--panel-edge);background:rgba(255,255,255,0.02)}
+.swap-box-note .bn-tag{font-family:'Cinzel',serif;font-size:.68em;letter-spacing:1.5px;text-transform:uppercase;
+  display:inline-block;margin-right:.6em;padding:.2em .6em;border-radius:999px;border:1px solid currentColor}
+.swap-box-note.both{border-color:color-mix(in srgb,var(--gold) 45%,var(--panel-edge))}
+.swap-box-note.both .bn-tag{color:var(--gold)}
+.swap-box-note.only .bn-tag{color:var(--dim)}
+
 /* ============ SECTION HEADERS & RUNE DIVIDERS ============ */
 h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);color:var(--bone-bright);
   letter-spacing:3px;text-transform:uppercase;
@@ -1521,6 +1559,7 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
     <div class="actions" id="showcaseActions"></div>
     <div id="showcaseConfirm"></div>
     <div id="deckFront" class="deck-front"></div>
+    <div id="twoThrones" class="two-thrones"></div>
     <div class="validation" id="validation"></div>
     <div class="stats" id="stats"></div>
 
@@ -1797,13 +1836,154 @@ const KESS_DECK = {
   identity: "ubr",
   buckets: [{"bucket": "Commander (1)", "cards": [{"n": "Kess, Dissident Mage", "star": 1}]}, {"bucket": "Spell Engines (8)", "cards": [{"n": "Archmage Emeritus", "star": 1}, {"n": "Veyran, Voice of Duality", "star": 1}, {"n": "Vivi Ornitier", "star": 1}, {"n": "Professor Onyx", "star": 1}, {"n": "Snapcaster Mage", "star": 1}, {"n": "Baral, Chief of Compliance"}, {"n": "Galazeth Prismari"}, {"n": "Pitiless Plunderer"}]}, {"bucket": "Wraith Pack (9)", "cards": [{"n": "Nazgûl ×3", "star": 1}, {"n": "Lord of the Nazgûl", "star": 1, "new": 1}, {"n": "Witch-king of Angmar", "star": 1}, {"n": "Witch-king, Sky Scourge", "star": 1}, {"n": "Sauron, the Necromancer"}, {"n": "Call of the Ring"}, {"n": "Nazgûl Battle-Mace"}]}, {"bucket": "Draw & Wheels (15)", "cards": [{"n": "Rhystic Study", "star": 1}, {"n": "Mystic Remora", "star": 1}, {"n": "Windfall", "star": 1}, {"n": "Notion Thief", "star": 1}, {"n": "Psychic Frog", "star": 1}, {"n": "Sensei's Divining Top", "star": 1}, {"n": "Brainstorm"}, {"n": "Ponder"}, {"n": "Baleful Strix"}, {"n": "Fact or Fiction"}, {"n": "Frantic Search"}, {"n": "Expressive Iteration"}, {"n": "Emeritus of Ideation // Ancestral Recall", "star": 1, "new": 1}, {"n": "Unfulfilled Desires"}, {"n": "The Dawning Archaic"}]}, {"bucket": "Graveyard & Recursion (4)", "cards": [{"n": "Underworld Breach", "star": 1}, {"n": "Past in Flames", "star": 1}, {"n": "Reanimate", "star": 1}, {"n": "Vivi's Persistence"}]}, {"bucket": "Interaction (16)", "cards": [{"n": "Force of Will", "star": 1}, {"n": "Cryptic Command", "star": 1}, {"n": "Deadly Rollick", "star": 1}, {"n": "Toxic Deluge", "star": 1}, {"n": "Counterflux"}, {"n": "Counterpoint"}, {"n": "Mystic Confluence"}, {"n": "Mana Sculpt"}, {"n": "Stifle"}, {"n": "Drown in the Loch"}, {"n": "Terminate"}, {"n": "Chaos Warp"}, {"n": "Feed the Swarm"}, {"n": "Reality Shift"}, {"n": "Saw in Half"}, {"n": "Spellskite"}]}, {"bucket": "Bombs & Tutors (8)", "cards": [{"n": "Demonic Tutor", "star": 1}, {"n": "Liliana Vess", "star": 1}, {"n": "Jeska's Will", "star": 1}, {"n": "Nicol Bolas, the Ravager // Nicol Bolas, the Arisen", "star": 1}, {"n": "Sheoldred // The True Scriptures", "star": 1}, {"n": "Duskmantle Guildmage", "star": 1}, {"n": "Mindcrank", "star": 1}, {"n": "Deadly Dispute"}]}, {"bucket": "Ramp (7)", "cards": [{"n": "Sol Ring", "star": 1}, {"n": "Arcane Signet"}, {"n": "Fellwar Stone"}, {"n": "Izzet Signet"}, {"n": "Rakdos Signet"}, {"n": "Talisman of Creativity"}, {"n": "Talisman of Indulgence"}]}, {"bucket": "Lands (32)", "cards": [{"n": "Command Tower", "star": 1}, {"n": "Blood Crypt", "star": 1}, {"n": "Watery Grave", "star": 1}, {"n": "Scalding Tarn", "star": 1}, {"n": "Bloodstained Mire", "star": 1}, {"n": "Urborg, Tomb of Yawgmoth", "star": 1}, {"n": "Drowned Catacomb"}, {"n": "Sulfur Falls"}, {"n": "Dragonskull Summit"}, {"n": "Smoldering Marsh"}, {"n": "Shivan Reef"}, {"n": "Darkwater Catacombs"}, {"n": "Graven Cairns"}, {"n": "Exotic Orchard"}, {"n": "Forbidden Orchard"}, {"n": "Mana Confluence"}, {"n": "Path of Ancestry"}, {"n": "Rogue's Passage"}, {"n": "Desolate Lighthouse"}, {"n": "Minamo, School at Water's Edge"}, {"n": "Xander's Lounge"}, {"n": "Izzet Guildgate"}, {"n": "Seat of the Synod"}, {"n": "Great Furnace"}, {"n": "Island ×3"}, {"n": "Swamp ×3"}, {"n": "Mountain ×2"}]}]
 };
+/* Sheoldred, the Apocalypse (Mono-Black cEDH Turbo).
+   Mode A of a modular "one box, two thrones" build: swap 19 cards to become
+   the Ghoul zombie deck below. Yawgmoth's Bargain is intentionally OUT (banned
+   in Commander). Owned-cards list from Greg's two-decks-one-box showcase. */
+const SHEOLDRED_DECK = {
+  name: "Sheoldred, the Apocalypse",
+  flavor: "Every card they draw costs two life. Ritual out the engine and end it before the table breathes.",
+  winLine: "Ritual into Necropotence or Ad Nauseam, refill past what the game should allow, and close — Peer into the Abyss with Sheoldred out is lethal on the spot, or Citadel plus Top plus Aetherflux burns the deck into a 50-point gun.",
+  character: "Sheoldred does not rush and does not bluff. She sits at the head of the table and turns knowledge into a toll — every card the others draw costs them blood, every card she draws builds the ending. She rituals out early, tears her own hand open on Necropotence or Ad Nauseam, and refills past what the game should allow. By the time anyone notices the clock, she has already read the last page. Regal, patient, and completely without mercy.",
+  colors: "Mono-Black (B)",
+  commander: "Sheoldred, the Apocalypse",
+  kicker: "Commander . Mono-Black cEDH Turbo",
+  identity: "b",
+  buckets: [
+    {"bucket":"Commander (1)","cards":[{"n":"Sheoldred, the Apocalypse","star":1}]},
+    {"bucket":"Fast Mana & Rituals (13)","cards":[
+      {"n":"K'rrik, Son of Yawgmoth","star":1},{"n":"Mana Vault"},{"n":"Dark Ritual"},
+      {"n":"Cabal Ritual"},{"n":"Culling the Weak"},{"n":"Rain of Filth"},
+      {"n":"Bubbling Muck"},{"n":"Lotus Petal"},{"n":"Jet Medallion"},
+      {"n":"Arcane Signet"},{"n":"Fellwar Stone"},{"n":"Thought Vessel"},
+      {"n":"Springleaf Drum"}
+    ]},
+    {"bucket":"Tutors (8)","cards":[
+      {"n":"Demonic Tutor","star":1},{"n":"Vampiric Tutor","star":1},
+      {"n":"Imperial Seal"},{"n":"Grim Tutor"},{"n":"Beseech the Queen"},
+      {"n":"Scheming Symmetry"},{"n":"Wishclaw Talisman"},{"n":"Praetor's Grasp"}
+    ]},
+    {"bucket":"Card Engines (13)","cards":[
+      {"n":"Ad Nauseam","star":1},{"n":"Necropotence","star":1},{"n":"Necrodominance"},
+      {"n":"The One Ring","star":1},{"n":"Bolas's Citadel"},{"n":"Dark Confidant"},
+      {"n":"Phyrexian Arena"},{"n":"Black Market Connections"},{"n":"Erebos, God of the Dead"},
+      {"n":"Greed"},{"n":"Sensei's Divining Top"},{"n":"Insatiable Avarice"},
+      {"n":"Yawgmoth, Thran Physician"}
+    ]},
+    {"bucket":"Cheap Draw (2)","cards":[
+      {"n":"Sign in Blood"},{"n":"Night's Whisper"}
+    ]},
+    {"bucket":"Sheoldred Kill Package (5)","cards":[
+      {"n":"Peer into the Abyss"},{"n":"Teferi's Puzzle Box"},{"n":"Temple Bell"},
+      {"n":"Dark Deal"},{"n":"Memory Jar"}
+    ]},
+    {"bucket":"Combo Lines (6)","cards":[
+      {"n":"Bloodchief Ascension"},{"n":"Mindcrank"},{"n":"Chain of Smog"},
+      {"n":"Professor Onyx"},{"n":"Aetherflux Reservoir"},{"n":"Skirge Familiar"}
+    ]},
+    {"bucket":"Recursion (3)","cards":[
+      {"n":"Reanimate"},{"n":"Animate Dead"},{"n":"Yawgmoth's Will","star":1}
+    ]},
+    {"bucket":"Removal (7)","cards":[
+      {"n":"Snuff Out"},{"n":"Dismember"},{"n":"Deadly Rollick"},{"n":"Toxic Deluge"},
+      {"n":"Feed the Swarm"},{"n":"Withering Torment"},{"n":"Bitter Triumph"}
+    ]},
+    {"bucket":"Disruption & Hate (6)","cards":[
+      {"n":"Imp's Mischief"},{"n":"Force of Despair"},{"n":"Defense Grid"},
+      {"n":"Opposition Agent"},{"n":"Dauthi Voidwalker"},{"n":"Orcish Bowmasters"}
+    ]},
+    {"bucket":"Lands (36)","cards":[
+      {"n":"Swamp ×22"},{"n":"Cabal Coffers"},{"n":"Urborg, Tomb of Yawgmoth"},
+      {"n":"Ancient Tomb"},{"n":"Urza's Saga"},{"n":"Crystal Vein"},{"n":"War Room"},
+      {"n":"Boseiju, Who Shelters All"},{"n":"Reliquary Tower"},
+      {"n":"Geier Reach Sanitarium"},{"n":"Mikokoro, Center of the Sea"},
+      {"n":"Takenuma, Abandoned Mire"},{"n":"Fell the Profane // Fell Mire"},
+      {"n":"Boggart Trawler // Boggart Bog"},{"n":"Malakir Rebirth // Malakir Mire"}
+    ]}
+  ]
+};
+
+/* The Ghoul, Gunslinger (Mono-Black Zombie Aristocrats).
+   Mode B of the same box: swap the 19 back, the Ghoul takes the command zone,
+   and Sheoldred rides shotgun in the 99. Casual pod build — every dead zombie
+   taxes the table and mints Treasures. Same 36 lands as Mode A. */
+const GHOUL_DECK = {
+  name: "The Ghoul, Gunslinger",
+  flavor: "Every zombie that dies pays you back. Grind the yard until the table runs out of life.",
+  winLine: "Loop Gravecrawler with an altar and Pitiless Plunderer while Blood Artist and Zulaport bleed the table, or fire Mikaeus plus Walking Ballista for infinite damage. Gray Merchant off Cabal Coffers ends it the honest way.",
+  character: "The Ghoul runs the graveyard like a saloon — nobody really leaves, they just come back for another round. Every zombie that falls tips the table a little life and slides a coin into his pocket. He is easy about it, almost friendly, which is the unsettling part: the bodies keep dropping, the treasures keep stacking, and the whole time he is grinning. Gravecrawler never stays down, Mikaeus won't let anyone rest, and the drain just keeps counting. He wins slow, then all at once, and tips his hat when he does.",
+  colors: "Mono-Black (B)",
+  commander: "The Ghoul, Gunslinger",
+  kicker: "Commander . Mono-Black Zombie Aristocrats",
+  identity: "b",
+  buckets: [
+    {"bucket":"Commander (1)","cards":[{"n":"The Ghoul, Gunslinger","star":1}]},
+    {"bucket":"Zombie Core (8)","cards":[
+      {"n":"Gravecrawler","star":1},{"n":"Mikaeus, the Unhallowed","star":1},
+      {"n":"Gray Merchant of Asphodel","star":1},{"n":"Diregraf Colossus"},
+      {"n":"Carrion Feeder"},{"n":"Undead Augur"},{"n":"Overlord of the Balemurk"},
+      {"n":"Sheoldred, the Apocalypse","star":1}
+    ]},
+    {"bucket":"Drain Payoffs (3)","cards":[
+      {"n":"Blood Artist"},{"n":"Zulaport Cutthroat"},{"n":"Zodiark, Umbral God"}
+    ]},
+    {"bucket":"Sac Outlets & Altars (4)","cards":[
+      {"n":"Viscera Seer"},{"n":"Ashnod's Altar"},{"n":"Altar of Dementia"},
+      {"n":"Pitiless Plunderer"}
+    ]},
+    {"bucket":"Combo Finish (2)","cards":[
+      {"n":"Walking Ballista","star":1},{"n":"Aetherflux Reservoir"}
+    ]},
+    {"bucket":"Reanimation & Recursion (5)","cards":[
+      {"n":"Reanimate"},{"n":"Animate Dead"},{"n":"Yawgmoth's Will","star":1},
+      {"n":"Victimize"},{"n":"Rise of the Dread Marn"}
+    ]},
+    {"bucket":"Removal & Sweepers (8)","cards":[
+      {"n":"Snuff Out"},{"n":"Dismember"},{"n":"Deadly Rollick"},{"n":"Toxic Deluge"},
+      {"n":"Feed the Swarm"},{"n":"Withering Torment"},{"n":"Bitter Triumph"},
+      {"n":"The Meathook Massacre"}
+    ]},
+    {"bucket":"Disruption & Hate (4)","cards":[
+      {"n":"Imp's Mischief"},{"n":"Force of Despair"},{"n":"Dauthi Voidwalker"},
+      {"n":"Orcish Bowmasters"}
+    ]},
+    {"bucket":"Card Engines (13)","cards":[
+      {"n":"Necropotence","star":1},{"n":"The One Ring","star":1},{"n":"Bolas's Citadel"},
+      {"n":"Dark Confidant"},{"n":"Phyrexian Arena"},{"n":"Black Market Connections"},
+      {"n":"Erebos, God of the Dead"},{"n":"Greed"},{"n":"Sensei's Divining Top"},
+      {"n":"Insatiable Avarice"},{"n":"Yawgmoth, Thran Physician"},
+      {"n":"Sign in Blood"},{"n":"Night's Whisper"}
+    ]},
+    {"bucket":"Fast Mana & Rituals (11)","cards":[
+      {"n":"K'rrik, Son of Yawgmoth","star":1},{"n":"Mana Vault"},{"n":"Dark Ritual"},
+      {"n":"Cabal Ritual"},{"n":"Culling the Weak"},{"n":"Lotus Petal"},
+      {"n":"Jet Medallion"},{"n":"Arcane Signet"},{"n":"Fellwar Stone"},
+      {"n":"Thought Vessel"},{"n":"Springleaf Drum"}
+    ]},
+    {"bucket":"Tutors (5)","cards":[
+      {"n":"Demonic Tutor","star":1},{"n":"Vampiric Tutor","star":1},{"n":"Grim Tutor"},
+      {"n":"Beseech the Queen"},{"n":"Wishclaw Talisman"}
+    ]},
+    {"bucket":"Lands (36)","cards":[
+      {"n":"Swamp ×22"},{"n":"Cabal Coffers"},{"n":"Urborg, Tomb of Yawgmoth"},
+      {"n":"Ancient Tomb"},{"n":"Urza's Saga"},{"n":"Crystal Vein"},{"n":"War Room"},
+      {"n":"Boseiju, Who Shelters All"},{"n":"Reliquary Tower"},
+      {"n":"Geier Reach Sanitarium"},{"n":"Mikokoro, Center of the Sea"},
+      {"n":"Takenuma, Abandoned Mire"},{"n":"Fell the Profane // Fell Mire"},
+      {"n":"Boggart Trawler // Boggart Bog"},{"n":"Malakir Rebirth // Malakir Mire"}
+    ]}
+  ]
+};
+
 /* ============ SEED REGISTRY ============ */
 /* Seed decks always exist. Stored decks under the same name shadow them (the user's evolved list wins). */
 const SEED_DECKS = {
   splinter: SPLINTER_DECK,
   urtet: URTET_DECK,
   chatterfang: CHATTERFANG_DECK,
-  kess: KESS_DECK
+  kess: KESS_DECK,
+  sheoldred: SHEOLDRED_DECK,
+  ghoul: GHOUL_DECK
 };
 const SEED_KEYS = new Set(Object.keys(SEED_DECKS));
 /* Map deck.name (lowercased) to the seed key it belongs to, so stored decks with the same name overwrite the seed slot. */
@@ -2900,10 +3080,22 @@ function computeBracket(deck, cardData, arch){
            landDenial: uniq(landDenial), combos };
 }
 
-/* Bracket info for the active deck: label + why. Card-driven; only falls back
+/* The registry key for a deck object, so its analysis is read for the deck in
+   hand and not for whatever is active. A deck that is not in the registry yet
+   (one still being built mid-import) falls back to the active slot, which is
+   where its card data lives. */
+function deckKeyFor(deck){
+  if (deck && deck !== ACTIVE_DECK){
+    const keys = Object.keys(DECKS);
+    for (let i = 0; i < keys.length; i++){ if (DECKS[keys[i]] === deck) return keys[i]; }
+  }
+  return ACTIVE_KEY;
+}
+
+/* Bracket info for a deck: label + why. Card-driven; only falls back
    to a stored value while the cards are still loading. */
 function bracketFor(deck){
-  const b = DECK_CACHE.get(ACTIVE_KEY);
+  const b = DECK_CACHE.get(deckKeyFor(deck));
   const info = computeBracket(deck, b && b.cardData, b && b.archetype);
   if (info) return info;
   if (deck && deck.bracket){
@@ -2953,6 +3145,231 @@ function renderDeckFront(deck){
   host.innerHTML = html;
   const kb = document.getElementById("keepForeverBtn");
   if (kb) kb.addEventListener("click", keepDeckForever);
+}
+
+/* ============================================================
+   TWO THRONES — one physical box, two decks.
+   Some decks are built as a pair: most of the box stays put, and a small set of
+   cards comes out so the other deck's cards can go in. What stays and what
+   moves is computed from the LIVE lists every render, so the counts stay true
+   even if a list is edited later. The only hand-written part is the reason on
+   each swap; a card with no reason still shows, it just has no note.
+   ============================================================ */
+const MODULAR_PAIRS = [
+  {
+    // keys[0] is the "base" mode, keys[1] is what it converts into.
+    keys: ["sheoldred", "ghoul"],
+    title: "Two thrones, one box",
+    modes: {
+      sheoldred: "Mode A — Sheoldred, the turbo build",
+      ghoul: "Mode B — The Ghoul, the zombie build"
+    },
+    // Short label used inside coach notes. Written to lead a sentence, and
+    // deliberately NOT the commander's name (the deck name IS a card name here,
+    // which reads as nonsense in a sentence about that card).
+    short: {
+      sheoldred: "The Sheoldred build",
+      ghoul: "The Ghoul build"
+    },
+    // [card that comes out of Mode A, card that goes in for Mode B, why]
+    swaps: [
+      ["Imperial Seal", "The Ghoul, Gunslinger", "The new commander. The whole deck bends around him."],
+      ["Ad Nauseam", "Gravecrawler", "A body that keeps coming back, so you can sacrifice it over and over."],
+      ["Necrodominance", "Carrion Feeder", "A free sacrifice outlet that grows every time you feed it."],
+      ["Peer into the Abyss", "Gray Merchant of Asphodel", "The big drain. All that black in your costs turns into life loss."],
+      ["Teferi's Puzzle Box", "Diregraf Colossus", "Every zombie spell you cast builds the board."],
+      ["Temple Bell", "Zulaport Cutthroat", "Each death drains the table. Nobody gets to ignore it."],
+      ["Memory Jar", "Undead Augur", "Your zombies dying turns into cards in hand."],
+      ["Dark Deal", "Blood Artist", "The second drain. Two of these is what turns a loop into a kill."],
+      ["Chain of Smog", "Viscera Seer", "Free sacrifice outlet, and it smooths your draws."],
+      ["Professor Onyx", "Zodiark, Umbral God", "Late-game muscle when the grind goes long."],
+      ["Mindcrank", "Mikaeus, the Unhallowed", "Undying on everything. Half the loops in the deck need him."],
+      ["Bloodchief Ascension", "Walking Ballista", "Goes infinite with Mikaeus, and it is honest removal on its own."],
+      ["Skirge Familiar", "Pitiless Plunderer", "A treasure every time something dies. That is the mana for the loop."],
+      ["Rain of Filth", "Ashnod's Altar", "A free sacrifice outlet that pays you mana."],
+      ["Bubbling Muck", "Altar of Dementia", "Sacrifice outlet that can also just mill the table out."],
+      ["Defense Grid", "Victimize", "Brings two bodies back at once."],
+      ["Opposition Agent", "Overlord of the Balemurk", "Digs back the creatures you already lost."],
+      ["Praetor's Grasp", "Rise of the Dread Marn", "Turns a board wipe into a pile of zombies."],
+      ["Scheming Symmetry", "The Meathook Massacre", "A sweeper that drains while it kills, and it stays behind."]
+    ]
+  }
+];
+
+function modularPairFor(key){
+  for (let i = 0; i < MODULAR_PAIRS.length; i++){
+    if (MODULAR_PAIRS[i].keys.indexOf(key) > -1) return MODULAR_PAIRS[i];
+  }
+  return null;
+}
+
+/* What stays, what leaves, what arrives — counted in real cards from the live
+   lists (a "Swamp ×22" entry counts as 22), read from the active deck's side. */
+function modularSplit(pair, key){
+  const otherKey = pair.keys[0] === key ? pair.keys[1] : pair.keys[0];
+  const A = DECKS[key], B = DECKS[otherKey];
+  if (!A || !B) return null;
+  const mapA = uniqueNamesWithQty(A), mapB = uniqueNamesWithQty(B);
+  let shared = 0, outCount = 0, inCount = 0;
+  const outNames = [], inNames = [];
+  mapA.forEach((qty, n) => {
+    if (mapB.has(n)){
+      const q2 = mapB.get(n);
+      shared += Math.min(qty, q2);
+      if (qty > q2) outCount += qty - q2;      // more copies here than there
+    } else { outNames.push(n); outCount += qty; }
+  });
+  mapB.forEach((qty, n) => {
+    if (!mapA.has(n)){ inNames.push(n); inCount += qty; }
+    else if (qty > mapA.get(n)) inCount += qty - mapA.get(n);
+  });
+  return { otherKey, shared, outNames, inNames, outCount, inCount };
+}
+
+/* The panel. Only renders for a deck that is half of a pair; otherwise it
+   empties the box and the CSS (:empty) hides it. */
+function renderTwoThrones(deck){
+  const host = document.getElementById("twoThrones");
+  if (!host) return;
+  host.innerHTML = "";
+  const pair = modularPairFor(ACTIVE_KEY);
+  if (!pair) return;
+  const split = modularSplit(pair, ACTIVE_KEY);
+  if (!split) return;
+
+  const baseKey = pair.keys[0], intoKey = pair.keys[1];
+  const otherDeck = DECKS[split.otherKey];
+  const otherLabel = pair.modes[split.otherKey] || (otherDeck && otherDeck.name) || split.otherKey;
+  const onBase = ACTIVE_KEY === baseKey;
+
+  let html = '<span class="tt-label">' + esc(pair.title) + '</span>';
+  html += '<p class="tt-lead"><span class="tt-count">' + split.shared + ' cards</span> never leave the box. ' +
+          '<span class="tt-count">' + split.outCount + '</span> come out, ' +
+          '<span class="tt-count">' + split.inCount + '</span> go in, and you are holding the other deck.</p>';
+  html += '<p class="tt-mode">You are looking at <span class="tt-you">' + esc(pair.modes[ACTIVE_KEY] || deck.name) + '</span>.</p>';
+  html += '<p class="tt-mode">The other throne is ' + esc(otherLabel) + '. ' +
+          '<button class="btn small tt-go" data-go="' + esc(split.otherKey) + '">Go to it</button></p>';
+
+  // The swap table is always written in one direction (base -> into) so it can
+  // never read backwards. Only the intro sentence changes with where you are.
+  const baseDeck = DECKS[baseKey], intoDeck = DECKS[intoKey];
+  const baseMap = baseDeck ? uniqueNamesWithQty(baseDeck) : new Map();
+  const intoMap = intoDeck ? uniqueNamesWithQty(intoDeck) : new Map();
+  const rows = [], usedOut = {}, usedIn = {};
+  pair.swaps.forEach(s => {
+    const outN = s[0], inN = s[1];
+    // Only show a pair that is still true of the live lists.
+    if (baseMap.has(outN) && !intoMap.has(outN) && intoMap.has(inN) && !baseMap.has(inN)){
+      usedOut[outN] = 1; usedIn[inN] = 1;
+      rows.push('<div class="tt-row"><div class="tt-cards"><span class="tt-out">' + esc(outN) + '</span>' +
+                '<span class="tt-arrow">&#8594;</span><span class="tt-in">' + esc(inN) + '</span></div>' +
+                (s[2] ? '<div class="tt-why">' + esc(s[2]) + '</div>' : '') + '</div>');
+    }
+  });
+  // Anything the hand-written list does not cover, so nothing hides.
+  const leftOut = [], leftIn = [];
+  baseMap.forEach((q, n) => { if (!intoMap.has(n) && !usedOut[n]) leftOut.push(n); });
+  intoMap.forEach((q, n) => { if (!baseMap.has(n) && !usedIn[n]) leftIn.push(n); });
+
+  const intoName = (intoDeck && intoDeck.name) || intoKey;
+  const baseName = (baseDeck && baseDeck.name) || baseKey;
+  const intro = onBase
+    ? 'Make these swaps and you are holding ' + intoName + '.'
+    : 'These are the swaps that turned ' + baseName + ' into this deck. Reverse them to go back.';
+
+  html += '<details class="tt-swaps"><summary>Show the ' + rows.length + ' swaps</summary>' +
+          '<p class="tt-mode">' + esc(intro) + '</p>' + rows.join("") +
+          (leftOut.length ? '<p class="tt-extra">Also out: ' + esc(leftOut.sort().join(", ")) + '</p>' : '') +
+          (leftIn.length ? '<p class="tt-extra">Also in: ' + esc(leftIn.sort().join(", ")) + '</p>' : '') +
+          '</details>';
+
+  host.innerHTML = html;
+  const go = host.querySelector(".tt-go");
+  if (go) go.addEventListener("click", () => {
+    // Reuse the deck switcher so the whole switch path stays in one place.
+    const b = document.querySelector('.swdeck[data-key="' + go.dataset.go + '"]');
+    if (b) b.click();
+  });
+}
+
+/* When the active deck is half of a pair, say plainly what a swap does to the
+   OTHER deck and to the conversion. This matters because a swap only edits the
+   deck you are standing in: cutting a card both decks share does NOT pull it out
+   of the box, it stays in the other deck, so the conversion gets one card longer.
+   Cutting a card that is already mode-specific keeps the conversion the same
+   length. Returns null for any deck that is not part of a pair, so every other
+   deck in the app renders exactly as before. */
+function modularShortName(pair, key){
+  if (pair && pair.short && pair.short[key]) return pair.short[key];
+  const d = DECKS[key];
+  return (d && d.name) ? d.name : "The other build";
+}
+
+/* swapBoxNote(cutName, addName)
+   Only fires for a deck that is half of a MODULAR_PAIRS entry. Everything else
+   gets null and the note stays hidden, so normal decks are untouched.
+
+   The point it explains: editing one list never edits the other one. So the
+   real, computable consequence of a swap is what it does to the SHARED CORE,
+   and therefore to how many cards you physically move to convert the box.
+
+     cut a shared card  -> it stays in the other build -> core shrinks -> +1 swap
+     cut one of the 19  -> other build never had it    -> core same   -> no change
+     add a card the other build already runs -> core grows -> -1 swap  */
+function swapBoxNote(cutName, addName){
+  const pair = modularPairFor(ACTIVE_KEY);
+  if (!pair) return null;
+  const split = modularSplit(pair, ACTIVE_KEY);
+  if (!split) return null;
+  const thisDeck = DECKS[ACTIVE_KEY], otherDeck = DECKS[split.otherKey];
+  if (!thisDeck || !otherDeck) return null;
+
+  const otherShort = modularShortName(pair, split.otherKey);
+  const otherSet = new Set();
+  uniqueNamesWithQty(otherDeck).forEach((q, n) => otherSet.add(String(n).toLowerCase()));
+
+  const cut = cutName ? String(cutName) : "";
+  const add = addName ? String(addName) : "";
+  const cutIsShared = !!cut && otherSet.has(cut.toLowerCase());
+  const addIsInOther = !!add && otherSet.has(add.toLowerCase());
+
+  const swaps = split.outCount;
+  const after = swaps + (cutIsShared ? 1 : 0) - (addIsInOther ? 1 : 0);
+  let move;
+  if (after > swaps) move = "the box conversion grows from " + swaps + " swaps to " + after + ".";
+  else if (after < swaps) move = "the box conversion drops from " + swaps + " swaps to " + after + ".";
+  else move = "the box conversion stays at " + swaps + " swaps.";
+
+  if (addIsInOther && cutIsShared){
+    return {
+      kind: "both",
+      tag: "Both decks",
+      text: "You are trading one shared card for another. " + otherShort + " already runs " + add +
+            ", and " + cut + " sits in the shared " + split.shared + ". So " + move
+    };
+  }
+  if (addIsInOther){
+    return {
+      kind: "both",
+      tag: "Both decks",
+      text: otherShort + " already runs " + add + ". Adding it here puts the card in the shared core, so " + move
+    };
+  }
+  if (cutIsShared){
+    return {
+      kind: "both",
+      tag: "Both decks",
+      text: cut + " is one of the " + split.shared + " cards both builds share. Cutting it here only pulls it from this list. " +
+            otherShort + " keeps its copy, so " + move
+    };
+  }
+  if (!cut) return null;
+  return {
+    kind: "only",
+    tag: "This deck only",
+    text: cut + " is already one of the " + swaps + " cards that swap out. " + otherShort +
+          " never runs it. Nothing over there changes, so " + move
+  };
 }
 
 /* ============================================================
@@ -3032,6 +3449,7 @@ async function keepDeckForever(){
 function renderShowcase(deck, cardData){
   renderDeckHeader(deck);
   renderDeckFront(deck);
+  renderTwoThrones(deck);
   updateCommanderPrompt(deck);
   renderValidation(deck, cardData);
   renderStats(deck);
@@ -3123,7 +3541,12 @@ async function fetchCollection(names){
   const found = {};
   const notFound = [];
   for (let i = 0; i < batches.length; i++) {
-    const body = { identifiers: batches[i].map(n => ({ name: n })) };
+    // Modal / double-faced / split cards ("Front // Back"): Scryfall's collection
+    // endpoint only matches these by their FRONT face name, then returns the full
+    // "Front // Back" name. We key `found` by that full name, and deck lists store
+    // the full name too, so sending the front face lets the lookup line up. Sending
+    // the full "//" name would land in not_found and drop the card from the math.
+    const body = { identifiers: batches[i].map(n => ({ name: n.indexOf("//") > -1 ? n.split("//")[0].trim() : n })) };
     const res = await fetch("https://api.scryfall.com/cards/collection", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -4070,6 +4493,10 @@ function buildSwapBlock(opts){
   // Region containers we rewrite on cycle.
   const rowEl = document.createElement("div");
   rowEl.className = "swap-row";
+  // Paired decks only: what this swap does to the other deck / the conversion.
+  const boxEl = document.createElement("div");
+  boxEl.className = "swap-box-note";
+  boxEl.style.display = "none";
   const whyOutEl = document.createElement("div");
   whyOutEl.className = "swap-why out-why";
   const whyInEl = document.createElement("div");
@@ -4081,6 +4508,7 @@ function buildSwapBlock(opts){
   emptyEl.style.display = "none";
 
   block.appendChild(rowEl);
+  block.appendChild(boxEl);
   block.appendChild(whyOutEl);
   block.appendChild(whyInEl);
   block.appendChild(synEl);
@@ -4110,6 +4538,17 @@ function buildSwapBlock(opts){
   block._swapCursor = 0;
   block._swapCategory = category;
 
+  // Draws the "Both decks" / "This deck only" tablet. On a deck that is not
+  // half of a modular pair, swapBoxNote returns null and the row stays hidden,
+  // so nothing about normal decks changes.
+  function paintBoxNote(cutName, addName){
+    const note = swapBoxNote(cutName, addName);
+    if (!note){ boxEl.style.display = "none"; boxEl.innerHTML = ""; return; }
+    boxEl.style.display = "";
+    boxEl.className = "swap-box-note " + note.kind;
+    boxEl.innerHTML = '<span class="bn-tag">' + esc(note.tag) + '</span>' + esc(note.text);
+  }
+
   function paint(){
     const idx = block._swapCursor;
     const opt = opts_[idx];
@@ -4121,6 +4560,8 @@ function buildSwapBlock(opts){
         (inCard.usd ? ' <span class="price">$' + esc(inCard.usd) + '</span>' : '') +
         '</span>';
       whyOutEl.style.display = "none";
+      // No cut to talk about, but the add can still be a shared-core card.
+      paintBoxNote(null, inCard.name);
       whyInEl.style.display = "";
       whyInEl.innerHTML = '<span class="lbl">Why add</span>' + esc(opt.addReason);
       synEl.style.display = "none";
@@ -4137,6 +4578,8 @@ function buildSwapBlock(opts){
         '</span>';
       whyOutEl.style.display = "";
       whyOutEl.innerHTML = '<span class="lbl">Why cut</span>' + esc(opt.cutPlan.reason);
+      // Paired decks only — otherwise swapBoxNote returns null and this stays hidden.
+      paintBoxNote(opt.cutPlan.name, inCard.name);
       whyInEl.style.display = "";
       whyInEl.innerHTML = '<span class="lbl">Why add</span>' + esc(opt.addReason);
 
@@ -5042,7 +5485,11 @@ async function ensureDeckAnalysis(key, deck){
       const ci = cmd.color_identity;
       deck.identity = ci.slice().sort().join("").toLowerCase();
       deck.colors = identityLabel(ci);
-      deck.kicker = "Commander . " + deck.colors;
+      // Correct colors/identity to the commander's real identity, but keep a seed
+      // deck's hand-written archetype kicker (e.g. "cEDH Turbo", "Esper Ninjutsu").
+      // The colors already show via the pips, so don't clobber the archetype line
+      // with a redundant color label. Imported/user decks keep the old behavior.
+      if (!(SEED_KEYS.has(key) && deck.kicker)) deck.kicker = "Commander . " + deck.colors;
     }
   }
 
