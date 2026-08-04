@@ -6648,10 +6648,34 @@ function describeFinisher(f){
   switch (f.kind){
     case "alt-win":
       return "It literally reads “you win the game.” Protect the turn it goes off and the game is just over.";
+    /* Drain is the most crowded slot in an aristocrats deck — six cards can all
+       read "each opponent loses 1". Splitting on the TRIGGER (life gained, tokens
+       made, creatures dying) and on who it hits keeps six win lines from printing
+       the same sentence six times. */
     case "drain": {
       const n = firstNum(/loses (\d+) life/, o);
-      if (n) return "Drains every opponent for " + n + " at once — stack a couple of triggers and that’s a kill from any board.";
-      return "Drains life from every opponent at once. Each trigger chips the whole table, and it adds up faster than people expect.";
+      const each = /(each opponent|each of your opponents) loses/.test(o);
+      const tail = /you gain (that much|\d+) life/.test(o) ? " You gain it back too." : "";
+      const t = f.type || "";
+      // Life-total engines: keyed to life changing, not to bodies dying.
+      if (/whenever you gain life/.test(o))
+        return "Turns every point of life you gain into life an opponent loses. Any lifegain already on board becomes a clock, and next to a gain-on-drain effect it loops until the table is dead.";
+      if (/whenever an opponent loses life/.test(o))
+        return "Pays you life for every point an opponent loses. On its own it only gains; sitting next to a drain it closes the loop and the game ends on the spot.";
+      // Token payoffs fire on the tokens themselves, not on deaths.
+      if (/create or sacrifice a token/.test(o))
+        return "Fires when tokens arrive AND again when you sacrifice them" + (n ? ", " + n + " each way" : "") + " — so it triggers on both ends of the loop, not just the dying half.";
+      if (/dies/.test(o)) {
+        const src = /creature you control dies/.test(o)
+          ? "Only your own creatures set it off."
+          : "Any creature dying sets it off, theirs included — the whole table's removal feeds you.";
+        const perm = t.includes("enchantment")
+          ? " Being an enchantment, it lives through the wipes that clear your board."
+          : (t.includes("creature") ? " Being a creature, it dies to the same wipes it profits from." : "");
+        return src + " Drains " + (each ? "every opponent at once" : "one player you pick") + (n ? " for " + n : "") + " a trigger." + perm + tail;
+      }
+      if (n) return "Drains " + (each ? "every opponent" : "a player") + " for " + n + " a trigger. It closes games that combat cannot." + tail;
+      return "Chips life totals without attacking, so the damage still arrives when the board is gummed up.";
     }
     case "overrun":
       return "Turns your whole board into one alpha strike: everything gets bigger and gains trample, so chump blocks don’t save anyone. If you’re wide, this is lethal from nowhere.";
@@ -6813,7 +6837,6 @@ function renderStrategy(deck, grade, archetype){
 `<div class="panel lead">
   <h3>The Read</h3>
   <p><em>${esc(arch)}</em></p>
-  <p>${esc(plan)}</p>
 </div>
 
 <div class="rune-div"><span>&#9670; &#9670; &#9670;</span></div>
@@ -6830,7 +6853,7 @@ function renderStrategy(deck, grade, archetype){
 <p class="section-sub">The paragraph you should have in your head at the start of every game.</p>
 <div class="panel">
   <p>${esc(plan)}</p>
-  ${topFin ? '<p style="margin-top:.6em"><b>How it ends.</b> ' + cardLink(topFin.name) + ' — ' + esc(describeFinisher(topFin)) + '</p>' : ''}
+  ${topFin ? '<p style="margin-top:.6em"><b>How it ends.</b> Usually ' + cardLink(topFin.name) + '. The rest of the kill routes are in Win Lines above.</p>' : ''}
 </div>
 
 <div class="rune-div"><span>&#9670; &#9670; &#9670;</span></div>
