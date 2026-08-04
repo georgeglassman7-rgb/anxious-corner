@@ -5199,6 +5199,7 @@ function detectArchetype(deck, cardData){
   const nameQty = uniqueNamesWithQty(deck);
 
   const typeCounts = {};
+  const subtypeNames = {};   // creature subtype -> the actual card names wearing it
   let instantsSorceries = 0;
   let aristocratsHits = 0;
   let counterCards = 0;
@@ -5206,6 +5207,11 @@ function detectArchetype(deck, cardData){
   let tokenMakers = 0;
   let artifactCount = 0;
   let voltronPieces = 0;
+  /* Every Equipment is also an Artifact, so an equipment deck double-counts into
+     both signals and "artifacts" wins on raw count every time. Tracking the
+     overlap lets the artifact signal be ranked on its NON-equipment core, so a
+     Voltron pile reads as Voltron instead of as an artifact deck. */
+  let equipmentArtifacts = 0;
   let counterspells = 0;
   let wipes = 0;
   let rampCount = 0;
@@ -5216,6 +5222,13 @@ function detectArchetype(deck, cardData){
   const removalNames = [];
   const wipeNames = [];
   const counterNames = [];
+  /* Which cards actually CREATED each archetype signal. The counters below say
+     "19 cards make tokens"; this says WHICH 19. Coaching prose can then name a
+     deck's own cards instead of describing the genre in the abstract — and it
+     works for a pasted/imported list on the first read, with no seed data. */
+  const themeNames = { tribal:[], spellslinger:[], aristocrats:[], counters:[],
+                       graveyard:[], tokens:[], artifacts:[], voltron:[],
+                       control:[], ramp:[] };
 
   nameQty.forEach((qty, name) => {
     if (BASICS.includes(name)) return;
@@ -5234,20 +5247,24 @@ function detectArchetype(deck, cardData){
         const clean = st.replace(/[^a-z]/g,"");
         if (!clean) return;
         typeCounts[clean] = (typeCounts[clean] || 0) + qty;
+        (subtypeNames[clean] = subtypeNames[clean] || []).push(card.name);
       });
     }
-    if (type.includes("instant") || type.includes("sorcery")) instantsSorceries += qty;
-    if (/sacrifice a creature/.test(oracle) || /whenever a creature (you control )?dies/.test(oracle) || /when(ever)? this creature dies/.test(oracle)) aristocratsHits += qty;
-    if (/\+1\/\+1 counter/.test(oracle) || /proliferate/.test(oracle)) counterCards += qty;
-    if (/return .* from (your |a )?graveyard/.test(oracle) || /flashback/.test(oracle) || /escape/.test(oracle) || /delve/.test(oracle) || /unearth/.test(oracle) || /reanimate/.test(oracle) || /mill /.test(oracle) || /mills /.test(oracle)) graveyardCards += qty;
-    if (/create (a|one|two|three|four|five|x|\d+).* token/.test(oracle)) tokenMakers += qty;
-    if (type.includes("artifact") && !type.includes("land")) artifactCount += qty;
-    if (type.includes("aura") || type.includes("equipment")) voltronPieces += qty;
+    if (type.includes("instant") || type.includes("sorcery")) { instantsSorceries += qty; themeNames.spellslinger.push(card.name); }
+    if (/sacrifice a creature/.test(oracle) || /whenever a creature (you control )?dies/.test(oracle) || /when(ever)? this creature dies/.test(oracle)) { aristocratsHits += qty; themeNames.aristocrats.push(card.name); }
+    if (/\+1\/\+1 counter/.test(oracle) || /proliferate/.test(oracle)) { counterCards += qty; themeNames.counters.push(card.name); }
+    if (/return .* from (your |a )?graveyard/.test(oracle) || /flashback/.test(oracle) || /escape/.test(oracle) || /delve/.test(oracle) || /unearth/.test(oracle) || /reanimate/.test(oracle) || /mill /.test(oracle) || /mills /.test(oracle)) { graveyardCards += qty; themeNames.graveyard.push(card.name); }
+    if (/create (a|one|two|three|four|five|x|\d+).* token/.test(oracle)) { tokenMakers += qty; themeNames.tokens.push(card.name); }
+    if (type.includes("artifact") && !type.includes("land")) { artifactCount += qty; themeNames.artifacts.push(card.name); }
+    if (type.includes("aura") || type.includes("equipment")) {
+      voltronPieces += qty; themeNames.voltron.push(card.name);
+      if (type.includes("artifact") && !type.includes("land")) equipmentArtifacts += qty;
+    }
     if (/counter target/.test(oracle)) counterspells += qty;
-    if (/destroy all/.test(oracle) || /exile all/.test(oracle)) { wipes += qty; wipeNames.push(card.name); }
+    if (/destroy all/.test(oracle) || /exile all/.test(oracle)) { wipes += qty; wipeNames.push(card.name); themeNames.control.push(card.name); }
     if (/(destroy|exile) target/.test(oracle) && (type.includes("instant") || type.includes("sorcery"))) removalNames.push(card.name);
-    if (/counter target/.test(oracle)) counterNames.push(card.name);
-    if (/add \{[wubrgc]/.test(oracle) || /search your library for .* land/.test(oracle) || (type.includes("artifact") && /add \{/.test(oracle))) rampCount += qty;
+    if (/counter target/.test(oracle)) { counterNames.push(card.name); themeNames.control.push(card.name); }
+    if (/add \{[wubrgc]/.test(oracle) || /search your library for .* land/.test(oracle) || (type.includes("artifact") && /add \{/.test(oracle))) { rampCount += qty; themeNames.ramp.push(card.name); }
 
     const powerNum = isNaN(parseInt(card.power)) ? null : parseInt(card.power);
     // Carry the real card text forward so the coaching can name the SPECIFIC
@@ -5289,6 +5306,7 @@ function detectArchetype(deck, cardData){
 
   if (tribalHits.length) {
     const top = tribalHits[0];
+    themeNames.tribal = (subtypeNames[top.type] || []).slice();
     signals.push({ key:"tribal", strength: top.qty, label: cap(top.type) + " tribal", short: "tribal (" + top.type + ")", detail: top.qty + " " + top.type + " creatures share the tribe. That is the engine." });
   }
   if (instantsSorceries >= 25) signals.push({ key:"spellslinger", strength: instantsSorceries, label: "Spellslinger", short: "spellslinger backbone", detail: instantsSorceries + " instants and sorceries. Cast, draw, cast again." });
@@ -5296,7 +5314,8 @@ function detectArchetype(deck, cardData){
   if (counterCards >= 8) signals.push({ key:"counters", strength: counterCards, label: "+1/+1 Counters", short: "counters", detail: counterCards + " cards work with +1/+1 counters. Snowball the board." });
   if (graveyardCards >= 8) signals.push({ key:"graveyard", strength: graveyardCards, label: "Graveyard", short: "graveyard engine", detail: graveyardCards + " cards use the yard as a second hand." });
   if (tokenMakers >= 8) signals.push({ key:"tokens", strength: tokenMakers, label: "Tokens", short: "tokens", detail: tokenMakers + " cards make tokens. Go wide." });
-  if (artifactCount >= 20) signals.push({ key:"artifacts", strength: artifactCount, label: "Artifacts", short: "artifact matters", detail: artifactCount + " artifacts. Payoffs land hard." });
+  // Gate on the true artifact count, but RANK on the non-equipment core (see above).
+  if (artifactCount >= 20) signals.push({ key:"artifacts", strength: Math.max(1, artifactCount - equipmentArtifacts), label: "Artifacts", short: "artifact matters", detail: artifactCount + " artifacts. Payoffs land hard." });
   if (voltronPieces >= 8) signals.push({ key:"voltron", strength: voltronPieces, label: "Voltron", short: "voltron", detail: voltronPieces + " auras and equipment. Suit up one threat." });
   if (counterspells + wipes >= 8) signals.push({ key:"control", strength: counterspells + wipes, label: "Control", short: "control", detail: (counterspells+wipes) + " counters and wipes. Answer everything, close at the end." });
   if (rampCount >= 12) signals.push({ key:"ramp", strength: rampCount, label: "Big Mana", short: "big mana", detail: rampCount + " ramp sources. Land the top end early." });
@@ -5390,6 +5409,7 @@ function detectArchetype(deck, cardData){
     removalNames: removalNames.slice(0,8),
     wipeNames: wipeNames.slice(0,6),
     counterNames: counterNames.slice(0,6),
+    themeNames,
     tribalHits
   };
 }
@@ -6547,9 +6567,23 @@ function renderPlaybook(deck, grade, archetype){
   const plan = phasePlan(archetype, grade);
   const ctx = { topKey: archetype && archetype.top && archetype.top.length ? archetype.top[0].key : null,
                 tribe: archetype && archetype.tribalHits && archetype.tribalHits.length ? archetype.tribalHits[0].type : null };
-  const earlyCards = archetype ? archetype.cheapPlays.slice(0, 4) : [];
-  const midCards   = archetype ? archetype.enginePieces.slice(0, 4) : [];
-  const lateCards  = archetype ? archetype.finisherNames.slice(0, 4) : [];
+  /* A cheap engine piece is BOTH a turn-one play and a turn-four engine, so the
+     same card used to print on two rungs with the identical sentence under it.
+     Each rung now only shows what no earlier rung already covered, so the ladder
+     reads as three real steps instead of one list repeated three times. */
+  const rungSeen = {};
+  const freshCards = (list, n) => {
+    const out = [];
+    (list || []).forEach(c => {
+      const key = String((c && c.name) || "").toLowerCase();
+      if (!key || rungSeen[key] || out.length >= n) return;
+      rungSeen[key] = 1; out.push(c);
+    });
+    return out;
+  };
+  const earlyCards = archetype ? freshCards(archetype.cheapPlays, 4) : [];
+  const midCards   = archetype ? freshCards(archetype.enginePieces, 4) : [];
+  const lateCards  = archetype ? freshCards(archetype.finisherNames, 4) : [];
   // Group cards that share the same "why" onto one line — like a coach saying
   // "these three are your diggers" — instead of repeating an identical sentence.
   const noteList = (cards, roleFn) => {
@@ -6604,7 +6638,7 @@ function renderPlaybook(deck, grade, archetype){
     <div class="rn">Turns 4 to 6</div>
     <div class="rb">
       <p>${esc(plan.mid)}</p>
-      ${midNotes}
+      ${midNotes || "<p>Your engines are the cheap cards above — by now they should already be running.</p>"}
     </div>
   </div>
   <div class="rung">
@@ -6804,30 +6838,106 @@ function renderStrategy(deck, grade, archetype){
   const topKey = archetype && archetype.top.length ? archetype.top[0].key : null;
 
   const engineNames = archetype ? archetype.enginePieces.slice(0,3).map(e => e.name) : [];
+  /* NOTE: `plan` is HTML, not plain text — several branches below build card
+     links with cardLink(). It is rendered UNESCAPED, so anything interpolated
+     into it that came from card data must be esc()'d right here. cardLink()
+     already escapes its own label and encodes its href. */
+  /* Everything below is derived from the analysis, never from a hand-written
+     per-deck table — so a list Greg pastes in gets the same treatment as a seed
+     deck on its very first read. Phrasing is chosen off a hash of the deck's own
+     name, so two token decks do not come back word-for-word identical. */
+  const themeNames = (archetype && archetype.themeNames) || {};
+  function vary(arr){
+    const s = String((deck && deck.name) || "deck");
+    let h = 0; for (let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+    return arr[h % arr.length];
+  }
+  // Up to n distinct real card names for a theme, longest-serving first.
+  function themeCards(key, n){
+    const seen = {}, out = [];
+    (themeNames[key] || []).forEach(nm => {
+      if (!seen[nm] && out.length < n) { seen[nm] = 1; out.push(nm); }
+    });
+    return out;
+  }
+  function listOf(names){ return names.map(cardLink).join(", "); }
+  /* Name this deck's own cards for the archetype. Falls back to the engine
+     pieces, then to nothing at all — never to a fake card name. */
+  function pieces(key, leads){
+    let names = themeCards(key, 3);
+    if (!names.length) names = engineNames.slice(0,3);
+    if (!names.length) return "";
+    return " " + vary(leads) + " " + listOf(names) + ".";
+  }
+
   let plan;
   if (topKey === "tribal") {
-    const t = archetype.tribalHits[0] ? archetype.tribalHits[0].type : "creatures";
-    plan = "Play " + t + ". Cast one, cast another, and the pile in front of you starts pumping itself. Trigger the lord effects, ride the draw spells like " + (engineNames.length ? engineNames.map(cardLink).join(", ") : "your card advantage") + ", and threaten lethal off the tribe every turn cycle.";
+    const t = esc(archetype.tribalHits[0] ? archetype.tribalHits[0].type : "creatures");
+    plan = vary([
+      "Play " + t + ". Cast one, cast another, and the pile in front of you starts pumping itself.",
+      "The tribe is the engine. Every " + t + " you land makes the next one hit harder.",
+      "Flood the board with " + t + " and let the lord effects do the math for you."
+    ]) + pieces("tribal", ["The core of the tribe:", "Your best bodies:", "This is the tribe that matters:"]);
   } else if (topKey === "spellslinger") {
-    plan = "The gas is the plan. Cast, draw, cast again. Every instant and sorcery works twice through pieces like " + (engineNames.length ? engineNames.map(cardLink).join(", ") : "your draw engines") + ". You are always one card deeper than the table.";
+    plan = vary([
+      "The gas is the plan. Cast, draw, cast again — you are always one card deeper than the table.",
+      "Hold up mana, answer what matters, and bury the table in card advantage.",
+      "Every spell should replace itself. Chain them and the game bends your way."
+    ]) + pieces("spellslinger", ["The spells doing the work:", "Your best gas:", "Lean on:"]);
   } else if (topKey === "aristocrats") {
-    plan = "Bodies come in, bodies go out, and the table takes damage in the middle. Loop the sacrifice engines, feed the payoffs, and win by attrition.";
+    plan = vary([
+      "Bodies come in, bodies go out, and the table takes damage in the middle.",
+      "Your creatures are ammunition, not attackers. Sacrifice them on purpose.",
+      "Every death is a trigger. Build the loop, then feed it."
+    ]) + pieces("aristocrats", ["The loop runs on:", "Your sacrifice core:", "The pieces that matter:"]);
   } else if (topKey === "counters") {
-    plan = "Every counter is a step. Land a small threat, grow it every turn, and the board snowballs before the table finds the answer.";
+    plan = vary([
+      "Every counter is a step. Land a small threat, grow it, and the board runs away.",
+      "Start small and compound. A one-drop with counters on it ends games.",
+      "Grow one thing faster than the table can answer it."
+    ]) + pieces("counters", ["The pieces that stack up:", "Your growth engine:", "Build on:"]);
   } else if (topKey === "graveyard") {
-    plan = "The yard is a second hand. Fill it early, reach into it mid-game, and end things by bringing back the biggest thing you own.";
+    plan = vary([
+      "The yard is a second hand. Fill it early, reach into it mid-game.",
+      "Throw things away on purpose — you get them back better than they left.",
+      "Your graveyard is a resource, not a loss. Stock it, then spend it."
+    ]) + pieces("graveyard", ["The pieces that dig it back:", "Your yard engine:", "Recursion lives on:"]);
   } else if (topKey === "tokens") {
-    plan = "Go wide. One token becomes six, six becomes an army, and the anthems turn the army into lethal.";
+    plan = vary([
+      "Go wide. One token becomes six, six becomes an army, and the anthems turn the army into lethal.",
+      "Quantity first, quality later. Make bodies early and turn them lethal all at once.",
+      "The board is your resource. Build it wide, then convert it in a single turn."
+    ]) + pieces("tokens", ["The makers that get you there:", "Your token core:", "Bodies come from:"]);
   } else if (topKey === "artifacts") {
-    plan = "Rocks and gear all game long. The board grows quietly until a payoff turn it all sideways.";
+    plan = vary([
+      "Rocks and gear all game long. The board grows quietly until a payoff turns it sideways.",
+      "Build the pile. Every artifact is a small step toward one big turn.",
+      "Nothing looks threatening until the payoff lands. Keep stacking."
+    ]) + pieces("artifacts", ["The pile is built on:", "Your key artifacts:", "Stack up:"]);
   } else if (topKey === "voltron") {
-    plan = "One creature carries the whole plan. Suit it up, protect it, and swing until the table falls over.";
+    plan = vary([
+      "One creature carries the whole plan. Suit it up, protect it, and swing.",
+      "Pick a threat and commit. The gear does the damage, the creature just holds it.",
+      "All eggs, one basket — but keep protection up and the basket never breaks."
+    ]) + pieces("voltron", ["The gear that carries it:", "Suit up with:", "Your equipment core:"]);
   } else if (topKey === "control") {
-    plan = "Say no to the important thing. Answer the rest with " + (wipes.length ? wipes.map(cardLink).join(", ") : "your board wipes") + ". Close on your own clock.";
+    plan = vary([
+      "Say no to the important thing, answer the rest, and close on your own clock.",
+      "Trade one-for-one until you are ahead, then take over.",
+      "Let the table fight. Answer the winner and finish at your leisure."
+    ]) + pieces("control", ["Your answers:", "Hold up:", "The safety net:"]);
   } else if (topKey === "ramp") {
-    plan = "Cheat the top of the curve down two turns. The biggest thing in your hand lands early and the table has not built for it yet.";
+    plan = vary([
+      "Cheat the top of the curve down two turns. The table has not built for it yet.",
+      "Mana first, threats second. Your turn five should look like their turn eight.",
+      "Accelerate hard and land something they cannot answer on time."
+    ]) + pieces("ramp", ["The acceleration:", "Your mana comes from:", "Ramp on:"]);
   } else {
-    plan = "Play the best card in your hand every turn. That is the plan. The deck has quality across the curve and closes on whatever finisher lands first.";
+    plan = vary([
+      "Play the best card in your hand every turn. The deck has quality across the curve.",
+      "No single engine carries this — it wins on raw card quality, so trade well and stay flexible.",
+      "This one is a good-stuff pile in the best way. Take the strongest line available each turn."
+    ]) + pieces("", ["Your best engines:", "Lean on:", "The cards that pull ahead:"]);
   }
 
   // Name the sharpest kill route so the game plan ends on a concrete "how it ends".
@@ -6852,7 +6962,7 @@ function renderStrategy(deck, grade, archetype){
 <h2>Game Plan</h2>
 <p class="section-sub">The paragraph you should have in your head at the start of every game.</p>
 <div class="panel">
-  <p>${esc(plan)}</p>
+  <p>${plan}</p>
   ${topFin ? '<p style="margin-top:.6em"><b>How it ends.</b> Usually ' + cardLink(topFin.name) + '. The rest of the kill routes are in Win Lines above.</p>' : ''}
 </div>
 
