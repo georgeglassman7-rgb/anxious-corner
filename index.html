@@ -3338,6 +3338,165 @@ function landManaPhrase(card, o){
   return "";
 }
 
+/* WHAT A ROCK OR A DORK ACTUALLY MAKES
+   The same defect the lands had, one function over, never carried across. manaAdded()
+   takes the first "Add {X}" run it finds and stops, and it cannot read "Add one mana of
+   any color" at all -- there are no pips in that sentence to grab. So all five Talismans
+   read "Taps for {C}" and hid the two colors they are in the deck FOR, Birds of Paradise
+   fell through the entire chain and led with "Flying", and Sylvan Caryatid came out as
+   "Protection." Colors are the one thing a mana source has to say out loud.
+
+   Built on the land helpers rather than a second parser: landManaSymbols already keeps
+   only the abilities whose cost is symbols alone, and "{T}:" passes that test exactly
+   the way a land's does. Returns "" when the card is not really a mana source, and the
+   rest of the chain runs untouched. */
+function rockManaPhrase(card, o, t){
+  // Reminder text in brackets is not the card's own rules. A Treasure token's reminder
+  // spells out "{T}, Sacrifice this token: Add one mana of any color", so Pitiless
+  // Plunderer -- a card that never taps for anything -- came out reading as a mana rock.
+  const oc = String(o).replace(/\([^)]*\)/g, " ");
+  if (!/add (\{|\w+ mana)/.test(oc)) return "";
+
+  const say = list => list.length >= 5 ? "any color"
+                    : orList(list.map(c => "{" + c + "}"));
+  const produced = () => {
+    const made = Array.isArray(card.produced_mana) ? card.produced_mana : [];
+    return WUBRG.filter(c => made.includes(c));
+  };
+
+  // Mana that scales off the card itself IS the card. Vivi can dump its whole power
+  // into one turn, so "Taps for {U} or {R}" made it look like a two-mana dork.
+  if (/add x mana/.test(oc)){
+    const cs = produced();
+    return "Adds " + (cs.length ? say(cs) : "mana")
+         + (/where x is [^.]*\bpower\b/.test(oc) ? " equal to its power." : ".");
+  }
+
+  // When the only way to get the mana is to sacrifice a creature, the card is a sac
+  // outlet first and a rock second -- that is why Ashnod's Altar is in a squirrel deck.
+  // Hand it to the sac-outlet rule further down instead of leading with the mana.
+  if (/sacrifice (a|another) creature:\s*add/.test(oc)) return "";
+
+  // Galazeth hands the mana ability to your ARTIFACTS. It does not tap for mana itself,
+  // so a "Taps for" line would be describing a card that isn't on the table.
+  const grant = oc.match(/(artifacts|creatures|lands|permanents) you control have "\{t\}: add ([^"]*)"/);
+  if (grant){
+    // Say "any color" only when the granted mana really is unrestricted -- Galazeth's
+    // is spendable on instants and sorceries alone, and promising fixing it can't do
+    // is the same lie this whole pass exists to stop.
+    const open = /any color/.test(grant[2]) && !/spend this mana only/.test(grant[2]);
+    return "Every " + grant[1].slice(0, -1) + " you control taps for " + (open ? "any color" : "mana") + ".";
+  }
+
+  // Capped at your commander -- Arcane Signet, Commander's Sphere.
+  if (/any color/.test(oc) && /commander/.test(oc)) return "Taps for any of your colors.";
+  // Fellwar Stone gives you whatever the table happens to be playing. Not a promise.
+  if (/a land an opponent controls could produce/.test(oc)) return "Taps for what your opponents' lands make.";
+  // Bloom Tender scales off your own board, so a flat color list would be a guess.
+  if (/each color among permanents you control/.test(oc)) return "Taps for each color you control.";
+
+  // Mana you can only spend on one kind of spell is not fixing. Counting Delighted
+  // Halfling's any-color as five real colors promised it could cast anything in the
+  // deck, so that ability is pulled out and said separately. Cut at the first comma --
+  // the full clause runs to "and that spell can't be countered", which is a paragraph.
+  const restrictM = oc.match(/add one mana of any color\.\s*spend this mana only to cast ([^.]+)/);
+  const restricted = restrictM ? restrictM[1].split(",")[0].trim() : "";
+
+  // Mana that hurts is not free mana. The modern Talismans put the damage in the EFFECT
+  // ("{T}: Add {U} or {B}. This artifact deals 1 damage to you.") rather than the cost,
+  // so the colour ability looks free to a cost-only parser. Held out of the free pass
+  // and said in its own sentence instead.
+  const isPain = l => /:\s*add\b/i.test(l) && /(deals \d+ damage to you|you lose \d+ life)/.test(l);
+  // Neither is mana you have to pay mana for. Pili-Pala's ability costs {2} on top of
+  // the untap, and a cost made only of symbols looks free to a symbols-only test.
+  const isBought = l => {
+    const m = l.trim().match(/^([^:]+):\s*(.+)$/);
+    return !!m && /^add\b/i.test(m[2].trim()) && /\{[wubrgcx0-9]\}/i.test(m[1]);
+  };
+  const oFree = String(oc).split("\n")
+    .filter(l => !/spend this mana only/.test(l) && !isPain(l) && !isBought(l)).join("\n");
+
+  const free = landManaSymbols(oFree);
+  const colors = WUBRG.filter(c => free.colors.has(c));
+
+  // Everything you can still get, but not for nothing.
+  const paid = new Set();
+  let paidCost = "", paidSac = false, paidTapCreature = false, usesUntap = false;
+  for (const raw of String(oc).split("\n")){
+    if (/spend this mana only/.test(raw)) continue;
+    const m = raw.trim().match(/^([^:]+):\s*(.+)$/);
+    if (!m) continue;
+    const cost = m[1].trim(), eff = m[2];
+    // {Q} is the untap symbol -- Pili-Pala untaps rather than taps, and calling that
+    // "Taps for" describes a motion the card does not make.
+    if (!/\{t\}/.test(cost) && !/\{q\}/.test(cost)) continue;
+    if (!/^add\b/i.test(eff.trim())) continue;
+    const hurt = eff.match(/deals (\d+) damage to you/) || eff.match(/you lose (\d+) life/);
+    // Only real mana symbols count as a price to print. Pulling the whole cost string
+    // apart instead turned Lotus Petal into "Costs SACRIFICETHISARTIFACT".
+    const buy  = (cost.match(/\{[wubrgcx0-9]\}/gi) || []).join("").toUpperCase();
+    // A cost of nothing but {T} with no rider was already counted as free.
+    if (/^(\{[^}]+\}|,|\s)+$/.test(cost) && !hurt && !buy) continue;
+    if (/\{q\}/.test(cost)) usesUntap = true;
+    if (hurt) paidCost = hurt[1] + (/damage/.test(hurt[0]) ? " damage" : " life");
+    else if (buy) paidCost = buy.toUpperCase();
+    else {
+      const life = cost.match(/pay (\d+) life/);
+      if (life) paidCost = life[1] + " life";
+      if (/sacrifice this/.test(cost)) paidSac = true;
+      if (/tap an? (untapped )?creature/.test(cost)) paidTapCreature = true;
+    }
+    if (/any color/i.test(eff)) WUBRG.forEach(c => paid.add(c));
+    else for (const p of eff.match(/\{[wubrg]\}/gi) || []) paid.add(p[1].toUpperCase());
+  }
+  const extra = WUBRG.filter(c => paid.has(c) && !free.colors.has(c));
+
+  let head = "";
+  if (colors.length >= 2)       head = free.both || say(colors);
+  else if (colors.length === 1) head = "{" + colors[0] + "}";
+  else if (free.colorless)      head = free.both || "{C}";
+
+  // A ritual hands it over once. "Taps for" would promise a repeat it cannot make.
+  const oneShot = t.includes("instant") || t.includes("sorcery");
+  // Urza, Grand Architect and Skirge Familiar all buy their mana with something other
+  // than tapping themselves -- an artifact, a blue creature, a card out of hand. Saying
+  // "Taps for" there describes a motion none of them make.
+  const verb = usesUntap ? "Untaps for " : "Taps for ";
+  const taps = /\{t\}/.test(oc) || usesUntap;
+
+  if (!head){
+    // A ritual has no activation cost at all -- "Add {B}{B}{B}." is the whole card and
+    // there is no colon for the ability parser to find. manaAdded reads those right,
+    // so it stays in service here rather than being thrown away.
+    head = manaAdded(oc) || "";
+    if (!head){
+      // Cost is a sacrifice, a creature tap, a discard. Fall back to everything
+      // Scryfall says the card can end up making.
+      const anyc = produced();
+      if (anyc.length) head = say(anyc);
+      else if ((card.produced_mana || []).includes("C")) head = "{C}";
+    }
+    if (!head) return "";
+    if (oneShot)         return "Adds " + head + " right now.";
+    if (paidSac)         return "Sacrifices for " + head + ".";
+    if (!taps)           return "Adds " + head + ".";
+    if (restricted)      return verb + head + ", but only for " + restricted + ".";
+    if (paidCost)        return verb + head + ". Costs " + paidCost + ".";
+    if (paidTapCreature) return verb + head + ", if you tap a creature too.";
+    return verb + head + ", but not for free.";
+  }
+
+  if (oneShot) return "Adds " + head + " right now.";
+  if (!taps)   return "Adds " + head + ".";
+  let line = verb + head + ".";
+  if (extra.length) line += " " + say(extra).replace(/^any/, "Any")
+                          + " costs " + (paidCost || "extra") + ".";
+  else if (restricted) line += " Any color for " + restricted + ".";
+  // A rock that also pumps the team is in the deck for the pump as much as the mana.
+  if (/creatures you control (of the chosen type )?get \+/.test(oc)) line += " Pumps your team.";
+  return line;
+}
+
 /* The payoff: what the land does beyond making one mana. Ordered by what defines the
    card, not by what comes first in the text box. */
 function landPayoff(card){
@@ -3477,10 +3636,8 @@ function cardOneLinerCore(card, deck){
   }
 
   // Mana first — rocks, dorks and rituals are the backbone of most lists.
-  const add = manaAdded(o);
-  if (add && /\{t\}/.test(o)) return "Taps for " + add + ".";
-  if (add && (t.includes("instant") || t.includes("sorcery"))) return "Adds " + add + " right now.";
-  if (add) return "Adds " + add + ".";
+  const mana = rockManaPhrase(card, o, t);
+  if (mana) return mana;
 
   if (/search your library for .*(land|plains|island|swamp|mountain|forest)/.test(o)) return "Ramps a land out of the deck.";
   if (/search your library for an artifact/.test(o)) return "Finds any artifact.";
@@ -3490,6 +3647,11 @@ function cardOneLinerCore(card, deck){
 
   if (/counter target spell/.test(o)) return "Says no to one spell.";
   if (/destroy all|exile all|each creature gets -|destroy each/.test(o)) return "Board wipe.";
+  // Removal that hits more than one body reads "destroy TWO target creatures", which the
+  // single-target rule below misses entirely. Curtains' Call fell all the way through to
+  // the cost rule and got called a discount instead of a two-for-one kill spell.
+  const multiKill = o.match(/(?:destroy|exile) (two|three|four|up to \w+) target creatures/);
+  if (multiKill) return "Kills " + multiKill[1] + " creatures.";
   if (/(destroy|exile) target creature/.test(o)) return "Kills a creature.";
   if (/(destroy|exile) target/.test(o)) return "Removal.";
   if (/target (player|opponent) sacrifices/.test(o)) return "Forces a sacrifice.";
@@ -3501,7 +3663,21 @@ function cardOneLinerCore(card, deck){
   // Sac outlets and self-recursion define a card far more than a rider does,
   // so they get asked about before the draw and counter rules.
   if (/sacrifice (a|another) creature:/.test(o)) return "Free sacrifice outlet.";
-  if (/you may cast .* from your graveyard/.test(o)) return "Recasts itself out of the graveyard.";
+  // "You may cast X from your graveyard" is two completely different cards depending
+  // on what X is. Gravecrawler and a flashback spell bring THEMSELVES back. Kess,
+  // Snapcaster and Bilbo let you cast the REST of your yard -- that is an engine, not
+  // self-recursion. Calling every one of them "itself" described the whole Kess deck
+  // backwards, commander included. Note "that card" and "target ... card" point at
+  // something else, so only the literal self-words count as self.
+  const gyCast = o.match(/you may cast ([^.]*?) from your graveyard/);
+  if (gyCast){
+    const what = gyCast[1].trim();
+    if (/^(this card|this creature|this spell|this land|it)$/.test(what))
+      return "Recasts itself out of the graveyard.";
+    if (/whenever [^.]*attacks/.test(o))
+      return "Attacks let you cast a spell out of your graveyard.";
+    return "Lets you cast spells out of your graveyard.";
+  }
   if (/when this creature dies, return it to the battlefield/.test(o)) return "Saves a creature the turn it would die.";
   if (/have undying/.test(o)) return "Your creatures come back bigger when they die.";
   if (/have persist/.test(o)) return "Your creatures come back once more after they die.";
@@ -3512,15 +3688,44 @@ function cardOneLinerCore(card, deck){
   if (/draw a card/.test(o)) return "Draws a card.";
   if (/scry|surveil|look at the top/.test(o)) return "Smooths your next few draws.";
 
+  // A Treasure is not a body. "Makes bodies" on Pitiless Plunderer pointed him at the
+  // wrong half of the card — what it actually does is turn deaths into mana.
+  const artTok = o.match(/create[^.]*?\b(treasure|powerstone|clue|food|blood)\b/);
+  if (artTok && !/creature token/.test(o)){
+    // Academy Manufactor names all three and turns any one of them into all of them.
+    // Grabbing the first word in the sentence called it a Clue engine, which is a third
+    // of the card.
+    const kinds = [...new Set(o.match(/\b(treasure|powerstone|clue|food|blood)\b/g) || [])];
+    if (kinds.length > 1){
+      const nice = kinds.map(w => w[0].toUpperCase() + w.slice(1));
+      return "One " + nice.slice(0, -1).join(", ") + " or " + nice[nice.length - 1]
+           + " token becomes all of them.";
+    }
+    const w = artTok[1];
+    if (w === "treasure")   return /whenever|at the beginning/.test(o)
+                                   ? "Makes Treasure again and again. That is your ramp."
+                                   : "Makes Treasure. Extra mana when you need it.";
+    if (w === "powerstone") return "Makes a Powerstone. Extra mana for artifacts.";
+    if (w === "clue")       return "Makes Clues. Pay later to draw.";
+    if (w === "food")       return "Makes Food. Pay later to gain life.";
+    if (w === "blood")      return "Makes Blood. Pay later to swap a card.";
+  }
   if (/create .*token/.test(o) && /whenever|at the beginning/.test(o)) return "Makes a body every turn.";
   if (/create .*token/.test(o)) return "Makes bodies.";
   if (/creatures you control get \+/.test(o)) return "Pumps the whole team.";
   if (/\+1\/\+1 counter/.test(o)) return "Grows your board.";
   if (/whenever .*(dies|creature you control dies)/.test(o)) return "Pays you off when your creatures die.";
   if (/lifelink/.test(o) && t.includes("creature")) return "A body that gains you life back.";
+  // Shadowspear takes hexproof and indestructible AWAY from the other side. Matching on
+  // the bare words labelled it "Protection." — the exact opposite of what it does.
+  if (/lose (hexproof|indestructible|protection)/.test(o)) return "Strips hexproof and indestructible off their board.";
   if (/hexproof|indestructible|protection from|can't be countered/.test(o)) return "Protection.";
   if (/extra turn/.test(o)) return "Takes an extra turn.";
-  if (/costs? \{?\d?\}? ?less/.test(o)) return "Makes your spells cheaper.";
+  // Reminder text is the explanation, not the card. Undaunted's bracketed note contains
+  // the words "costs {1} less", which is how a two-for-one kill spell got called a cost
+  // reducer. Only stripped here — flashback's "cast this from your graveyard" also lives
+  // inside brackets, and the graveyard rule above needs to keep seeing it.
+  if (/costs? \{?\d?\}? ?less/.test(o.replace(/\([^)]*\)/g, " "))) return "Makes your spells cheaper.";
 
   // Nothing matched, so fall back to the card's own printed text.
   const own = firstOracleLine(card);
@@ -6502,6 +6707,17 @@ function inferInRole(inCard, category){
   if (tags.has("removal")) return "removal";
   if (tags.has("wipe")) return "wipe";
   if (tags.has("counter")) return "counter";
+
+  // Nothing above matched, so the card used to land in a holding pen called "New
+  // Additions" even when the list already had an obvious home for it. A card whose
+  // job happens in your own graveyard belongs with the graveyard cards; a static
+  // discount or a cast-trigger is an engine. Only guess this when the coach has not
+  // already named a category -- the swap path stays exactly as it was.
+  if (!category){
+    const o = String(inCard.oracle_text || "").toLowerCase();
+    if (/from your graveyard|in your graveyard|\bflashback\b|\bescape\b/.test(o)) return "graveyard";
+    if (/spells you cast cost|costs? \{\d+\} less|whenever you cast (a|an|your)/.test(o)) return "engine";
+  }
   return category || "misc";
 }
 
@@ -6515,6 +6731,8 @@ function pickTargetBucket(deck, role){
     counter: ["counter","control","interaction"],
     tutor: ["tutor","selection","top control"],
     finisher: ["finisher","bomb","win"],
+    graveyard: ["graveyard","recursion","yard","reanimat"],
+    engine: ["engine","value","payoff","synerg"],
     misc: ["rest","other","utility"]
   };
   const aliases = roleAliases[role] || [];
