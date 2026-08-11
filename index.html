@@ -2009,7 +2009,8 @@ const CHATTERFANG_DECK = {
       {"n":"Scavenger Grounds"},{"n":"Maze of Ith"},{"n":"Phyrexian Tower"},
       {"n":"Fountainport"},{"n":"Yavimaya, Cradle of Growth"},
       {"n":"Wastewood Verge"},{"n":"Tranquil Thicket","new":1},
-      {"n":"Forest ×9"},{"n":"Swamp ×8"}
+      {"n":"Swarmyard","new":1},
+      {"n":"Forest ×8"},{"n":"Swamp ×8"}
     ]}
   ]
 };
@@ -3163,6 +3164,270 @@ function firstOracleLine(card){
   return "";
 }
 
+/* ============ WHAT A LAND ACTUALLY DOES ============
+   The rule here used to be "lands say what they tap for, nothing more." The instinct
+   was right -- the land block is the longest thing on the page on a phone, and fifteen
+   rows of "Taps for {B}" is scrolling, not reading. But it was too blunt to tell a
+   Forest from Cabal Coffers. Any land whose text mentioned mana stopped at the mana,
+   so the reason the land is in the deck -- regenerate your squirrels, sacrifice a
+   creature for two black, blow up an artifact -- never got printed at all.
+
+   So: basics and plain duals still say one short thing, exactly as before. A land that
+   genuinely DOES something gets one more short phrase, and only those do. */
+
+function upperFirst(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+function tidyPhrase(s){
+  return String(s)
+    .replace(/\s*\([^)]*\)\s*/g, " ")   // reminder text in brackets
+    .replace(/\s+/g, " ")
+    .replace(/\s+([,.])/g, "$1")
+    .trim();
+}
+
+function clampPhrase(s, max){
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max), sp = cut.lastIndexOf(" ");
+  return (sp > max * 0.5 ? cut.slice(0, sp) : cut) + "…";
+}
+
+/* A line that is nothing but mana: "{T}: Add {C}." The cost has to be symbols only,
+   so "{T}, Sacrifice a creature: Add {B}{B}" does NOT count -- paying a creature is
+   the whole point of Phyrexian Tower, not a footnote. */
+function isPlainManaLine(line){
+  const m = String(line).match(/^([^:]+):\s*(.+)$/);
+  if (!m) return false;
+  if (!/^(\{[^}]+\}|,|\s)+$/.test(m[1].trim())) return false;
+  if (/for each/i.test(m[2])) return false;
+  return /^add\b/i.test(m[2].trim());
+}
+
+/* Drop the activation cost, keep the effect, first sentence only. Keeps the keyword
+   as a lead-in where the keyword IS the reason you run the card (Channel, Cycling). */
+function landEffectPhrase(line){
+  // Reminder text has to go FIRST. "Cycling {G} ({G}, Discard this card: Draw a card.)"
+  // hides a colon inside the brackets, and splitting on that colon leaves the garbage
+  // fragment "Draw a card.)" with the stray bracket still attached.
+  let s = tidyPhrase(line), lead = "";
+  const kw = s.match(/^(channel|landcycling|transmute)\s*—\s*/i);
+  if (kw){ lead = upperFirst(kw[1].toLowerCase()) + ": "; s = s.slice(kw[0].length); }
+  // War Room's activation cost alone runs 84 characters, so a tight cap here left the
+  // whole cost sitting in the row and the effect cut off the end of it.
+  const c = s.match(/^[^:]{0,100}:\s*(.+)$/);
+  if (c) s = c[1];
+  s = tidyPhrase(s);
+  const dot = s.search(/\.(\s|$)/);
+  if (dot > 0) s = s.slice(0, dot + 1);
+  if (!s) return "";
+  /* Timing boilerplate. "When this land enters, scry 1" is just "Scry 1" once you are
+     looking at the land, and the row was running to three lines on a phone because of
+     openers like this. Also: it is the only land on screen, so "this land" is "it". */
+  s = s.replace(/^when (this land|it) enters(?: the battlefield)?,\s*/i, "")
+       .replace(/^at the beginning of (the end step|your upkeep|your end step),\s*/i, "")
+       .replace(/\bthis land\b/gi, "it")
+       // "a creature card" is a creature. "to your hand" is where things go from a
+       // graveyard. Both are rules precision that costs a line break on a phone.
+       .replace(/\b(creature|artifact|land|instant|sorcery|planeswalker|enchantment) cards?\b/gi, "$1")
+       .replace(/\bfrom your graveyard to your hand\b/gi, "from your graveyard")
+       // "a 1/1 colorless Spirit creature token" is a 1/1 Spirit. The colour word and
+       // the word "creature" are already carried by the 1/1 and by the creature type.
+       .replace(/\b(\d+\/\d+) (?:colorless |white |blue |black |red |green )?(\w+)(?: artifact| enchantment)? creature token/gi, "$1 $2 token");
+  s = lead + upperFirst(s);
+  if (!/[.!]$/.test(s)) s += ".";
+  // 80, not 92. The mana clause sits in front of this, so 92 here was putting 106-character
+  // rows on a phone. Three lines under one card name is where he stops reading.
+  return clampPhrase(s, 80);
+}
+
+/* Does it really come in tapped? The naive test says yes for shocks, fastlands and
+   crowd lands -- all of which are usually UNtapped by the time you actually play them,
+   and a crowd land is NEVER tapped in a four-player pod. Getting this wrong tells him
+   to hold a land he could have dropped, which is a worse lie than saying nothing. */
+/* These conditions get read off a lowercased copy of the text, and a basic land type is
+   a proper noun. "Untapped with an island or a swamp" looks like a typo, and looking like
+   a typo is enough to make him stop trusting the line. */
+function landTypeCase(s){
+  return s.replace(/\b(plains|island|swamp|mountain|forest)\b/gi, m => upperFirst(m.toLowerCase()));
+}
+
+function landTempoPhrase(card){
+  const lo = String(card.oracle_text || card.oracle || "").toLowerCase();
+  if (/tapped unless you have [^.]*opponents/.test(lo)) return "Untapped in your pod.";
+  if (!/enters (the battlefield )?tapped/.test(lo)) return "";
+  const life = lo.match(/you may pay (\d+) life/);
+  if (life) return "Pay " + life[1] + " life for untapped.";
+  // Choked Estuary is untapped whenever you can show it a land. Calling that "comes in
+  // tapped" is flat wrong, and it is wrong on the exact turn the answer matters.
+  const reveal = lo.match(/you may reveal ([^.]+?) from your hand/);
+  if (reveal) return "Untapped if you reveal " + landTypeCase(tidyPhrase(reveal[1])) + ".";
+  if (/two or fewer other lands/.test(lo)) return "Untapped early.";
+  // Name the condition. "A land it likes" was true for check lands and battle lands
+  // alike and told him nothing he could act on -- which land? He has to know.
+  const unless = lo.match(/tapped unless you control ([^.]+)/);
+  if (unless) return "Untapped with " + landTypeCase(tidyPhrase(unless[1])) + ".";
+  return "Comes in tapped.";
+}
+
+/* WHAT COLORS DOES IT ACTUALLY MAKE?
+   Scryfall has already worked this out and hands it over as produced_mana, so read that
+   rather than guessing from the text box. The old code took the first "Add {X}" line it
+   found and stopped. On any land with two mana abilities -- every shock, check land,
+   painland, Verge, triome and guildgate -- that printed ONE color and hid the rest.
+   Shivan Reef read "Taps for {C}" when it makes blue and red. Roughly thirty lands
+   across the six decks were wrong. Colors are the one thing a land row has to get
+   right, so this now comes from the data. */
+const WUBRG = ["W","U","B","R","G"];
+
+/* "{B}, {G} or {U}" -- reads out loud the way you'd say it, and keeps the pips together
+   so the eye can grab the colors without reading a sentence. */
+function orList(pips){
+  if (pips.length <= 1) return pips.join("");
+  return pips.slice(0, -1).join(", ") + " or " + pips[pips.length - 1];
+}
+
+/* The mana you get for JUST TAPPING -- every mana ability whose cost is nothing but
+   symbols. produced_mana on its own is too generous: it unions every ability on the card,
+   so Phyrexian Tower comes back as black when the black actually costs you a creature.
+   Leading a row with a color the land won't give you for free is a lie he'd act on. */
+function landManaSymbols(o){
+  const out = { colors: new Set(), colorless: false, both: null };
+  for (const raw of String(o).split("\n")){
+    const m = raw.trim().match(/^([^:]+):\s*(.+)$/);
+    if (!m) continue;
+    if (!/^(\{[^}]+\}|,|\s)+$/.test(m[1].trim())) continue;   // cost must be symbols only
+    const eff = m[2];
+    if (!/^add\b/i.test(eff.trim())) continue;
+    if (/for each|equal to the number/i.test(eff)) continue;   // scaling is said elsewhere
+    if (/any color/i.test(eff)){ WUBRG.forEach(c => out.colors.add(c)); continue; }
+    for (const p of eff.match(/\{[wubrgc]\}/gi) || []){
+      const c = p[1].toUpperCase();
+      if (c === "C") out.colorless = true; else out.colors.add(c);
+    }
+    /* "Add {U}{B}." hands you both at once (Dimir Aqueduct). "Add {B}{B}, {B}{G}, or
+       {G}{G}." is a choice between them (Twilight Mire), and reading that as "both"
+       printed {B}{B} and dropped green off a land he runs for green. So the run of pips
+       only counts when it is the whole effect. */
+    const run = eff.match(/^add\s+((?:\{[wubrgc]\}){2,})\s*(?:\.|$)/i);
+    if (run) out.both = run[1].toUpperCase();
+  }
+  return out;
+}
+
+function landManaPhrase(card, o){
+  // Command Tower is capped at your commander, so say that instead of "any color".
+  if (/commander/.test(o) && /any color/.test(o)) return "Taps for any of your colors.";
+  // Exotic Orchard makes whatever the table is playing, which is not a promise.
+  if (/a land an opponent controls could produce/.test(o)) return "Taps for what your opponents' lands make.";
+
+  const free = landManaSymbols(o);
+  let colors    = WUBRG.filter(c => free.colors.has(c));
+  let colorless = free.colorless;
+
+  // Nothing comes free. Urborg has no mana ability of its own -- it just turns itself
+  // into a Swamp -- so fall back to everything the card can end up making.
+  if (!colors.length && !colorless){
+    const made = Array.isArray(card.produced_mana) ? card.produced_mana : [];
+    colors    = WUBRG.filter(c => made.includes(c));
+    colorless = made.includes("C");
+  }
+
+  if (colors.length >= 5) return "Taps for any color.";
+  if (colors.length >= 2) return "Taps for " + (free.both || orList(colors.map(c => "{" + c + "}"))) + ".";
+  if (colors.length === 1) return "Taps for {" + colors[0] + "}.";
+  if (colorless) return "Taps for " + (free.both || "{C}") + ".";
+  return "";
+}
+
+/* The payoff: what the land does beyond making one mana. Ordered by what defines the
+   card, not by what comes first in the text box. */
+function landPayoff(card){
+  const lines = String(card.oracle_text || card.oracle || "").split("\n").map(s => s.trim()).filter(Boolean);
+
+  // 1. Mana that SCALES is the entire card. Cabal Coffers is not a Swamp.
+  for (const line of lines){
+    const per = line.match(/add\s+((?:\{[^}]+\}\s*)+?)for each ([^.]+)/i);
+    if (per) return { head: "Taps for " + per[1].replace(/\s+/g, "").toUpperCase()
+                            + " per " + tidyPhrase(per[2]) + "." };
+    // Same idea, spelled the long way round: "Add an amount of mana of that color
+    // equal to the number of creatures you control of the chosen type." (Three Tree City)
+    const eq = line.match(/add an amount of mana[^.]*equal to the number of ([^.]+)/i);
+    // "per creatures you control" — the card counts a plural, but "per" takes one.
+    if (eq) return { extra: "Adds one mana per " + tidyPhrase(eq[1]).replace(/^(\w+?)s\b/, "$1") + "." };
+  }
+  /* 2. Mana you have to give something up for. Phyrexian Tower, Crystal Vein.
+        Only sacrifice costs -- "Pay 2 life: Add {C}" also matched this once, and on
+        Boseiju it beat out the line that is the actual reason the card is in the deck. */
+  for (const line of lines){
+    const costly = line.match(/^\{t\}\s*,\s*([^:]*sacrifice[^:]*):\s*add\s+((?:\{[^}]+\}\s*)+)/i);
+    if (costly) return { extra: upperFirst(tidyPhrase(costly[1])).replace(/\bthis land\b/gi, "it") + " for "
+                                + costly[2].replace(/\s+/g, "").toUpperCase() + "." };
+  }
+  /* 2b. Uncounterable. On Boseiju, Who Shelters All this is buried at the end of a mana
+         ability, so the generic pass took the first sentence and printed "Add {C}." --
+         which is both useless and already said by the mana clause in front of it. */
+  for (const line of lines){
+    if (!/can't be countered/i.test(line)) continue;
+    if (/instant and sorcery spells you control/i.test(line))
+      return { extra: "Your instants and sorceries can't be countered." };
+    const life = line.match(/pay (\d+) life/i);
+    return { extra: life ? "Pay " + life[1] + " life to make a spell uncounterable."
+                         : "Its mana makes a spell uncounterable." };
+  }
+  // 3. Filter lands. Pay one, get two.
+  for (const line of lines){
+    if (/^\{[wubrg]\/[wubrg]\}\s*,\s*\{t\}\s*:\s*add/i.test(line)) return { extra: "Filters one mana into two." };
+  }
+  // 4. Cycling. Printed as a bare keyword with the rules buried in brackets, so say
+  //    what it means instead: this land is a spare card when you already have lands.
+  for (const line of lines){
+    if (/^cycling\s*\{/i.test(line.trim())) return { extra: "Cycle it if you don't need a land." };
+  }
+  // 4b. Painlands. The life is the whole trade-off and it belongs on the row -- otherwise
+  //     "Taps for {W} or {R}." reads like a free dual, which is the wrong land to fetch.
+  for (const line of lines){
+    // Ancient Tomb charges you on every tap; a painland only charges for the colors.
+    const dmg = line.match(/deals (\d+) damage to you/i);
+    if (dmg) return { extra: dmg[1] === "1" ? "1 life per colored mana." : dmg[1] + " life every tap." };
+    // Spire of Industry and Mana Confluence. Spire has a free colorless tap to fall back
+    // on; Confluence has nothing free at all, so the life is not optional there.
+    if (/pay 1 life[^:]*:\s*add/i.test(line))
+      return { extra: lines.some(isPlainManaLine) ? "1 life for any color." : "Costs 1 life each tap." };
+  }
+  /* 4c. Three sentences the rules text says the long way round. Left alone they ran the
+         row to three lines on a phone, which is the one thing that makes him stop reading. */
+  for (const line of lines){
+    // Urborg / Yavimaya
+    const each = line.match(/^each land is a (\w+) in addition/i);
+    if (each) return { extra: "Every land is also a " + upperFirst(each[1]) + "." };
+    // Inventors' Fair, and any other "reveal it, put it into your hand, then shuffle"
+    const tut = line.match(/search your library for (an? [^,.]+?) card/i);
+    if (tut) return { extra: "Tutors up " + tut[1].toLowerCase() + "." };
+    // Mishra's Factory. The Assembly-Worker typing is not why it is in the deck.
+    const anim = line.match(/becomes? an? (\d+\/\d+)[^.]*creature/i);
+    if (anim) return { extra: "Becomes a " + anim[1] + " creature." };
+  }
+  // 5. Anything else it actually does.
+  //    Two passes, because a land with four abilities should be described by the
+  //    interesting one. Fountainport makes Fish and Treasure; picking its first
+  //    non-mana line got "Draw a card.", which is the least of what it does.
+  const BIG = /\b(create|destroy|exile|regenerate|counter target|search your library|return)\b/i;
+  const candidates = [];
+  for (const line of lines){
+    if (isPlainManaLine(line)) continue;
+    if (/^\(/.test(line)) continue;
+    // A line with no colon that talks about entering tapped is pure tempo, and tempo
+    // is said separately. Covers "This land enters tapped." and both "...unless" forms.
+    if (!line.includes(":") && /enters (the battlefield )?tapped/i.test(line)) continue;
+    candidates.push(line);
+  }
+  const pick = candidates.find(l => BIG.test(l)) || candidates[0];
+  if (pick){
+    const eff = landEffectPhrase(pick);
+    if (eff) return { extra: eff };
+  }
+  return null;
+}
+
 /* Double-faced cards keep all their text on the faces, so the top-level oracle is
    empty and every rule below would miss. Read the FRONT face — that is the side you
    cast — and say when the back is a land, because "a spell that can be a land instead"
@@ -3188,18 +3453,26 @@ function cardOneLinerCore(card, deck){
   const t = String(card.type_line || card.type || "").toLowerCase();
   const first = String(card.oracle_text || card.oracle || "").split("\n")[0].trim();
 
-  // Lands: say what they tap for, nothing more. Double-faced cards whose back is a
-  // land ("Fell the Profane // Fell Mire") are judged on their front face instead —
-  // that is the side you actually cast.
+  // Lands: what it taps for, then what it DOES, then whether it really comes in
+  // tapped. A land that is only mana still says only one thing. Double-faced cards
+  // whose back is a land ("Fell the Profane // Fell Mire") are judged on their front
+  // face instead — that is the side you actually cast.
   if (t.includes("land") && !t.includes("//")){
     if (/^(plains|island|swamp|mountain|forest)$/.test(String(card.name||"").toLowerCase()))
       return "Basic land.";
-    const add = manaAdded(o);
-    if (/enters .*tapped/.test(o) && add) return "Taps for " + add + ". Comes in tapped.";
-    if (add) return "Taps for " + add + ".";
+    const pay   = landPayoff(card);
+    const tempo = landTempoPhrase(card);
+    // Scaling mana replaces the mana clause outright rather than sitting next to it,
+    // because "Taps for {B}. Taps for {B} per Swamp." would be nonsense.
+    if (pay && pay.head) return [pay.head, tempo].filter(Boolean).join(" ");
+    const mana = landManaPhrase(card, o);
+    if (mana) return [mana, pay && pay.extra, tempo].filter(Boolean).join(" ");
+    // A fetchland's search IS the card, so don't also print the search line twice.
     if (/search your library/.test(o)) return "Fetches a land.";
     // A utility land that makes no mana still does something. Say what, rather
     // than printing the word "Land." under it.
+    const parts = [pay && pay.extra, tempo].filter(Boolean);
+    if (parts.length) return parts.join(" ");
     return firstOracleLine(card) || "Land.";
   }
 
