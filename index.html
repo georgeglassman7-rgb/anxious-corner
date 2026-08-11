@@ -2019,8 +2019,8 @@ const CHATTERFANG_DECK = {
 const KESS_DECK = {
   name: "Kess, Dissident Mage",
   flavor: "Every spell comes back. The graveyard is hand number two.",
-  winLine: "Recast your spells out of the graveyard, out-card the room, and close with a big burn or a storm turn once they are buried in card advantage.",
-  character: "Kess casts everything twice. Play the spell, then play it again from the graveyard — she treats the yard as a second hand and never really runs dry. She counters what matters, wipes what does not, and chips the table down while she waits. Bookish, patient, a little ruthless. By the time the game feels decided, she decided it a few turns ago.",
+  winLine: "Answer everything, recast it out of the graveyard, and let the Wraiths do the killing. Lord of the Nazgûl turns every instant and sorcery into a 3/3 with menace, and once you control nine Wraiths they all swing as 9/9s. Backup line is Duskmantle Guildmage plus Mindcrank, which mills an opponent out and collects on their next draw.",
+  character: "Kess casts everything twice. Play the spell, then play it again from the graveyard — she treats the yard as a second hand and never really runs dry. She counters what matters, wipes what does not, and every spell she throws puts another Wraith on the board. Bookish, patient, a little ruthless. The army builds itself while she says no. By the time the game feels decided, she decided it a few turns ago.",
   colors: "Grixis (U/B/R)",
   commander: "Kess, Dissident Mage",
   kicker: "Commander . Grixis Spellslinger",
@@ -3726,6 +3726,21 @@ function setEditStatus(msg, isErr){
   el.className = "status" + (isErr ? " err" : "");
 }
 
+/* A half-typed name is not a misspelled name. Scryfall answers "Bilbo" with a 404
+   whose body says the name was AMBIGUOUS -- twelve cards start with it -- not that
+   the card is missing. We used to throw that away and tell you to check your
+   spelling, which sends you hunting for a typo that was never there. Read the real
+   reason and say the real thing. Falls back to the old wording on a genuine miss. */
+const NO_SUCH_CARD = "No card by that name. Check the spelling, or pick one from the list that drops down as you type.";
+
+async function scryfallNameError(res, typed){
+  let why = "";
+  try { const j = await res.json(); why = String((j && j.details) || ""); } catch(e){}
+  if (/ambiguous|too many cards/i.test(why))
+    return "More than one card starts with “" + typed + "”. Pick the one you want from the list, or type a few more words.";
+  return NO_SUCH_CARD;
+}
+
 function deckCardTotal(deck){
   if (!deck || !deck.buckets) return 0;
   return deck.buckets.reduce((s,b) => s + b.cards.reduce((t,c) => t + qtyOf(c.n), 0), 0);
@@ -3893,10 +3908,11 @@ async function addCardToDeck(raw){
   const addBtn = document.getElementById("editAddBtn");
   if (addBtn) addBtn.disabled = true;
 
-  let card = null;
+  let card = null, nameErr = null;
   try {
     const res = await fetch("https://api.scryfall.com/cards/named?fuzzy=" + encodeURIComponent(typed));
     if (res.ok) card = await res.json();
+    else nameErr = await scryfallNameError(res, typed);
   } catch(e){ /* offline: fall through to the same plain message */ }
   if (addBtn) addBtn.disabled = false;
 
@@ -3905,7 +3921,7 @@ async function addCardToDeck(raw){
   if (ACTIVE_KEY !== key){ setEditStatus(""); return; }
 
   if (!card || !card.name){
-    setEditStatus("No card by that name. Check the spelling, or pick one from the list that drops down as you type.", true);
+    setEditStatus(nameErr || NO_SUCH_CARD, true);
     return;
   }
 
@@ -4062,6 +4078,11 @@ function wireEditDeck(){
     });
     input.addEventListener("input", () => {
       clearTimeout(EDIT_TIMER);
+      // A red line from the last attempt must not sit under a name you have since
+      // fixed -- it reads as though the app is still refusing a card it would take.
+      // Only errors get cleared; the green "X is in" confirmation stays put.
+      const stEl = document.getElementById("editStatus");
+      if (stEl && stEl.classList.contains("err")) setEditStatus("");
       const q = input.value.trim();
       if (q.length < 3){ hideEditSugg(); return; }
       EDIT_TIMER = setTimeout(() => suggestEditNames(q), 220);
@@ -5080,7 +5101,10 @@ async function runLookup(raw){
     const res = await fetch("https://api.scryfall.com/cards/named?fuzzy=" + encodeURIComponent(name));
     if (seq !== LOOKUP_SEQ) return;
     if (!res.ok){
-      st.textContent = "No card found for “" + name + "”. Check the spelling, or type three letters and pick from the list.";
+      const why = await scryfallNameError(res, name);
+      st.textContent = (why === NO_SUCH_CARD)
+        ? "No card found for “" + name + "”. Check the spelling, or type three letters and pick from the list."
+        : why;
       st.className = "status err";
       return;
     }
