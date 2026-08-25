@@ -238,6 +238,43 @@ html.calm .deck-mark{filter:none;opacity:.13}
 .combo-name{font-size:1.08em;font-weight:600;color:var(--bone-bright);margin-bottom:.28em;line-height:1.35}
 .combo-why{font-size:.95em;color:var(--steel);line-height:1.55}
 
+/* Wish list — upgrade ideas for every deck in one column at the top of Showcase.
+   Rows reuse the .combo-row shape. The left bar and the deck chip carry that
+   deck's OWN accent as inline --wl-* tokens (same trick as .swdeck), so a row
+   reads as "this belongs to Kess" without retinting the page. */
+.wl-strip{margin:0 0 1.6em}
+.wl-strip:empty{display:none}
+.wl-head{display:flex;align-items:baseline;gap:.6em;flex-wrap:wrap;margin-bottom:.7em}
+.wl-title{font-family:'Cinzel',serif;font-size:.72em;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.wl-n{font-size:.82em;color:var(--steel)}
+.wl-row{border-left:3px solid var(--wl-hint,var(--gold))}
+.wl-deck{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--wl-hint,var(--gold));border:1px solid var(--wl-edge,var(--panel-edge));
+  border-radius:20px;padding:.2em .7em;margin-left:.5em;white-space:nowrap}
+.wl-pick{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(215,178,90,0.45);background:rgba(215,178,90,0.09);
+  border-radius:12px;padding:.15em .6em;margin-left:.5em;white-space:nowrap}
+.wl-out{font-size:.9em;color:var(--bone-bright);margin-top:.45em;line-height:1.5}
+.wl-caveat{font-size:.86em;color:var(--text-dim);font-style:italic;line-height:1.55;margin-top:.35em}
+.wl-quiet>summary{font-family:'Cinzel',serif;font-size:.72em;letter-spacing:2px;text-transform:uppercase;color:var(--steel)}
+.wl-ask{font-size:.94em;line-height:1.55;color:var(--bone-bright);margin-top:.7em;padding:.6em .7em;border-radius:8px;background:rgba(var(--panel-rgb),0.55);border:1px solid var(--wl-edge,var(--panel-edge))}
+.wl-err{font-size:.9em;color:var(--crimson-bright);line-height:1.55;margin-top:.5em}
+.wl-acts{display:flex;gap:.5em;flex-wrap:wrap;align-items:center;margin-top:.8em}
+.wl-acts .btn{min-height:44px}
+.wl-acts .status{font-size:.9em;color:var(--steel)}
+.wl-done{opacity:.62}
+.wl-park{display:flex;gap:.5em;flex-wrap:wrap;align-items:center;margin-bottom:1em}
+.wl-park input{flex:1;min-width:180px;min-height:44px;padding:.5em .8em;border-radius:6px;
+  border:1px solid var(--panel-edge);background:rgba(var(--void-rgb),0.55);color:var(--bone-bright);
+  font-family:inherit;font-size:.95em}
+.wl-park select{min-height:44px;padding:.5em .7em;border-radius:6px;border:1px solid var(--panel-edge);
+  background:rgba(var(--void-rgb),0.55);color:var(--bone-bright);font-family:inherit;font-size:.9em}
+.wl-park .btn{min-height:44px}
+.wl-parkfor{display:flex;gap:.5em;align-items:center;flex:1 1 auto}
+.wl-parkfor select{flex:1 1 auto;min-width:0}
+.wl-parkmsg{font-size:.9em;line-height:1.55;margin-bottom:1em;color:var(--steel)}
+.wl-parkmsg.bad{color:var(--crimson-bright)}
+
 /* views with a light fade */
 .view{display:none;opacity:0;transition:opacity .22s ease}
 .view.active{display:block;opacity:1}
@@ -1700,6 +1737,8 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
   <div class="view active" id="view-showcase">
     <div class="actions" id="showcaseActions"></div>
     <div id="showcaseConfirm"></div>
+    <!-- Wish list: upgrade ideas for ALL decks. Empty means empty; the strip hides itself. -->
+    <div class="wl-strip" id="wishStrip"></div>
     <div id="deckFront" class="deck-front"></div>
     <div id="twoThrones" class="two-thrones"></div>
     <div class="validation" id="validation"></div>
@@ -3089,6 +3128,87 @@ const COMBOS = [
     note:"Forge casts Top off the library and Top puts itself back. Wants one artifact cost reducer to run free." }
 ];
 
+/* ============ WISH LIST ============
+   Cards worth thinking about, for every deck, in one column at the top of Showcase.
+
+   Hand-entered. Automation never writes here. The Thursday sweep writes
+   MTG_Deck_App/SWEEP_LOG.md and sweep_state.json; a later session, with a backup
+   taken first, moves the findings into this list. Two ideas a week, one deck a
+   week, six decks in rotation -- about a dozen rows at steady state, not hundreds.
+   Keep it that way. When a row goes stale, delete it.
+
+   deck     a key in SEED_DECKS. A row pointing at a key that no longer exists is skipped.
+   card     the EXACT Scryfall name, PLAIN. This string is what gets added to the deck,
+            so no quantity suffix and no HTML entities. A wrong name here fails silently.
+   cost     printed mana cost as prose. Display only.
+   why      one line on what it does for that deck.
+   out      the card this comes in for, EXACT and PLAIN -- this one gets cut, so the
+            same naming rule applies. null when the sweep did not name one, which
+            turns the row into a plain add instead of a swap.
+   outNote  the human aside about the out card. Display only, never matched on.
+   caveat   the honest downside. null when there genuinely is none.
+   pick     1 on the single idea the sweep named under "Next:". At most one per week.
+   at       the sweep week, YYYY-MM-DD. Drives the ordering. */
+const WISHLIST = [
+  { deck:"splinter", card:"Willie Lumpkin, Postman", cost:"W/U, 2 mana", pick:1,
+    why:"Can't be blocked, and draws you a card every time he connects. That is a free ninjutsu trigger every single turn.",
+    out:"Mothdust Changeling",
+    outNote:"which you already marked hold",
+    caveat:null,
+    at:"2026-08-24" },
+
+  { deck:"splinter", card:"Elektra, Daughter of the Hand", cost:"2BB",
+    why:"Has Sneak, which works like ninjutsu — return an unblocked attacker and cast her cheap. Fits the Ninjas bucket.",
+    out:null,
+    outNote:null,
+    caveat:"Four mana is clunky next to your 1- and 2-drops. Weaker than Willie.",
+    at:"2026-08-24" }
+];
+
+/* Wish-list state: what you decided, and what you parked yourself.
+   One key, one object -- not a key per row.
+   decided is keyed by wishId(); mine is the cards you added by hand. */
+const WISH_KEY = "anxiouscorner.wish";
+function wishId(w){ return w.deck + "|" + String(w.card).toLowerCase(); }
+
+/* Which row is asking to be confirmed, which one is mid-action, and which one is
+   showing a refusal. All three are drawn from these by renderWishList, so a
+   redraw -- and a deck analysis landing forces one -- cannot wipe them. */
+let WISH_PENDING = null, WISH_BUSY = null, WISH_ERR = null;
+function loadWish(){
+  let raw = null;
+  try { raw = JSON.parse(localStorage.getItem(WISH_KEY) || "null"); } catch(e){}
+  if (!raw || typeof raw !== "object") raw = {};
+  if (!raw.decided || typeof raw.decided !== "object") raw.decided = {};
+  if (!Array.isArray(raw.mine)) raw.mine = [];
+  return raw;
+}
+function saveWish(state){
+  try { localStorage.setItem(WISH_KEY, JSON.stringify(state)); } catch(e){}
+}
+/* d is "in" | "out", or null to undo the decision and put the row back.
+   landedName is the name the card actually went into the deck under, which is
+   not always the name on the row -- Scryfall canonicalises. Storing it lets the
+   render step check the claim against the real list. */
+function setWishDecision(id, d, landedName){
+  const st = loadWish();
+  if (d){
+    st.decided[id] = { d:d, at:Date.now() };
+    if (landedName) st.decided[id].n = landedName;
+  } else delete st.decided[id];
+  saveWish(st);
+}
+/* Sweep rows and parked rows render identically; parked ones just carry mine:1
+   so they get a Remove button and the sweep rows do not. */
+function allWishRows(){
+  const st = loadWish();
+  const parked = st.mine.map(m => ({
+    deck:m.deck, card:m.card, cost:m.cost || "", why:m.why || "You parked this one.",
+    out:null, outNote:null, caveat:null, pick:0, at:m.at || "", mine:1
+  }));
+  return WISHLIST.concat(parked).filter(w => DECKS[w.deck]);
+}
+
 /* Combo pieces are stored lowercase for matching. Put them back into card-name case
    without mangling possessives ("bolas's" must not become "Bolas'S") or hyphens. */
 const NAME_SMALL = new Set(["of","the","and","from","to","in","a","an","on"]);
@@ -3938,12 +4058,19 @@ function setEditStatus(msg, isErr){
    reason and say the real thing. Falls back to the old wording on a genuine miss. */
 const NO_SUCH_CARD = "No card by that name. Check the spelling, or pick one from the list that drops down as you type.";
 
-async function scryfallNameError(res, typed){
+/* Same words, minus the pointer at a type-ahead list. The wish list and the park
+   box have no dropdown, so telling him to pick from one sends him looking for
+   something that is not on screen. */
+const NO_SUCH_CARD_NOLIST = "No card by that name. Check the spelling — it does not have to be exact, just close.";
+
+async function scryfallNameError(res, typed, noList){
   let why = "";
   try { const j = await res.json(); why = String((j && j.details) || ""); } catch(e){}
   if (/ambiguous|too many cards/i.test(why))
-    return "More than one card starts with “" + typed + "”. Pick the one you want from the list, or type a few more words.";
-  return NO_SUCH_CARD;
+    return noList
+      ? "More than one card starts with “" + typed + "”. Type a few more words of the name."
+      : "More than one card starts with “" + typed + "”. Pick the one you want from the list, or type a few more words.";
+  return noList ? NO_SUCH_CARD_NOLIST : NO_SUCH_CARD;
 }
 
 function deckCardTotal(deck){
@@ -4102,6 +4229,26 @@ function joinWords(list){
   return list.slice(0,-1).join(", ") + " and " + list[list.length-1];
 }
 
+/* The colors your commander can pay for are the only colors this deck may contain.
+   Returns the refusal to show, or null when the card is legal here.
+   Shared: the wish list needs this because applySwap checks no colors at all --
+   the coach only ever hands it cards it already filtered. */
+function identityRejection(deck, key, card){
+  const bundle  = DECK_CACHE.get(key);
+  const cmdData = (bundle && bundle.cardData && deck.commander)
+    ? bundle.cardData[String(deck.commander).toLowerCase()] : null;
+  const allowed = new Set(
+    (cmdData && cmdData.color_identity)
+      ? cmdData.color_identity.map(x => String(x).toUpperCase())
+      : identityStringToArray(deck.identity || "")
+  );
+  const off = (card.color_identity || []).map(x => String(x).toUpperCase()).filter(c => !allowed.has(c));
+  if (!off.length) return null;
+  const cmdShort = deck.commander ? String(deck.commander).split(",")[0].trim() : "your commander";
+  return card.name + " is " + joinWords(off.map(c => COLOR_WORDS[c] || c)) + ", and " + cmdShort +
+    " cannot pay for that. A deck can only run cards inside its commander's colors.";
+}
+
 async function addCardToDeck(raw){
   const typed = String(raw || "").trim();
   if (!typed){ setEditStatus("Type a card name first.", true); return; }
@@ -4130,24 +4277,10 @@ async function addCardToDeck(raw){
     return;
   }
 
-  // Commander legality, refused up front and in plain words. The colors your
-  // commander can pay for are the only colors this deck may contain, so an
-  // off-color card gets stopped here instead of quietly failing a check later.
-  const bundle  = DECK_CACHE.get(key);
-  const cmdData = (bundle && bundle.cardData && deck.commander)
-    ? bundle.cardData[String(deck.commander).toLowerCase()] : null;
-  const allowed = new Set(
-    (cmdData && cmdData.color_identity)
-      ? cmdData.color_identity.map(x => String(x).toUpperCase())
-      : identityStringToArray(deck.identity || "")
-  );
-  const off = (card.color_identity || []).map(x => String(x).toUpperCase()).filter(c => !allowed.has(c));
-  if (off.length){
-    const cmdShort = deck.commander ? String(deck.commander).split(",")[0].trim() : "your commander";
-    setEditStatus(card.name + " is " + joinWords(off.map(c => COLOR_WORDS[c] || c)) + ", and " + cmdShort +
-      " cannot pay for that. A deck can only run cards inside its commander's colors.", true);
-    return;
-  }
+  // Commander legality, refused up front and in plain words.
+  const bundle = DECK_CACHE.get(key);
+  const reject = identityRejection(deck, key, card);
+  if (reject){ setEditStatus(reject, true); return; }
 
   const cap      = multiCopyCap(card.name);
   const isBasic  = BASICS.includes(card.name);
@@ -5149,6 +5282,7 @@ function renderShowcase(deck, cardData){
     if (cached && cached.cardData) cardData = cached.cardData;
   }
   renderDeckHeader(deck);
+  renderWishList();
   renderDeckFront(deck);
   renderTwoThrones(deck);
   updateCommanderPrompt(deck);
@@ -5157,6 +5291,368 @@ function renderShowcase(deck, cardData){
   renderPowerModules(deck, cardData);
   renderDecklist(deck, cardData);
   renderShowcaseActions();
+}
+
+/* ============ WISH LIST ============
+   Every deck's ideas in one column at the top of Showcase, active deck first.
+   Deciding a row never deletes it -- it drops into the collapsed "Already
+   decided" block with a way back. */
+
+function wishShortName(key){
+  const d = DECKS[key];
+  if (!d) return key;
+  return (d.commander ? d.commander.split(",")[0] : d.name.split(",")[0]).trim();
+}
+
+/* That deck's own accent, inline, so a row reads as "this belongs to Kess"
+   without retinting the page. Same trick renderSwitcher uses for .swdeck. */
+function wishTint(key){
+  const t = themeForDeck(key, DECKS[key]);
+  return "--wl-hint:" + t.accent + ";--wl-edge:" + t.glow + ";";
+}
+
+function prettyCost(mc){ return String(mc || "").replace(/[{}]/g, ""); }
+
+function todayStamp(){
+  const d = new Date(), p = n => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+}
+
+/* Refusals stay on the row until he acts on them. flashInlineMessage wipes itself
+   after three seconds, which is not long enough to read a reason. Held in a
+   variable rather than written straight to the node so a redraw cannot lose it. */
+function wishError(id, msg){
+  WISH_ERR = { id: id, msg: msg };
+}
+
+/* A row with nothing to cut leaves the deck one card over. The count that says so
+   lives in the validation block, thousands of pixels below the button he just
+   tapped, so say it here while he can still say no. */
+function wishAskText(w, deckName){
+  let ask = w.out
+    ? "Put " + w.card + " into " + deckName + " and take " + w.out + " out?"
+    : "Put " + w.card + " into " + deckName + "?";
+  ask += " This changes the copy on this device, and you can undo it.";
+  if (!w.out){
+    const after = deckCardTotal(DECKS[w.deck]) + 1;
+    if (after > 100) ask += " Nothing comes out, so " + deckName + " goes to " +
+      after + " cards. You will need to cut " + (after - 100) + ".";
+  }
+  return ask;
+}
+
+function wishRowHtml(w, decided){
+  const id = wishId(w), st = decided[id], isDone = !!st;
+  const deckName = wishShortName(w.deck);
+  let h = '<div class="combo-row wl-row' + (isDone ? " wl-done" : "") +
+          '" style="' + wishTint(w.deck) + '" data-wish="' + esc(id) + '">';
+  h += '<div class="combo-name">' +
+       '<a href="' + scry(w.card) + '" target="_blank" rel="noopener" data-card="' + esc(w.card) + '">' + esc(w.card) + '</a>' +
+       (w.cost ? '<span class="wl-n"> &middot; ' + esc(w.cost) + '</span>' : "") +
+       '<span class="wl-deck">' + esc(deckName) + '</span>' +
+       (w.pick && !isDone ? '<span class="wl-pick">Start here</span>' : "") +
+       '</div>';
+  h += '<div class="combo-why">' + esc(w.why) + '</div>';
+  if (w.out){
+    h += '<div class="wl-out">Comes out for: ' + esc(w.out) +
+         (w.outNote ? ", " + esc(w.outNote) : "") + '.</div>';
+  }
+  if (w.caveat) h += '<div class="wl-caveat">' + esc(w.caveat) + '</div>';
+  const err = (WISH_ERR && WISH_ERR.id === id) ? WISH_ERR.msg : "";
+  h += '<div class="wl-err" data-wish-err' + (err ? "" : " hidden") + '>' + esc(err) + '</div>';
+  if (WISH_PENDING === id && !isDone){
+    h += '<div class="wl-ask">' +
+         esc(wishAskText(w, deckName)) + '</div>';
+  }
+  h += '<div class="wl-acts">';
+  if (isDone){
+    h += '<span class="status">' +
+         (st.d === "in" ? esc(w.card) + " went into " + esc(deckName) + "." : "Passed on this one.") +
+         '</span><button class="btn ghost small" type="button" data-wish-undo="' + esc(id) + '">Put it back</button>';
+  } else if (WISH_PENDING === id){
+    h += '<button class="btn small" type="button" data-wish-yes="' + esc(id) + '">Yes, do it</button>' +
+         '<button class="btn ghost small" type="button" data-wish-no="' + esc(id) + '">Cancel</button>';
+  } else if (WISH_BUSY === id){
+    h += '<span class="status">Working on ' + esc(w.card) + '&hellip;</span>';
+  } else {
+    h += '<button class="btn small" type="button" data-wish-go="' + esc(id) + '">' +
+         (w.out ? "Swap it in" : "Add it") + '</button>' +
+         '<button class="btn ghost small" type="button" data-wish-pass="' + esc(id) + '">Not now</button>';
+  }
+  if (w.mine) h += '<button class="btn ghost small" type="button" data-wish-del="' + esc(id) + '">Remove</button>';
+  h += '</div></div>';
+  return h;
+}
+
+function wishParkBoxHtml(){
+  let opts = "";
+  Object.keys(DECKS).forEach(k => {
+    opts += '<option value="' + esc(k) + '"' + (k === ACTIVE_KEY ? " selected" : "") + '>' +
+            esc(wishShortName(k)) + '</option>';
+  });
+  // The label, the picker and the button stay in one group so a phone-width wrap
+  // cannot leave the word "for" stranded on its own at the far edge.
+  return '<div class="wl-park">' +
+    '<input type="text" id="wishParkName" placeholder="Card name&hellip;" autocomplete="off" ' +
+      'autocapitalize="off" spellcheck="false" aria-label="Card to park on the wish list">' +
+    '<span class="wl-parkfor">' +
+      '<label class="wl-n" for="wishParkDeck">for</label>' +
+      '<select id="wishParkDeck" aria-label="Which deck to park it for">' + opts + '</select>' +
+      '<button class="btn small" type="button" id="wishParkBtn">Park it</button>' +
+    '</span></div>';
+}
+
+function renderWishList(){
+  const host = document.getElementById("wishStrip");
+  if (!host) return;
+  const rows = allWishRows();
+
+  // "in" is a claim about the deck. Undo the swap from the change log, or cut the
+  // card by hand, and the claim stops being true -- so check it against the real
+  // list and let the row come back rather than saying something false.
+  const st = loadWish();
+  let dirty = false;
+  Object.keys(st.decided).forEach(id => {
+    if (st.decided[id].d !== "in") return;
+    const w = rows.find(x => wishId(x) === id);
+    if (!w || !DECKS[w.deck]) return;
+    if (!findCardLocation(DECKS[w.deck], st.decided[id].n || w.card)){
+      delete st.decided[id];
+      dirty = true;
+    }
+  });
+  if (dirty) saveWish(st);
+
+  const decided = st.decided;
+  const open = rows.filter(w => !decided[wishId(w)]);
+  const done = rows.filter(w =>  decided[wishId(w)]);
+
+  // Active deck first: when you are looking at Splinter, the Splinter ideas are
+  // the ones that mean anything right now. Then newest week, then the sweep's
+  // own "Next:" pick leads its week.
+  const rank  = w => (w.deck === ACTIVE_KEY ? 0 : 1);
+  const order = (a, b) =>
+    rank(a) - rank(b) ||
+    String(b.at || "").localeCompare(String(a.at || "")) ||
+    ((b.pick ? 1 : 0) - (a.pick ? 1 : 0)) ||
+    String(a.card).localeCompare(String(b.card));
+
+  // Nothing waiting at all: fold the whole thing down to one line. This sits at the
+  // top of every deck, and a screenful of "nothing waiting" every day is the kind of
+  // noise that gets a panel ignored. Opening it still gets you the park box.
+  if (!open.length && !done.length){
+    host.innerHTML =
+      '<details class="tt-swaps wl-quiet"><summary>Wish list &mdash; nothing waiting</summary>' +
+      '<div class="mod-empty">The sweep runs Thursday nights and drops its ideas here. ' +
+      'You can park a card yourself in the meantime.</div>' +
+      wishParkBoxHtml() +
+      '<div class="wl-parkmsg" id="wishParkMsg" hidden></div></details>';
+    wireWishStrip(host);
+    return;
+  }
+
+  let html = '<div class="wl-head"><span class="wl-title">Wish List</span><span class="wl-n">' +
+    (open.length ? open.length + (open.length === 1 ? " idea waiting" : " ideas waiting") : "nothing waiting") +
+    '</span></div>';
+  html += wishParkBoxHtml();
+  html += '<div class="wl-parkmsg" id="wishParkMsg" hidden></div>';
+  if (open.length){
+    html += '<div class="combo-list">' + open.sort(order).map(w => wishRowHtml(w, decided)).join("") + '</div>';
+  }
+  if (done.length){
+    html += '<details class="tt-swaps"><summary>Already decided (' + done.length + ')</summary>' +
+            '<div class="combo-list">' + done.sort(order).map(w => wishRowHtml(w, decided)).join("") + '</div></details>';
+  }
+  host.innerHTML = html;
+  wireWishStrip(host);
+}
+
+function wireWishStrip(host){
+  host.querySelectorAll("[data-wish-go]").forEach(b =>
+    b.addEventListener("click", () => {
+      WISH_PENDING = b.getAttribute("data-wish-go"); WISH_ERR = null; renderWishList();
+    }));
+  host.querySelectorAll("[data-wish-yes]").forEach(b =>
+    b.addEventListener("click", () => runWishRow(b.getAttribute("data-wish-yes"))));
+  host.querySelectorAll("[data-wish-no]").forEach(b =>
+    b.addEventListener("click", () => { WISH_PENDING = null; renderWishList(); }));
+  host.querySelectorAll("[data-wish-pass]").forEach(b =>
+    b.addEventListener("click", () => { setWishDecision(b.getAttribute("data-wish-pass"), "out"); renderWishList(); }));
+  host.querySelectorAll("[data-wish-undo]").forEach(b =>
+    b.addEventListener("click", () => { setWishDecision(b.getAttribute("data-wish-undo"), null); renderWishList(); }));
+  host.querySelectorAll("[data-wish-del]").forEach(b =>
+    b.addEventListener("click", () => removeParkedWish(b.getAttribute("data-wish-del"))));
+  const pb = host.querySelector("#wishParkBtn");
+  if (pb) pb.addEventListener("click", () => parkWishCard());
+  const pi = host.querySelector("#wishParkName");
+  if (pi) pi.addEventListener("keydown", e => { if (e.key === "Enter") parkWishCard(); });
+}
+
+/* One tap does not put a card in a deck. The question is drawn on the row itself,
+   not in #showcaseConfirm: that holder is emptied by renderShowcaseActions every
+   time a deck analysis lands, so a confirm put there can vanish mid-tap. On the
+   row it also sits under the card it is asking about, instead of at the top of a
+   list he may have scrolled well past. */
+async function runWishRow(id){
+  const w = allWishRows().find(x => wishId(x) === id);
+  if (!w) return;
+  WISH_PENDING = null;
+  WISH_ERR = null;
+  WISH_BUSY = id;
+  renderWishList();
+  try { await doWishAct(w); }
+  finally { WISH_BUSY = null; renderWishList(); }
+}
+
+async function doWishAct(w){
+  const key = w.deck, id = wishId(w), deckName = wishShortName(key);
+  if (!DECKS[key]) return;
+
+  // applySwap and addCardToDeck both only ever write to ACTIVE_DECK, so the right
+  // deck has to be in front first. Click its switcher button rather than repeating
+  // the switch here, so the whole switch path stays in one place.
+  if (ACTIVE_KEY !== key){
+    let btn = null;
+    document.querySelectorAll(".swdeck").forEach(b => { if (b.dataset.key === key) btn = b; });
+    if (btn) btn.click();
+  }
+  // Never write into a list you are not standing in. If the switch did not take,
+  // stop rather than editing the wrong deck.
+  if (ACTIVE_KEY !== key){
+    renderWishList();
+    wishError(id, "Could not switch to " + deckName + ". Open that deck first, then try again.");
+    return;
+  }
+
+  const deck = DECKS[key];
+  if (findCardLocation(deck, w.card)){
+    setWishDecision(id, "in", w.card);
+    renderWishList();
+    flashInlineMessage(w.card + " is already in " + deckName + ".");
+    return;
+  }
+
+  // A swap needs a card to cut. If the out card is already gone, applySwap bails
+  // silently and it would look like nothing happened -- so fall through to a
+  // plain add instead.
+  if (w.out && findCardLocation(deck, w.out)) await doWishSwap(w, deck, key);
+  else await doWishAdd(w, deck, key);
+}
+
+async function doWishSwap(w, deck, key){
+  const id = wishId(w);
+  let card = null, nameErr = null;
+  try {
+    const res = await fetch("https://api.scryfall.com/cards/named?fuzzy=" + encodeURIComponent(w.card));
+    if (res.ok) card = await res.json();
+    else nameErr = await scryfallNameError(res, w.card, true);
+  } catch(e){ /* offline: falls through to the same plain message */ }
+
+  // You may have moved decks while that was in the air.
+  if (ACTIVE_KEY !== key){ renderWishList(); return; }
+  if (!card || !card.name){ wishError(id, nameErr || NO_SUCH_CARD_NOLIST); return; }
+
+  // applySwap checks no colors and no singleton -- the coach only ever hands it
+  // cards it has already filtered. Coming from here, both have to be checked.
+  const reject = identityRejection(deck, key, card);
+  if (reject){ wishError(id, reject); return; }
+  if (findCardLocation(deck, card.name)){
+    wishError(id, card.name + " is already in " + wishShortName(key) + ".");
+    return;
+  }
+
+  applySwap({ outName: w.out, inCard: card, category: null, blockEl: null });
+
+  // applySwap ends on the coach panel and never refreshes the change log -- the
+  // coach does not need it, because it draws its own Undo on the swap block.
+  // From here the change log is the only undo there is, and the confirm just
+  // promised him one.
+  renderChangeLog();
+
+  // Ask the deck, not the message. If Scryfall canonicalised the name to
+  // something else, this comes back false and the row stays open.
+  const landed = !!findCardLocation(DECKS[key], card.name);
+  if (landed) setWishDecision(id, "in", card.name);
+  renderWishList();
+  if (landed) flashInlineMessage(card.name + " is in, " + w.out + " is out. Undo is in the change log below.");
+  else wishError(id, "That did not go through. Nothing changed.");
+}
+
+async function doWishAdd(w, deck, key){
+  const id = wishId(w);
+  // addCardToDeck does its own lookup, colors, singleton and logging. Do not
+  // repeat any of it here.
+  await addCardToDeck(w.card);
+  if (ACTIVE_KEY !== key) return;
+
+  // It focuses the edit input on success, which pops the keyboard on a phone.
+  const inp = document.getElementById("editAdd");
+  if (inp) inp.blur();
+
+  const landed = !!findCardLocation(DECKS[key], w.card);
+  if (landed) setWishDecision(id, "in", w.card);
+  renderWishList();
+
+  // It also reports through #editStatus, which lives inside the edit panel and is
+  // hidden unless you are editing. Mirror the message somewhere he can see it.
+  const stEl = document.getElementById("editStatus");
+  const msg  = (stEl && stEl.textContent.trim()) ? stEl.textContent.trim() : "";
+  setEditStatus("");
+  if (landed) flashInlineMessage(msg || (w.card + " is in."));
+  else wishError(id, msg || "That did not go through. Nothing changed.");
+}
+
+/* Park a card you found yourself. The name has to be real and the deck has to be
+   able to run it, so something that could never go in never sits on the list. */
+async function parkWishCard(){
+  const inp = document.getElementById("wishParkName");
+  const sel = document.getElementById("wishParkDeck");
+  const btn = document.getElementById("wishParkBtn");
+  const box = document.getElementById("wishParkMsg");
+  if (!inp || !sel) return;
+  const say = (text, bad) => {
+    if (!box) return;
+    box.textContent = text || "";
+    box.hidden = !text;
+    box.classList.toggle("bad", !!bad);
+  };
+  const typed = inp.value.trim(), key = sel.value, deck = DECKS[key];
+  if (!typed){ say("Type a card name first.", true); return; }
+  if (!deck){ say("Pick a deck first.", true); return; }
+
+  if (btn) btn.disabled = true;
+  say("Looking up " + typed + "…", false);
+  let card = null, nameErr = null;
+  try {
+    const res = await fetch("https://api.scryfall.com/cards/named?fuzzy=" + encodeURIComponent(typed));
+    if (res.ok) card = await res.json();
+    else nameErr = await scryfallNameError(res, typed, true);
+  } catch(e){ /* offline: falls through to the same plain message */ }
+  if (btn) btn.disabled = false;
+
+  if (!card || !card.name){ say(nameErr || NO_SUCH_CARD_NOLIST, true); return; }
+  const reject = identityRejection(deck, key, card);
+  if (reject){ say(reject, true); return; }
+
+  const st = loadWish();
+  const id = key + "|" + card.name.toLowerCase();
+  const already = st.mine.some(m => (m.deck + "|" + String(m.card).toLowerCase()) === id) ||
+                  WISHLIST.some(x => wishId(x) === id);
+  if (already){ say(card.name + " is already on the list for " + wishShortName(key) + ".", true); return; }
+
+  st.mine.push({ deck:key, card:card.name, cost:prettyCost(card.mana_cost), at:todayStamp() });
+  saveWish(st);
+  inp.value = "";
+  renderWishList();
+  flashInlineMessage(card.name + " parked for " + wishShortName(key) + ".");
+}
+
+function removeParkedWish(id){
+  const st = loadWish();
+  st.mine = st.mine.filter(m => (m.deck + "|" + String(m.card).toLowerCase()) !== id);
+  delete st.decided[id];
+  saveWish(st);
+  renderWishList();
 }
 
 /* The combos your list already contains, and the ones it is a single card short of.
