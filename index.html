@@ -248,6 +248,11 @@ html.calm .deck-mark{filter:none;opacity:.13}
 .wl-title{font-family:'Cinzel',serif;font-size:.72em;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
 .wl-n{font-size:.82em;color:var(--steel)}
 .wl-row{border-left:3px solid var(--wl-hint,var(--gold))}
+/* Card links here are not inside .deck-block, so without this they fall all the way
+   back to the browser default -- #0000EE and underlined on a near-black panel.
+   Hover uses the row's own tint rather than --accent-2, which retints per deck. */
+.wl-row .combo-name a{color:var(--text);text-decoration:none;border-bottom:1px dotted transparent;transition:color .16s,border-color .16s}
+.wl-row .combo-name a:hover{color:var(--wl-hint,var(--gold));border-bottom-color:var(--wl-edge,transparent)}
 .wl-deck{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:1.4px;text-transform:uppercase;
   color:var(--wl-hint,var(--gold));border:1px solid var(--wl-edge,var(--panel-edge));
   border-radius:20px;padding:.2em .7em;margin-left:.5em;white-space:nowrap}
@@ -270,8 +275,6 @@ html.calm .deck-mark{filter:none;opacity:.13}
 .wl-park select{min-height:44px;padding:.5em .7em;border-radius:6px;border:1px solid var(--panel-edge);
   background:rgba(var(--void-rgb),0.55);color:var(--bone-bright);font-family:inherit;font-size:.9em}
 .wl-park .btn{min-height:44px}
-.wl-parkfor{display:flex;gap:.5em;align-items:center;flex:1 1 auto}
-.wl-parkfor select{flex:1 1 auto;min-width:0}
 .wl-parkmsg{font-size:.9em;line-height:1.55;margin-bottom:1em;color:var(--steel)}
 .wl-parkmsg.bad{color:var(--crimson-bright)}
 
@@ -3162,7 +3165,77 @@ const WISHLIST = [
     out:null,
     outNote:null,
     caveat:"Four mana is clunky next to your 1- and 2-drops. Weaker than Willie.",
-    at:"2026-08-24" }
+    at:"2026-08-24" },
+
+  { deck:"urtet", card:"Anointed Procession", cost:"4 mana, white", pick:1,
+    why:"Every token you make, you make two of instead. Urtet already spits out a Myr every time you cast a Myr, so this doubles your best engine — and it doubles Genesis Chamber and Myr Turbine on top of that.",
+    out:"Myr Incubator",
+    outNote:"six mana to cast, then six more to use it",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"urtet", card:"Intruder Alarm", cost:"3 mana, blue",
+    why:"Whenever any creature enters, every creature untaps. Urtet makes a Myr token each time you cast a Myr, so every Myr you play untaps your whole board — including the ones that make mana.",
+    out:"Myr Propagator",
+    outNote:"three mana to cast, three more for every copy",
+    caveat:"Real downside: your creatures stop untapping on your own untap step. Urtet untaps your Myr at combat anyway, so the Myr are fine. Anything that is not a Myr is not.",
+    at:"2026-08-25" },
+
+  { deck:"chatterfang", card:"Ashnod's Altar", cost:"3 mana, colorless", pick:1,
+    why:"Sacrifice any creature, get two mana back. A free sac outlet that pays you instead of costing you — and you already run Blood Artist, Zulaport Cutthroat and Bastion of Remembrance, so every squirrel you feed it drains the table.",
+    out:"Chatter of the Squirrel",
+    outNote:"one mana for one squirrel, then three more for a second",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"chatterfang", card:"Dictate of Erebos", cost:"5 mana, black",
+    why:"Every time one of your creatures dies, each opponent has to sacrifice one of theirs. You already run Grave Pact — this is the second copy of it. Flash means you can drop it at the end of their turn.",
+    out:"Grievous Wound",
+    outNote:"five mana, and it only ever hurts one player",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"kess", card:"Mystical Tutor", cost:"1 mana, blue", pick:1,
+    why:"One mana, find any instant or sorcery, put it on top. Kess lets you cast a spell out of your graveyard once a turn, so this one keeps paying — tutor now, then cast the tutor again later.",
+    out:"The Dawning Archaic",
+    outNote:"ten mana before discounts, and it still has to attack",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"kess", card:"Bolas's Citadel", cost:"6 mana, black",
+    why:"Play off the top of your library and pay life instead of mana. You already run Sensei's Divining Top, and Top plus Citadel is the engine — you set the top card, then cast it for nothing.",
+    out:"Unfulfilled Desires",
+    outNote:"three mana, then a mana and a life every time you loot",
+    caveat:"Six mana, and the life adds up fast with three opponents pointing at you.",
+    at:"2026-08-25" },
+
+  { deck:"sheoldred", card:"Howling Mine", cost:"2 mana, colorless", pick:1,
+    why:"Everyone draws an extra card each turn. With Sheoldred out that is two more damage to every opponent every time around the table, and two more life for you. It belongs right next to Temple Bell.",
+    out:"Greed",
+    outNote:"you already run thirteen card engines",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"sheoldred", card:"Deserted Temple", cost:"a land",
+    why:"Taps for one, or pays one to untap any land. That means untapping Cabal Coffers — a second Coffers activation in the same turn, which in this deck is a pile of black mana.",
+    out:"Crystal Vein",
+    outNote:"a colorless land you have to sacrifice to get two out of",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"ghoul", card:"Phyrexian Altar", cost:"3 mana, colorless", pick:1,
+    why:"Sacrifice a creature, get one mana of any colour. Unlike Ashnod's Altar it makes black — so Gravecrawler goes down, comes back, and goes down again for free. With Blood Artist or Zulaport Cutthroat out, that loop drains the whole table.",
+    out:"Rise of the Dread Marn",
+    outNote:"only good on a turn things already died",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"ghoul", card:"Cryptbreaker", cost:"1 mana, black",
+    why:"A one-drop that turns dead cards into 2/2 zombies, and turns spare zombies back into cards. Discarding is upside here — you already run Reanimate, Animate Dead and Gravecrawler.",
+    out:"Greed",
+    outNote:"four mana to do a slower version of the same job",
+    caveat:null,
+    at:"2026-08-25" }
 ];
 
 /* Wish-list state: what you decided, and what you parked yourself.
@@ -5349,7 +5422,6 @@ function wishRowHtml(w, decided){
   h += '<div class="combo-name">' +
        '<a href="' + scry(w.card) + '" target="_blank" rel="noopener" data-card="' + esc(w.card) + '">' + esc(w.card) + '</a>' +
        (w.cost ? '<span class="wl-n"> &middot; ' + esc(w.cost) + '</span>' : "") +
-       '<span class="wl-deck">' + esc(deckName) + '</span>' +
        (w.pick && !isDone ? '<span class="wl-pick">Start here</span>' : "") +
        '</div>';
   h += '<div class="combo-why">' + esc(w.why) + '</div>';
@@ -5366,9 +5438,13 @@ function wishRowHtml(w, decided){
   }
   h += '<div class="wl-acts">';
   if (isDone){
+    // Two different undos wearing one button. "Passed" only ever moved the row, so
+    // putting it back is free. "Went in" changed the deck, so the label has to
+    // promise the deck change coming back out -- and undoWishRow has to deliver it.
     h += '<span class="status">' +
          (st.d === "in" ? esc(w.card) + " went into " + esc(deckName) + "." : "Passed on this one.") +
-         '</span><button class="btn ghost small" type="button" data-wish-undo="' + esc(id) + '">Put it back</button>';
+         '</span><button class="btn ghost small" type="button" data-wish-undo="' + esc(id) + '">' +
+         (st.d === "in" ? "Undo this" : "Put it back") + '</button>';
   } else if (WISH_PENDING === id){
     h += '<button class="btn small" type="button" data-wish-yes="' + esc(id) + '">Yes, do it</button>' +
          '<button class="btn ghost small" type="button" data-wish-no="' + esc(id) + '">Cancel</button>';
@@ -5385,27 +5461,22 @@ function wishRowHtml(w, decided){
 }
 
 function wishParkBoxHtml(){
-  let opts = "";
-  Object.keys(DECKS).forEach(k => {
-    opts += '<option value="' + esc(k) + '"' + (k === ACTIVE_KEY ? " selected" : "") + '>' +
-            esc(wishShortName(k)) + '</option>';
-  });
-  // The label, the picker and the button stay in one group so a phone-width wrap
-  // cannot leave the word "for" stranded on its own at the far edge.
+  // No deck picker: the list only ever shows the deck you are standing in, so a
+  // card parked for anything else would vanish the moment you parked it.
   return '<div class="wl-park">' +
     '<input type="text" id="wishParkName" placeholder="Card name&hellip;" autocomplete="off" ' +
       'autocapitalize="off" spellcheck="false" aria-label="Card to park on the wish list">' +
-    '<span class="wl-parkfor">' +
-      '<label class="wl-n" for="wishParkDeck">for</label>' +
-      '<select id="wishParkDeck" aria-label="Which deck to park it for">' + opts + '</select>' +
-      '<button class="btn small" type="button" id="wishParkBtn">Park it</button>' +
-    '</span></div>';
+    '<button class="btn small" type="button" id="wishParkBtn">Park it for ' +
+      esc(wishShortName(ACTIVE_KEY)) + '</button>' +
+    '</div>';
 }
 
 function renderWishList(){
   const host = document.getElementById("wishStrip");
   if (!host) return;
-  const rows = allWishRows();
+  // The deck you are looking at, and nothing else. Kess ideas are noise while you
+  // are reading Splinter.
+  const rows = allWishRows().filter(w => w.deck === ACTIVE_KEY);
 
   // "in" is a claim about the deck. Undo the swap from the change log, or cut the
   // card by hand, and the claim stops being true -- so check it against the real
@@ -5427,31 +5498,31 @@ function renderWishList(){
   const open = rows.filter(w => !decided[wishId(w)]);
   const done = rows.filter(w =>  decided[wishId(w)]);
 
-  // Active deck first: when you are looking at Splinter, the Splinter ideas are
-  // the ones that mean anything right now. Then newest week, then the sweep's
-  // own "Next:" pick leads its week.
-  const rank  = w => (w.deck === ACTIVE_KEY ? 0 : 1);
+  // Newest week first, then the sweep's own "Next:" pick leads its week.
   const order = (a, b) =>
-    rank(a) - rank(b) ||
     String(b.at || "").localeCompare(String(a.at || "")) ||
     ((b.pick ? 1 : 0) - (a.pick ? 1 : 0)) ||
     String(a.card).localeCompare(String(b.card));
+
+  const deckName = wishShortName(ACTIVE_KEY);
 
   // Nothing waiting at all: fold the whole thing down to one line. This sits at the
   // top of every deck, and a screenful of "nothing waiting" every day is the kind of
   // noise that gets a panel ignored. Opening it still gets you the park box.
   if (!open.length && !done.length){
     host.innerHTML =
-      '<details class="tt-swaps wl-quiet"><summary>Wish list &mdash; nothing waiting</summary>' +
-      '<div class="mod-empty">The sweep runs Thursday nights and drops its ideas here. ' +
-      'You can park a card yourself in the meantime.</div>' +
+      '<details class="tt-swaps wl-quiet"><summary>Wish list &mdash; nothing waiting for ' +
+      esc(deckName) + '</summary>' +
+      '<div class="mod-empty">Nothing queued up for ' + esc(deckName) + ' right now. ' +
+      'You can park a card here yourself any time.</div>' +
       wishParkBoxHtml() +
       '<div class="wl-parkmsg" id="wishParkMsg" hidden></div></details>';
     wireWishStrip(host);
     return;
   }
 
-  let html = '<div class="wl-head"><span class="wl-title">Wish List</span><span class="wl-n">' +
+  let html = '<div class="wl-head"><span class="wl-title">Wish List</span>' +
+    '<span class="wl-deck">' + esc(deckName) + '</span><span class="wl-n">' +
     (open.length ? open.length + (open.length === 1 ? " idea waiting" : " ideas waiting") : "nothing waiting") +
     '</span></div>';
   html += wishParkBoxHtml();
@@ -5479,7 +5550,7 @@ function wireWishStrip(host){
   host.querySelectorAll("[data-wish-pass]").forEach(b =>
     b.addEventListener("click", () => { setWishDecision(b.getAttribute("data-wish-pass"), "out"); renderWishList(); }));
   host.querySelectorAll("[data-wish-undo]").forEach(b =>
-    b.addEventListener("click", () => { setWishDecision(b.getAttribute("data-wish-undo"), null); renderWishList(); }));
+    b.addEventListener("click", () => undoWishRow(b.getAttribute("data-wish-undo"))));
   host.querySelectorAll("[data-wish-del]").forEach(b =>
     b.addEventListener("click", () => removeParkedWish(b.getAttribute("data-wish-del"))));
   const pb = host.querySelector("#wishParkBtn");
@@ -5502,6 +5573,36 @@ async function runWishRow(id){
   renderWishList();
   try { await doWishAct(w); }
   finally { WISH_BUSY = null; renderWishList(); }
+}
+
+/* Reverses a decided row. A passed row only ever moved itself, so clearing the
+   decision is the whole job. A row that went in changed the deck, and the button
+   says "Undo this" -- so the card has to actually come back out.
+
+   undoLoggedOp drops one op and rebuilds from seed + what is left, so it is safe
+   at any index, not just the newest. We find the op by the name the card really
+   landed under, because Scryfall may have canonicalised it. If the op is already
+   gone -- he undid it in Spellbook, or hit Undo everything -- just free the row
+   rather than erroring at him about a change that is already reversed. */
+function undoWishRow(id){
+  const st = loadWish().decided[id];
+  const landed = st && st.n;
+
+  if (st && st.d === "in" && landed && id.slice(0, id.indexOf("|")) === ACTIVE_KEY){
+    const log = loadSeedLog(ACTIVE_KEY) || [];
+    let found = -1;
+    for (let i = log.length - 1; i >= 0; i--){
+      const op = log[i];
+      if ((op.op === "swap" && op.in === landed) || (op.op === "add" && op.n === landed)){ found = i; break; }
+    }
+    setWishDecision(id, null);
+    if (found >= 0){ undoLoggedOp(found); renderChangeLog(); flashSavedToast(); }
+    renderWishList();
+    return;
+  }
+
+  setWishDecision(id, null);
+  renderWishList();
 }
 
 async function doWishAct(w){
@@ -5532,10 +5633,21 @@ async function doWishAct(w){
     return;
   }
 
+  // A stacked row is one entry worth many cards. applySwap removes the entry, so
+  // cutting "Swamp" here would take all twenty-two of them, not one. Refuse rather
+  // than quietly gut the mana base.
+  const outLoc = w.out ? findCardLocation(deck, w.out) : null;
+  if (outLoc && qtyOf(outLoc.card.n) > 1){
+    wishError(id, "This one wants to cut " + w.out + ", and " + deckName + " runs " +
+      qtyOf(outLoc.card.n) + " of them on one line. Taking that out here would remove all " +
+      qtyOf(outLoc.card.n) + ". Use Edit Deck to drop just one, then come back.");
+    return;
+  }
+
   // A swap needs a card to cut. If the out card is already gone, applySwap bails
   // silently and it would look like nothing happened -- so fall through to a
   // plain add instead.
-  if (w.out && findCardLocation(deck, w.out)) await doWishSwap(w, deck, key);
+  if (outLoc) await doWishSwap(w, deck, key);
   else await doWishAdd(w, deck, key);
 }
 
@@ -5606,17 +5718,16 @@ async function doWishAdd(w, deck, key){
    able to run it, so something that could never go in never sits on the list. */
 async function parkWishCard(){
   const inp = document.getElementById("wishParkName");
-  const sel = document.getElementById("wishParkDeck");
   const btn = document.getElementById("wishParkBtn");
   const box = document.getElementById("wishParkMsg");
-  if (!inp || !sel) return;
+  if (!inp) return;
   const say = (text, bad) => {
     if (!box) return;
     box.textContent = text || "";
     box.hidden = !text;
     box.classList.toggle("bad", !!bad);
   };
-  const typed = inp.value.trim(), key = sel.value, deck = DECKS[key];
+  const typed = inp.value.trim(), key = ACTIVE_KEY, deck = DECKS[key];
   if (!typed){ say("Type a card name first.", true); return; }
   if (!deck){ say("Pick a deck first.", true); return; }
 
