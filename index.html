@@ -2210,13 +2210,26 @@ const GHOUL_DECK = {
 
 /* ============ SEED REGISTRY ============ */
 /* Seed decks always exist. Stored decks under the same name shadow them (the user's evolved list wins). */
+const GISHATH_DECK = {
+  name: "Gishath, Sun's Avatar",
+  flavor: "Ramp hard. Connect once. Empty the top of your library onto the table.",
+  winLine: "Land Gishath with haste protection, connect once, and flip seven cards — fourteen with a doubler. Every dinosaur in them hits the battlefield free, and their arrival triggers fire on the way in.",
+  character: "Not a creature deck that happens to have big creatures. A one-punch combo deck where the combo piece is an eight-drop with haste and the payoff is measured in free dinosaurs per swing. Ramp hard, keep him alive for one turn, connect. With Roaming Throne out the trigger fires twice, and one connection puts a table-ending board into play for free.",
+  colors: "Naya (R/G/W)",
+  commander: "Gishath, Sun's Avatar",
+  kicker: "Commander . Naya Dinosaur Tribal",
+  identity: "wrg",
+  buckets: [{"bucket": "Commander (1)", "cards": [{"n": "Gishath, Sun's Avatar", "star": 1}]}, {"bucket": "Ramp & Cost Reduction (13)", "cards": [{"n": "Sol Ring", "star": 1}, {"n": "Arcane Signet"}, {"n": "Selvala, Heart of the Wilds", "star": 1, "new": 1}, {"n": "Nature's Lore", "star": 1}, {"n": "Three Visits", "star": 1}, {"n": "Skyshroud Claim", "star": 1, "new": 1}, {"n": "Farseek"}, {"n": "Herd Heirloom", "star": 1, "new": 1}, {"n": "Cultivate"}, {"n": "Kodama's Reach"}, {"n": "Urza's Incubator", "star": 1}, {"n": "Mirari's Wake"}, {"n": "Otepec Huntmaster", "star": 1}]}, {"bucket": "Trigger Doublers & Haste (6)", "cards": [{"n": "Roaming Throne", "star": 1, "new": 1}, {"n": "Berserkers' Onslaught", "star": 1, "new": 1}, {"n": "Swiftfoot Boots", "new": 1}, {"n": "Rhythm of the Wild", "star": 1}, {"n": "Lightning Greaves", "star": 1}, {"n": "Palani's Hatcher", "new": 1}]}, {"bucket": "Dinosaur Ramp & Land Engines (4)", "cards": [{"n": "Ranging Raptors", "star": 1}, {"n": "Topiary Stomper"}, {"n": "Wayward Swordtooth"}, {"n": "Regal Behemoth"}]}, {"bucket": "Card Advantage (7)", "cards": [{"n": "Guardian Project", "star": 1, "new": 1}, {"n": "Elemental Bond"}, {"n": "Garruk's Uprising", "star": 1}, {"n": "Runic Armasaur"}, {"n": "Ripjaw Raptor", "star": 1}, {"n": "Etali, Primal Storm", "star": 1}, {"n": "Bonehoard Dracosaur", "star": 1, "new": 1}]}, {"bucket": "Removal & Interaction (11)", "cards": [{"n": "Swords to Plowshares", "star": 1}, {"n": "Path to Exile", "star": 1}, {"n": "Chaos Warp", "star": 1, "new": 1}, {"n": "Beast Within"}, {"n": "Trapjaw Tyrant"}, {"n": "Raging Swordtooth"}, {"n": "Apex Altisaur", "star": 1}, {"n": "Trumpeting Carnosaur", "star": 1, "new": 1}, {"n": "Marauding Raptor"}, {"n": "Thrashing Brontodon"}, {"n": "Burning Sun's Avatar"}]}, {"bucket": "Protection (4)", "cards": [{"n": "Heroic Intervention", "star": 1}, {"n": "Akroma's Will", "star": 1, "new": 1}, {"n": "Temple Altisaur"}, {"n": "Carnage Tyrant", "star": 1}]}, {"bucket": "Tutors & Recursion (5)", "cards": [{"n": "Worldly Tutor", "star": 1}, {"n": "Monster Manual // Zoological Study", "star": 1}, {"n": "Majestic Genesis", "star": 1}, {"n": "Lurking Predators", "star": 1}, {"n": "Welcome to . . . // Jurassic Park", "star": 1, "new": 1}]}, {"bucket": "Dinosaur Beef & Finishers (13)", "cards": [{"n": "Pantlaza, Sun-Favored", "star": 1, "new": 1}, {"n": "Devil Dinosaur", "star": 1, "new": 1}, {"n": "Territorial Allosaurus", "new": 1}, {"n": "Crested Herdcaller", "new": 1}, {"n": "Regisaur Alpha", "star": 1}, {"n": "Quartzwood Crasher", "star": 1}, {"n": "Ghalta, Primal Hunger"}, {"n": "Ghalta and Mavren"}, {"n": "Kogla and Yidaro"}, {"n": "Wakening Sun's Avatar"}, {"n": "Verdant Sun's Avatar"}, {"n": "Polyraptor"}, {"n": "Zacama, Primal Calamity"}]}, {"bucket": "Lands (36)", "cards": [{"n": "Command Tower", "star": 1}, {"n": "Jetmir's Garden", "star": 1, "new": 1}, {"n": "Sacred Foundry", "star": 1, "new": 1}, {"n": "Stomping Ground", "star": 1, "new": 1}, {"n": "Temple Garden", "star": 1, "new": 1}, {"n": "Overgrown Farmland", "new": 1}, {"n": "Flooded Strand", "new": 1}, {"n": "Rootbound Crag", "new": 1}, {"n": "Karplusan Forest", "new": 1}, {"n": "Sunpetal Grove", "new": 1}, {"n": "Brushland", "new": 1}, {"n": "Battlefield Forge", "new": 1}, {"n": "Rugged Prairie", "new": 1}, {"n": "Krosan Verge", "new": 1}, {"n": "Path of Ancestry"}, {"n": "Unclaimed Territory"}, {"n": "Canopy Vista"}, {"n": "Cinder Glade"}, {"n": "Clifftop Retreat"}, {"n": "Temple of Abandon"}, {"n": "Temple of Triumph"}, {"n": "Terramorphic Expanse"}, {"n": "Evolving Wilds"}, {"n": "Sejiri Shelter // Sejiri Glacier"}, {"n": "Forest ×5"}, {"n": "Plains ×3"}, {"n": "Mountain ×4"}]}]
+};
+
 const SEED_DECKS = {
   splinter: SPLINTER_DECK,
   urtet: URTET_DECK,
   chatterfang: CHATTERFANG_DECK,
   kess: KESS_DECK,
   sheoldred: SHEOLDRED_DECK,
-  ghoul: GHOUL_DECK
+  ghoul: GHOUL_DECK,
+  gishath: GISHATH_DECK
 };
 const SEED_KEYS = new Set(Object.keys(SEED_DECKS));
 /* Map deck.name (lowercased) to the seed key it belongs to, so stored decks with the same name overwrite the seed slot. */
@@ -3235,7 +3248,119 @@ const WISHLIST = [
     out:"Greed",
     outNote:"four mana to do a slower version of the same job",
     caveat:null,
-    at:"2026-08-25" }
+    at:"2026-08-25" },
+
+  { deck:"splinter", card:"Silver-Fur Master", cost:"U/B, 2 mana", pick:1,
+    why:"Every ninjutsu you activate costs one less, and your other Ninjas get +1/+1. He is a Rat and a Ninja both, so everything Splinter cares about counts him.",
+    out:"Ninja of the New Moon",
+    outNote:"five mana for a plain body with no ability at all",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"splinter", card:"Thousand-Faced Shadow", cost:"1 mana, blue",
+    why:"A one-mana flyer to sneak in early. Later its ninjutsu copies your best attacker — it lands mid-combat as a second Fallen Shinobi or Ink-Eyes, tapped and attacking.",
+    out:"Moonblade Shinobi",
+    outNote:"four mana for a token maker that never scares anyone",
+    caveat:"The copy trick costs four mana. Early on it is just a cheap flyer, and that is fine.",
+    at:"2026-08-27" },
+
+  { deck:"urtet", card:"Tempered Steel", cost:"3 mana, white", pick:1,
+    why:"All your artifact creatures get +2/+2. Every Myr you own is an artifact creature, so this is an army-sized pump for three mana — and new tokens arrive already big.",
+    out:"Render Silent",
+    outNote:"three exact colors of mana to counter one spell",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"urtet", card:"Sai, Master Thopterist", cost:"3 mana, blue",
+    why:"Every artifact spell you cast makes a flying 1/1 on the side. Myr are artifacts, so each one now brings a friend — more bodies for Coat of Arms, Impact Tremors and Skullclamp.",
+    out:"Spellskite",
+    outNote:"a two-mana wall that mostly just sits there",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"chatterfang", card:"Camellia, the Seedmiser", cost:"3 mana, black-green", pick:1,
+    why:"All your Squirrels get menace, and every Food you sacrifice makes another Squirrel. Academy Manufactor turns your Treasures into Food, so the engine feeds itself — and menace means the swarm actually gets through.",
+    out:"Garruk, Cursed Huntsman",
+    outNote:"six mana, and he mostly just makes two wolves",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"chatterfang", card:"Ravenous Squirrel", cost:"1 mana, black or green",
+    why:"A one-drop that grows every time you sacrifice anything, and turns spare tokens into cards and life. Cheap early, a mana sink forever.",
+    out:"Scheming Symmetry",
+    outNote:"it hands an opponent a free tutor too, and you already run five better ones",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"kess", card:"Storm-Kiln Artist", cost:"4 mana, red", pick:1,
+    why:"Every instant or sorcery you cast or copy makes a Treasure. Kess casts one from the graveyard every turn, so he pays for the spells you are already casting.",
+    out:"Stifle",
+    outNote:"a one-shot answer that sits dead in hand most games",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"kess", card:"Third Path Iconoclast", cost:"2 mana, blue-red",
+    why:"Every noncreature spell you cast leaves a 1/1 artifact body behind. Free blockers all game, in a deck that is nothing but noncreature spells.",
+    out:"Reality Shift",
+    outNote:"it exiles a creature but hands them a surprise 2/2 back",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"sheoldred", card:"Underworld Dreams", cost:"3 mana, black", pick:1,
+    why:"Every card an opponent draws burns them for one. It stacks with Sheoldred, so Peer into the Abyss and Temple Bell now hit twice as hard.",
+    out:"Force of Despair",
+    outNote:"it only kills creatures made that same turn",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"ghoul", card:"Headless Rider", cost:"3 mana, black", pick:1,
+    why:"Every nontoken Zombie of yours that dies leaves a 2/2 Zombie behind. Gravecrawler plus either altar now makes a body every loop — with Blood Artist out, that drains the whole table.",
+    out:"Springleaf Drum",
+    outNote:"the weakest rock here, and it needs a spare creature just to tap",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"ghoul", card:"Plague Belcher", cost:"3 mana, black",
+    why:"Every other Zombie of yours that dies stings each opponent for one. A second Blood Artist that only counts Zombies — on a 5/4 menace body.",
+    out:"Zodiark, Umbral God",
+    outNote:"five black pips, and its arrival makes you sacrifice half your own board too",
+    caveat:"Its arrival puts two -1/-1 counters on one of your own creatures. Aim them at Gravecrawler — he does not stay dead.",
+    at:"2026-08-27" },
+
+  { deck:"urtet", card:"Unwinding Clock", cost:"4 mana, colorless",
+    why:"Untap all your artifacts on every opponent's untap step. Your mana Myr and every rock wake up four times a round instead of once.",
+    out:"Eldrazi Displacer",
+    outNote:"it wants colorless mana this five-color deck struggles to hold",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"ghoul", card:"Relentless Dead", cost:"2 mana, black",
+    why:"A zombie that never stays dead — pay one to bounce it back to hand, or pay more and it reanimates another zombie on its way out. Endless altar fodder, endless Blood Artist triggers.",
+    out:"Victimize",
+    outNote:"a one-shot version of what this card does every turn",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"gishath", card:"The Great Henge", cost:"9 mana, but really about 2", pick:1,
+    why:"Costs less for every point of power on your biggest creature — with Ghalta out it is nearly free. Then every dinosaur that enters draws you a card and gets bigger, including every one Gishath flips in. The dump turn refills your whole hand.",
+    out:"Elemental Bond",
+    outNote:"Henge is Bond plus ramp plus life, on a card they cannot easily remove",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"gishath", card:"Aggravated Assault", cost:"3 mana, red",
+    why:"Pay five, untap everything, take another combat. Gishath connects twice in one turn — two flips, one board.",
+    out:"Mirari's Wake",
+    outNote:"a five-drop anthem on the turn you would rather cast Gishath",
+    caveat:"With Selvala tapping for big mana this goes infinite combats. Same table talk as Raptor plus Polyraptor — say it at rule zero.",
+    at:"2026-08-27" },
+
+  { deck:"sheoldred", card:"Font of Mythos", cost:"4 mana, colorless",
+    why:"Every player draws two extra cards each turn. With Sheoldred out that is four damage to each opponent every time around the table. Howling Mine, doubled.",
+    out:"Beseech the Queen",
+    outNote:"the weakest of your eight tutors",
+    caveat:null,
+    at:"2026-08-27" }
 ];
 
 /* Wish-list state: what you decided, and what you parked yourself.
