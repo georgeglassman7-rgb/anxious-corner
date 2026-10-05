@@ -1972,12 +1972,15 @@ body:not(.in-game) .wrap{padding-bottom:120px}
 
   <!-- ============ SHOWCASE VIEW ============ -->
   <div class="view active" id="view-showcase">
-    <div class="actions" id="showcaseActions"></div>
-    <div id="showcaseConfirm"></div>
-    <!-- Wish list: upgrade ideas for ALL decks. Empty means empty; the strip hides itself. -->
-    <div class="wl-strip" id="wishStrip"></div>
+    <!-- The deck's explanation comes first (bracket, why, how you win). Swap ideas
+         sit under it, then the list tools. Every block is found by id, so the
+         order here is only what Greg sees. (Reordered 2026-10-04 at his ask.) -->
     <div id="deckFront" class="deck-front"></div>
     <div id="twoThrones" class="two-thrones"></div>
+    <!-- Wish list: upgrade ideas for ALL decks. Empty means empty; the strip hides itself. -->
+    <div class="wl-strip" id="wishStrip"></div>
+    <div class="actions" id="showcaseActions"></div>
+    <div id="showcaseConfirm"></div>
     <div class="validation" id="validation"></div>
     <div class="stats" id="stats"></div>
 
