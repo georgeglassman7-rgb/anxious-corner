@@ -1708,6 +1708,147 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
 .lt-cb:hover{filter:brightness(1.08)}
 .lt-cadd{font-family:'Cinzel',serif;font-size:.58em;letter-spacing:1px;text-transform:uppercase;color:#e9d49a;background:rgba(9,20,20,.5);border:1px dashed rgba(230,200,120,.4);border-radius:20px;padding:.42em .7em;cursor:pointer}
 .lt-cadd:hover{color:#fff6e2;border-color:#f3d98f}
+
+/* ============ GAME MODE ============
+   Deck mode = study + build. Game mode = one table screen. body.in-game hides
+   every piece of deck chrome (nothing is removed from the page). Colors that
+   carry meaning use the FIXED palette (jade / crimson / cyan / bone + seat
+   colors), never --accent*, so they read the same in every deck theme.
+   No transitions, no animation. Every target is 44px or more. */
+.game-door{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1em;width:100%;min-height:56px;margin:0 0 1.2em;padding:.5em 1em;border:1px solid var(--jade);border-radius:12px;background:#10261b;color:var(--jade-bright);font-family:inherit;font-size:1.08em;font-weight:700;cursor:pointer}
+.game-door .gd-sub{font-size:.8em;font-weight:400;color:var(--bone)}
+.game-door .gd-sub:empty{display:none}
+.tab[data-view="station"],.tab[data-view="table"]{display:none !important}
+.gb-btn,.gb-title{display:none}
+body.in-game .wrap > :not(.appbar):not(.view){display:none !important}
+body.in-game .appbar > :not(.gb-btn):not(.gb-title):not(.settings-gear):not(.settings-pop){display:none !important}
+body.in-game #drips{display:none !important}
+body.in-game .appbar{position:sticky;top:0;z-index:70;flex-wrap:nowrap;gap:.5em;padding:.5em 0;margin-bottom:1em;background:rgba(var(--void-rgb),0.97)}
+body.in-game .gb-btn{display:inline-flex;align-items:center;justify-content:center;flex:none;min-height:44px;min-width:44px;padding:0 .9em;border:1px solid var(--panel-edge);border-radius:10px;background:var(--void-2);color:var(--bone);font-family:inherit;font-size:.95em;cursor:pointer}
+body.in-game .gb-title{display:block;flex:1;min-width:0;text-align:center;font-weight:700;font-size:1.02em;color:var(--bone-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.in-game .wrap{padding-top:0}
+#view-game{transition:none}
+#gameBody{padding-bottom:110px;max-width:560px;margin:0 auto}
+.g-h{margin:.2em 0 .2em;font-family:inherit;font-size:1.4em;font-weight:700;letter-spacing:0;text-transform:none;color:var(--bone-bright)}
+.g-sub{margin:.2em 0 .8em;color:var(--text-dim);font-size:.95em;line-height:1.5}
+.g-warn{margin:0 0 .8em;padding:.6em .9em;border-left:3px solid var(--crimson);border-radius:6px;background:rgba(224,85,119,0.08);color:var(--bone)}
+.g-card{display:block;width:100%;box-sizing:border-box;margin:0 0 .8em;padding:.8em 1em;border:1px solid var(--panel-edge);border-left:5px solid var(--seat-bright,var(--panel-edge));border-radius:12px;background:linear-gradient(160deg,var(--panel),var(--shadow));color:var(--bone);text-align:left;font-family:inherit;font-size:1em}
+.g-card.turn{border-color:var(--seat-bright);box-shadow:0 0 0 1px var(--seat-bright) inset}
+.g-card.dead{opacity:.6}
+.g-deadtag{display:inline-block;margin:.2em 0 .4em;padding:.1em .6em;border-radius:6px;background:rgba(224,85,119,0.16);color:var(--crimson-bright);font-weight:700}
+.g-tag{display:inline-block;margin-left:.3em;padding:0 .45em;border-radius:6px;background:rgba(92,224,142,0.14);color:var(--jade-bright);font-size:.78em;font-weight:700;vertical-align:middle}
+/* setup rows */
+.g-setrow{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:.6em;min-height:64px;cursor:pointer}
+.g-setrow-name{grid-column:1;font-weight:700;font-size:1.1em;color:var(--bone-bright)}
+.g-setrow-cmdr{grid-column:1;color:var(--text-dim);font-size:.95em}
+.g-setrow-edit{grid-column:2;grid-row:1 / span 2;align-self:center;padding:.5em .8em;border:1px solid var(--panel-edge);border-radius:9px;color:var(--steel);font-size:.9em}
+.g-add{display:block;width:100%;min-height:56px;margin:0 0 .9em;border:1px dashed var(--jade);border-radius:12px;background:transparent;color:var(--jade-bright);font-family:inherit;font-size:1.05em;font-weight:700;cursor:pointer}
+.g-life-start{display:flex;align-items:center;gap:.6em;flex-wrap:wrap;margin:.4em 0 1em;color:var(--bone)}
+/* editor */
+.g-editor{border-left-width:5px}
+.g-ed-title{font-weight:700;font-size:1.15em;color:var(--bone-bright);margin-bottom:.4em}
+.g-lbl{display:block;margin:.7em 0 .3em;color:var(--text-dim);font-size:.92em}
+.g-input{display:block;width:100%;box-sizing:border-box;min-height:48px;padding:.5em .8em;border:1px solid var(--panel-edge);border-radius:10px;background:var(--void-2);color:var(--bone-bright);font-family:inherit;font-size:max(16px,1.05rem)}
+.g-input:focus{outline:2px solid var(--cyan-bright);outline-offset:1px}
+.g-sugg{display:flex;flex-direction:column;gap:.3em;margin:.35em 0 0}
+.g-sugg:empty{display:none}
+.g-sugg-btn,.g-deckbtn{display:flex;align-items:center;gap:.6em;width:100%;min-height:46px;padding:.4em .8em;border:1px solid var(--panel-edge);border-radius:10px;background:var(--void-2);color:var(--bone);font-family:inherit;font-size:1em;text-align:left;cursor:pointer}
+.g-decklist{display:flex;flex-direction:column;gap:.35em;margin:.4em 0 0}
+.g-dot{flex:none;width:.8em;height:.8em;border-radius:50%}
+.g-picked{display:flex;align-items:center;justify-content:space-between;gap:.6em;min-height:48px;padding:.3em .8em;border:1px solid var(--jade);border-radius:10px;background:#10261b;color:var(--jade-bright);font-weight:700}
+.g-ed-msg{margin:.6em 0 0;padding:.5em .8em;border-left:3px solid var(--cyan);border-radius:6px;background:rgba(95,208,230,0.08);color:var(--bone)}
+.g-ed-move{display:grid;grid-template-columns:1fr 1fr;gap:.5em;margin-top:.8em}
+.g-ed-move .g-lbl{grid-column:1 / -1;margin:0}
+.g-sugg-btn{border-color:rgba(95,208,230,0.45);background:rgba(95,208,230,0.07);color:var(--cyan-bright)}
+.g-sugg-btn::before{content:"\203A";margin-right:.1em;color:var(--cyan)}
+.g-primary{display:block;width:100%;min-height:52px;margin:1em 0 .3em;border:1px solid var(--jade);border-radius:12px;background:#143a26;color:var(--jade-bright);font-family:inherit;font-size:1.08em;font-weight:700;cursor:pointer}
+.g-primary[disabled]{opacity:.6}
+.g-quiet{display:block;width:100%;min-height:44px;margin:.2em 0;border:0;background:transparent;color:var(--steel);font-family:inherit;font-size:.98em;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.g-link{min-height:44px;padding:0 .4em;border:0;background:transparent;color:var(--cyan-bright);font-family:inherit;font-size:.98em;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.g-danger{display:block;width:100%;min-height:48px;margin:.8em 0 0;border:1px solid var(--crimson);border-radius:10px;background:rgba(224,85,119,0.08);color:var(--crimson-bright);font-family:inherit;font-size:1em;cursor:pointer}
+.g-small{min-height:44px;min-width:44px;padding:0 .8em;border:1px solid var(--panel-edge);border-radius:9px;background:var(--void-2);color:var(--bone);font-family:inherit;font-size:.98em;cursor:pointer}
+.g-small[disabled]{opacity:.4}
+.g-small.wide{display:block;width:100%;margin:.4em 0 0;text-align:left}
+.g-small.warn{border-color:var(--crimson);color:var(--crimson-bright)}
+.g-stepper{display:inline-flex;align-items:center;gap:.4em}
+/* turn card */
+.g-turn{text-align:center}
+.g-turn-name{font-size:1.55em;font-weight:700;color:var(--bone-bright);line-height:1.25}
+.g-turn-cmdr{color:var(--seat-bright,var(--text-dim));font-size:.95em}
+.g-turn-next{margin-top:.3em;color:var(--text-dim)}
+.g-turn-next b{color:var(--bone)}
+.g-over{text-align:center;border-color:var(--gold)}
+.g-over-name{font-size:1.3em;font-weight:700;color:var(--bone-bright);margin-bottom:.3em}
+.g-first{display:block;width:100%;min-height:48px;margin:.4em 0;border:1px solid var(--gold);border-radius:10px;background:rgba(215,178,90,0.12);color:#f3d98f;font-family:inherit;font-size:1em;font-weight:700;cursor:pointer}
+/* your seat */
+.g-you-head{display:flex;align-items:center;gap:.6em;flex-wrap:wrap}
+.g-you-name{font-weight:700;font-size:1.2em;color:var(--bone-bright)}
+.g-you-deck{flex:1;min-width:0;color:var(--seat-bright,var(--text-dim));font-size:.95em}
+.g-life-row{display:flex;align-items:center;justify-content:center;gap:.8em;margin:.5em 0 .2em}
+.g-step{flex:none;width:58px;height:58px;border-radius:50%;border:1px solid var(--panel-edge);background:var(--void-2);color:var(--bone-bright);font-family:inherit;font-size:1.7em;line-height:1;cursor:pointer}
+.g-step.sm{width:48px;height:48px;font-size:1.4em}
+.g-life.lt-num{font-size:3.4em !important;min-width:2em;text-shadow:none !important}
+.g-opp-num.lt-num{font-size:2em !important;min-width:1.8em;text-shadow:none !important}
+/* low life reads red on the game screen too */
+.g-life.lt-num.low,.g-opp-num.lt-num.low{color:var(--crimson-bright) !important}
+/* reused counter tiles: thumb-sized inside the game */
+#gameBody .lt-ctrgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+#gameBody .lt-ctrrow .lt-cmdb{width:48px;height:48px}
+#gameBody .lt-ctrdel{width:44px;height:44px}
+#gameBody .lt-ctradd,#gameBody .lt-ctrdeck,#gameBody .lt-ctrpick-close,#gameBody .lt-ctrpick-chip{min-height:44px;font-family:inherit;font-size:1em;letter-spacing:0;text-transform:none}
+/* hand + Don't forget drawers: plain-case buttons, fixed colors */
+.g-deckbits .btn,.g-deckbits .wbtn{font-family:inherit;text-transform:none;letter-spacing:0;font-size:1em;min-height:44px}
+.g-deckbits .wbtn.on{background:#143a26;border-color:var(--jade);color:var(--jade-bright);box-shadow:none}
+.g-deckbits .section-sub{display:none}
+/* only ONE loud button at a time: these step back once the bottom button matters */
+.g-add.calm{border-color:var(--panel-edge);color:var(--bone);font-weight:400}
+.g-first{border-color:var(--panel-edge) !important;background:var(--void-2) !important;color:var(--bone) !important;font-weight:400 !important}
+/* the running tally sits above the number, never on it */
+.g-life .lt-delta,.g-opp-num .lt-delta{left:50%;top:-1.2rem;transform:translateX(-50%)}
+.g-quick{display:flex;justify-content:center;gap:.6em;margin:.2em 0 .6em}
+.g-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4em}
+.g-chip{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:56px;padding:.25em .3em;border:1px solid var(--panel-edge);border-radius:10px;background:var(--void-2);color:var(--bone);font-family:inherit;font-size:.9em;line-height:1.2;cursor:pointer}
+.g-chip span{white-space:nowrap}
+.g-chip b{color:var(--bone-bright);font-size:1.15em}
+body.in-game .settings-gear{min-width:44px;min-height:44px;flex:none}
+.g-chip.on{border-color:var(--bone)}
+.g-chip.poison.live b{color:var(--crimson-bright)}
+.g-chip.cmd.live b{color:var(--cyan-bright)}
+.g-panel{margin:.6em 0 .2em;padding:.6em;border:1px solid var(--panel-edge);border-radius:10px;background:rgba(var(--void-rgb),0.5)}
+.g-row{display:flex;align-items:center;justify-content:space-between;gap:.5em;min-height:48px;padding:.2em 0;border-top:1px solid rgba(230,225,245,0.07)}
+.g-row:first-of-type{border-top:0}
+.g-row-lbl{display:flex;flex-direction:column;line-height:1.3;color:var(--bone)}
+.g-row-lbl small{color:var(--seat-bright,var(--text-dim));font-size:.85em}
+.g-row-val{min-width:1.8em;text-align:center;font-weight:700;font-size:1.2em;color:var(--cyan-bright)}
+.g-row.hot .g-row-val{color:var(--crimson-bright)}
+.g-tools{margin-top:.8em}
+.g-drawer{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:50px;margin:.4em 0 0;padding:0 1em;border:1px solid var(--panel-edge);border-radius:10px;background:var(--void-2);color:var(--bone);font-family:inherit;font-size:1.02em;cursor:pointer}
+.g-drawer.on{border-color:var(--bone)}
+.g-drawer-ic{font-size:1.3em;color:var(--steel)}
+.g-deckbits{margin:.4em 0 0}
+/* the drawer button already names the section, and Notes has its own drawer */
+.g-deckbits .station-section,.g-deckbits #handNotesBtn,.g-deckbits .hand-notes-inline{display:none !important}
+.g-notes{width:100%;box-sizing:border-box;min-height:110px;margin-top:.4em;font-size:max(16px,1rem)}
+/* everyone else */
+.g-opp-top{display:flex;flex-direction:column;align-items:flex-start;width:100%;min-height:44px;padding:0;border:0;background:transparent;color:inherit;font-family:inherit;text-align:left;cursor:pointer}
+.g-opp-name{font-weight:700;font-size:1.1em;color:var(--bone-bright)}
+.g-opp-cmdr{color:var(--seat-bright,var(--text-dim));font-size:.92em}
+.g-opp-life{display:flex;align-items:center;gap:.6em;margin-top:.3em}
+.g-more{margin-left:auto;min-height:44px;min-width:64px;padding:0 .8em;border:1px solid var(--panel-edge);border-radius:9px;background:var(--void-2);color:var(--steel);font-family:inherit;font-size:.95em;cursor:pointer}
+.g-more.on{border-color:var(--bone);color:var(--bone)}
+.g-log{margin:.4em 0 .4em;padding:.2em 1em .6em;border:1px solid var(--panel-edge);border-radius:10px}
+.g-dice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4em;margin-bottom:.4em}
+.g-confirm{margin:.5em 0;padding:.7em .9em;border:1px solid var(--crimson);border-radius:10px;background:rgba(224,85,119,0.08)}
+.g-confirm p{margin:0 0 .3em;color:var(--bone-bright)}
+.g-confirm .g-danger{margin-top:.3em}
+/* the one next step */
+.game-next{position:fixed;left:0;right:0;bottom:0;z-index:65;padding:.6em 16px calc(.6em + env(safe-area-inset-bottom,0px));background:rgba(var(--void-rgb),0.97);border-top:1px solid var(--panel-edge)}
+.game-next[hidden],.game-next:empty,body.g-typing .game-next{display:none}
+.g-next-btn{display:block;width:100%;max-width:560px;margin:0 auto;min-height:56px;padding:0 1em;border:1px solid var(--jade);border-radius:12px;background:#143a26;color:var(--jade-bright);font-family:inherit;font-size:1.15em;font-weight:700;cursor:pointer}
+/* inline "Other" counter field (replaces the old pop-up) */
+.lt-ctrpick-other{display:flex;gap:.4em;margin:.5em 0 .2em}
+.lt-ctrpick-other input{flex:1;min-width:0;min-height:44px;padding:0 .7em;border:1px solid var(--panel-edge);border-radius:9px;background:var(--void-2);color:var(--bone-bright);font-family:inherit;font-size:max(16px,1rem)}
+.lt-ctrpick-otherbtn{min-height:44px;min-width:60px;border:1px solid var(--jade);border-radius:9px;background:#10261b;color:var(--jade-bright);font-family:inherit;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
@@ -1722,6 +1863,10 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
       <div class="coach-pop" id="coachPop" hidden></div>
     </div>
     <div class="artmode" id="artMode" role="button" tabindex="0" title="Card-hover art: random printings or always newest">&#127922; Random art</div>
+    <!-- Game-mode bar: only shows while a game is open (body.in-game). The gear stays. -->
+    <button class="gb-btn gb-exit" id="gameExit" type="button">&lsaquo; Decks</button>
+    <span class="gb-title" id="gameTitle">Game</span>
+    <button class="gb-btn gb-undo" id="gameUndo" type="button">Undo</button>
     <button class="settings-gear" id="settingsGear" type="button" aria-haspopup="true" aria-expanded="false" title="Reading and display settings">&#9881;</button>
     <div class="settings-pop" id="settingsPop" hidden>
       <div class="sp-head">Comfort &amp; display</div>
@@ -1731,6 +1876,9 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
       <p class="sp-note">Quietly tunes readability. Remembered on this table.</p>
     </div>
   </div>
+
+  <!-- The one way into a live game. Not a .tab, so switchView never touches it. -->
+  <button class="game-door" id="gameDoor" type="button"><span class="gd-main">Play a game</span><span class="gd-sub" id="gameDoorSub"></span></button>
 
   <div class="switcher" id="switcher"></div>
   <p class="storage-note" id="storageNote"></p>
@@ -1915,6 +2063,14 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
     <div class="book-panel" data-book-panel="combos">
       <div id="combosBody"><div class="load-line">Reading the deck...</div></div>
     </div>
+  </div>
+
+  <!-- ============ GAME VIEW (live play: one table screen) ============
+       Everything a game needs on one scroll. The bottom bar is always the one
+       next step. Reached only from the Play a game door; deck chrome hides. -->
+  <div class="view" id="view-game">
+    <div id="gameBody"><div class="load-line">Pulling up chairs...</div></div>
+    <div class="game-next" id="gameNext"></div>
   </div>
 
 </div>
@@ -8760,6 +8916,17 @@ async function switchView(name){
   document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.view === name));
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + name));
 
+  // Two modes. Game mode (the game screen, plus the round-table seat map opened
+  // from it) hides the deck chrome with one body class. Everything else is deck mode.
+  const inGame = GAME_VIEWS.indexOf(name) >= 0;
+  CUR_VIEW = name;
+  document.body.classList.toggle("in-game", inGame);
+  if (!inGame) LAST_DECK_VIEW = name;
+  saveMode(inGame ? "game" : "deck");
+  gameWakeLock(inGame);
+  updateGameDoor();
+
+  if (name === "game") { enterGame(); return; }
   if (name === "showcase") return;
   if (name === "station") { await enterStation(); return; }
   if (name === "table") { enterTable(); return; }
@@ -8783,23 +8950,22 @@ function showBookSub(sub){
 
 // Slim counters strip, mirrored from Station. A glance at the live game while
 // you read the plan; tap it to jump to Station where the counters are set.
+// Slim strip: only shows while a game is going. It reads YOUR seat on the game
+// table (the one life total), and tapping it takes you back to the game.
 function renderSbMirror(){
   const host = document.getElementById("sbMirror");
   if (!host) return;
-  // Point STATION at the active deck's saved counters, same as Station does.
-  if (STATION_DECK !== ACTIVE_KEY){
-    STATION = loadStation(ACTIVE_KEY);
-    STATION_DECK = ACTIVE_KEY;
-  }
-  const s = STATION || {};
+  if (!TABLE) TABLE = loadTable();
+  if (!gameIsLive()){ host.innerHTML = ""; host.onclick = null; return; }
+  const s = youSeat() || {};
   let chips = '';
-  chips += '<span class="sbm-chip life"><span class="sbm-k">Life</span><span class="sbm-v">' + (s.life != null ? s.life : 40) + '</span></span>';
+  chips += '<span class="sbm-chip life"><span class="sbm-k">Life</span><span class="sbm-v">' + (s.life != null ? s.life : TABLE.start) + '</span></span>';
   if ((s.poison||0) > 0) chips += '<span class="sbm-chip poison"><span class="sbm-k">Poison</span><span class="sbm-v">' + s.poison + '</span></span>';
-  const dmg = Array.isArray(s.cmdDmg) ? s.cmdDmg : [];
+  const dmg = Object.values(s.cmd || {});
   const maxDmg = dmg.length ? Math.max.apply(null, dmg) : 0;
   if (maxDmg > 0) chips += '<span class="sbm-chip cmd"><span class="sbm-k">Cmdr dmg</span><span class="sbm-v">' + maxDmg + '</span></span>';
-  host.innerHTML = '<div class="sbm-row">' + chips + '<span class="sbm-note">from Station &rsaquo;</span></div>';
-  host.onclick = function(){ switchView("station"); };
+  host.innerHTML = '<div class="sbm-row">' + chips + '<span class="sbm-note">Round ' + (TABLE.round || 1) + '. Back to your game &rsaquo;</span></div>';
+  host.onclick = function(){ switchView("game"); };
 }
 
 // Combos & engines, built from the same deck read the coach uses.
@@ -9250,9 +9416,14 @@ function renderSwitcher(){
     html += '<button class="swdeck ' + (k === ACTIVE_KEY ? "active" : "") + '" data-key="' + esc(k) + '" style="' + hintStyle + '">' + esc(shortName) + '</button>';
   });
   wrap.innerHTML = html;
-  wrap.querySelectorAll(".swdeck").forEach(b => b.addEventListener("click", async () => {
-    const key = b.dataset.key;
-    if (key === ACTIVE_KEY) return;
+  wrap.querySelectorAll(".swdeck").forEach(b => b.addEventListener("click", () => switchDeck(b.dataset.key)));
+}
+/* Switch the active deck. Same steps the switcher button always ran; pulled out
+   so the game screen can switch to the deck you're playing without being thrown
+   back to Showcase ({stay:true}). */
+function switchDeck(key, opts){
+  {
+    if (!DECKS[key] || key === ACTIVE_KEY) return;
     // Leaving a deck always leaves edit mode. Landing on a different list with a
     // delete button already on every row is how you lose a card by accident.
     exitEditMode();
@@ -9275,8 +9446,8 @@ function renderSwitcher(){
       applyTheme(identityStringToArray(ACTIVE_DECK.identity), key);
       warmShowcase(key);
     }
-    switchView("showcase");
-  }));
+    if (!(opts && opts.stay)) switchView("showcase");
+  }
 }
 
 /* ============ DRAG AND DROP ============ */
@@ -10134,17 +10305,24 @@ function renderStation(){
   // Turn walker
   host.querySelectorAll(".wbtn").forEach(b => b.addEventListener("click", () => stationSetPhase(b.dataset.phase)));
 }
-function handTogglePicker(){ HAND_PICKER_OPEN = !HAND_PICKER_OPEN; if (!HAND_PICKER_OPEN) HAND_FILTER = ""; renderStation(); }
+/* Hand / phase changes redraw whichever screen is showing them: the game screen
+   (your seat's drawers) when a game is open, the old Station otherwise. */
+function stationRefresh(){
+  const gv = document.getElementById("view-game");
+  if (gv && gv.classList.contains("active") && typeof renderGame === "function") renderGame();
+  else renderStation();
+}
+function handTogglePicker(){ HAND_PICKER_OPEN = !HAND_PICKER_OPEN; if (!HAND_PICKER_OPEN) HAND_FILTER = ""; stationRefresh(); }
 function handToggleCard(name){
   if (!name) return;
   stationSnapshot();
   const low = name.toLowerCase();
   const i = STATION.hand.findIndex(n => n.toLowerCase() === low);
   if (i >= 0) STATION.hand.splice(i,1); else STATION.hand.push(name);
-  saveStation(); renderStation();
+  saveStation(); stationRefresh();
 }
-function handClearAll(){ stationSnapshot(); STATION.hand = []; HAND_PICKER_OPEN = false; HAND_FILTER = ""; saveStation(); renderStation(); }
-function stationSetPhase(key){ STATION.phase = key; saveStation(); renderStation(); }
+function handClearAll(){ stationSnapshot(); STATION.hand = []; HAND_PICKER_OPEN = false; HAND_FILTER = ""; saveStation(); stationRefresh(); }
+function stationSetPhase(key){ STATION.phase = key; saveStation(); stationRefresh(); }
 async function enterStation(){
   const host = document.getElementById("stationBody");
   if (STATION_DECK !== ACTIVE_KEY){
@@ -10314,6 +10492,7 @@ function seatPlayers(t){
     showCtr: !!p.showCtr,
     cmd: (p.cmd && typeof p.cmd === "object" && !Array.isArray(p.cmd)) ? p.cmd : {},
     commander: (p.commander && p.commander.name) ? p.commander : null,
+    deckKey: (typeof p.deckKey === "string" && p.deckKey) ? p.deckKey : null,   // one of Greg's decks, if this seat plays one
     counters: normCounters(p.counters),
     cx: (typeof p.cx === "number") ? p.cx : undefined,
     cy: (typeof p.cy === "number") ? p.cy : undefined
@@ -10321,6 +10500,7 @@ function seatPlayers(t){
   // Fresh table: seat 0 is "you" — pre-wire the active deck's tokens/counters.
   if (t._seed && arr[0] && typeof ACTIVE_DECK !== "undefined" && ACTIVE_DECK){
     seedSeatCountersFromDeck(arr[0], ACTIVE_DECK);
+    t._seed = false;   // once only: later reshuffles must not seed whoever lands in seat one
   }
   // prune stale cmd entries that point at seats no longer in the pod
   const ids = new Set(arr.map(p => p.id));
@@ -10335,7 +10515,20 @@ function seatPlayers(t){
   if (!t.firstId || !ids.has(t.firstId)) t.firstId = arr.length ? arr[0].id : null;
   t.round = Math.max(1, parseInt(t.round) || 1);
   if (!Array.isArray(t.log)) t.log = [];
+  // Game screen fields. youId = Greg's seat (older saves: seat 1 is you).
+  // gstate = setup (filling seats) / first (who goes first) / play.
+  // An older save opens as setup with the same people seated: an old Life Table
+  // game is usually stale. (Start keeps a .prev copy before anything resets.)
+  if (!t.youId || !ids.has(t.youId)) t.youId = arr.length ? arr[0].id : null;
+  if (GSTATES.indexOf(t.gstate) < 0) t.gstate = "setup";
 }
+const GSTATES = ["setup", "first", "play"];
+function youIndex(){
+  if (!TABLE) return 0;
+  const i = TABLE.players.findIndex(function(p){ return p.id === TABLE.youId; });
+  return i < 0 ? 0 : i;
+}
+function youSeat(){ return TABLE ? TABLE.players[youIndex()] : null; }
 function loadTable(){
   if (STORAGE_OK){
     try { const raw = localStorage.getItem(TABLE_KEY); if (raw){ const t = Object.assign(defaultTable(), JSON.parse(raw)); t._seed=false; seatPlayers(t); return t; } } catch(e){}
@@ -10427,11 +10620,14 @@ function tableSetStart(delta){
   TABLE.start = Math.max(1, TABLE.start + delta);
   saveTable(); renderTable();
 }
-function tableNewGame(){
-  if (!confirm("New game? Everyone resets to " + TABLE.start + " life and all commander damage / poison clears. Seat names and seating stay.")) return;
+function tableNewGame(skipConfirm){
+  if (!skipConfirm && !confirm("New game? Everyone resets to " + TABLE.start + " life and all commander damage / poison clears. Seat names and seating stay.")) return;
   tableSnapshot();
   TABLE.players.forEach((p,i)=>{ p.life = TABLE.start; p.poison = 0; p.cmd = {}; p.counters = normCounters(p.counters); p.counters.forEach(c=>c.val=0); });
-  if (TABLE.players[0] && typeof ACTIVE_DECK !== "undefined" && ACTIVE_DECK) seedSeatCountersFromDeck(TABLE.players[0], ACTIVE_DECK);
+  // Your seat gets the counters of the deck IT plays (not whatever deck is open).
+  const me = youSeat();
+  if (me && me.deckKey && DECKS[me.deckKey]) seedSeatCountersFromDeck(me, DECKS[me.deckKey]);
+  else if (me && !me.commander && typeof ACTIVE_DECK !== "undefined" && ACTIVE_DECK) seedSeatCountersFromDeck(me, ACTIVE_DECK);
   LT_OPEN = { seat:-1, type:null };
   ltClearBursts();
   TABLE.round = 1; TABLE.log = []; TABLE.wonBy = null; LT_TOOL_MSG = "";
@@ -10564,6 +10760,8 @@ function tableSetTurn(i){
 function tableNextTurn(dir){
   const n = TABLE.players.length;
   if (!n) return;
+  // Nothing comes before the very first turn of the game.
+  if (dir < 0 && (TABLE.round || 1) === 1 && TABLE.turnId === TABLE.firstId) return;
   tableSnapshot();
   const was = turnIndex();
   let i = was;
@@ -10628,8 +10826,11 @@ function ltWinnerHTML(t){
   if (alive.length !== 1){ if (t.wonBy){ t.wonBy = null; saveTable(); } return ""; }
   const w = t.players[alive[0]], nm = seatName(w, alive[0]);
   if (t.wonBy !== w.id){ t.wonBy = w.id; ltLog(nm + " is the last one standing"); }
-  return '<div class="lt-winner"><span>' + esc(nm) + ' is the last one standing.</span>' +
-         '<button class="lt-reset" onclick="tableNewGame()">New Game</button></div>';
+  // Inside a game, the game screen owns "play again" (no pop-up); send him there.
+  const btn = document.body.classList.contains("in-game")
+    ? '<button class="lt-reset" onclick="switchView(&quot;game&quot;)">Back to the game</button>'
+    : '<button class="lt-reset" onclick="tableNewGame()">New Game</button>';
+  return '<div class="lt-winner"><span>' + esc(nm) + ' is the last one standing.</span>' + btn + '</div>';
 }
 function ltLogListHTML(t){
   const log = (t && Array.isArray(t.log)) ? t.log : [];
@@ -10651,6 +10852,11 @@ function ltRefreshLog(){
   if (list) list.innerHTML = ltLogListHTML(TABLE);
   const n = document.getElementById("ltLogN");
   if (n) n.textContent = (TABLE && TABLE.log) ? TABLE.log.length : 0;
+  // the game screen keeps its own copy of the log (own ids, so no duplicates)
+  const gl = document.getElementById("gLogList");
+  if (gl) gl.innerHTML = ltLogListHTML(TABLE);
+  const gn = document.getElementById("gLogN");
+  if (gn) gn.textContent = (TABLE && TABLE.log) ? TABLE.log.length : 0;
 }
 /* ---- per-seat commander (Scryfall fuzzy search -> art + color identity) ---- */
 const COLOR_ORDER = ["W","U","B","R","G"];
@@ -10684,6 +10890,8 @@ async function lookupCommander(term){
 async function setSeatCommander(i){
   const p = TABLE.players[i];
   if (!p) return;
+  // Same seat editor as renaming: search box + suggestions on the page, no pop-ups.
+  if (document.getElementById("gameBody")){ gameOpenEditor(p.id); return; }
   const cur = p.commander && p.commander.name ? p.commander.name : "";
   const q = prompt("Which commander is " + (p.name||("Seat "+(i+1))) + " playing?\n(type any part of the name — I'll look it up)", cur);
   if (q === null) return;
@@ -10724,7 +10932,7 @@ async function backfillCommanderTokens(opts){
   if (BACKFILL_RUNNING) return;
   if (!TABLE || !Array.isArray(TABLE.players)) return;
   const withCmd = TABLE.players.filter(function(p){ return p && p.commander && p.commander.name; }).length;
-  if (force && !withCmd){ alert("Set a commander on a seat first, then I can load its tokens."); return; }
+  if (force && !withCmd){ LT_TOOL_MSG = "Set a commander on a seat first, then I can load its tokens."; renderTable(); return; }
   // Which seats need a look-up? Auto = legacy only (no .tokens array). Force = all.
   const todo = [];
   TABLE.players.forEach(function(p, i){
@@ -10757,12 +10965,13 @@ async function backfillCommanderTokens(opts){
   } finally {
     BACKFILL_RUNNING = false;
   }
-  saveTable(); renderTable(); syncStationTable();
   if (force){
-    alert(seededAny > 0
-      ? ("Loaded tokens onto your commanders — added " + seededAny + " counter" + (seededAny===1?"":"s") + ".")
-      : "Scanned every commander — none of them use tokens or counters.");
+    // A plain status line instead of an alert() box (alerts stop the game on a phone).
+    LT_TOOL_MSG = seededAny > 0
+      ? ("Loaded tokens onto your commanders. Added " + seededAny + " counter" + (seededAny===1?"":"s") + ".")
+      : "Checked every commander. None of them use tokens or counters.";
   }
+  saveTable(); renderTable(); syncStationTable();
 }
 /* ============ DECK MARK (static color-identity emblem) ============
    The "land logos" symbol Greg asked for, modeled on the Atraxa showcase mark but
@@ -10862,6 +11071,9 @@ function colorPips(colors){
 function tableToggleCmd(i){ tableSnapshot(); TABLE.players[i].showCmd = !TABLE.players[i].showCmd; saveTable(); renderTable(); }
 function tableToggleCtr(i){ tableSnapshot(); const p = TABLE.players[i]; p.showCtr = !p.showCtr; if (!p.showCtr && LT_CTR_PICK === i) LT_CTR_PICK = -1; saveTable(); renderTable(); }
 function tableRename(i){
+  // Renaming now happens in the game screen's seat editor (a typing box on the
+  // page, no pop-up). The old prompt() path below stays only as a fallback.
+  if (document.getElementById("gameBody") && TABLE.players[i]){ gameOpenEditor(TABLE.players[i].id); return; }
   const cur = TABLE.players[i].name || ("Seat "+(i+1));
   const name = prompt("Name this seat:", cur);
   if (name === null) return;
@@ -11197,8 +11409,10 @@ function counterPickerHTML(i, p){
     h += '<span class="lt-ctrpick-ico">'+counterIcon(name)+'</span><span class="lt-ctrpick-nm">'+esc(name)+'</span>';
     h += '</button>';
   });
-  h += '<button class="lt-ctrpick-chip custom" onclick="tableAddCounterCustom('+i+')"><span class="lt-ctrpick-ico">&#9998;</span><span class="lt-ctrpick-nm">Custom&#8230;</span></button>';
   h += '</div>';
+  // Anything not listed: type it right here (no pop-up box).
+  h += '<div class="lt-ctrpick-other"><input type="text" maxlength="18" placeholder="Other, like Rad or Shield" aria-label="Other counter name" autocomplete="off" autocapitalize="words" onkeydown="if(event.key===&quot;Enter&quot;){addCounterByName('+i+',this.value)}">';
+  h += '<button class="lt-ctrpick-otherbtn" onclick="addCounterByName('+i+',this.previousElementSibling.value)">Add</button></div>';
   h += '<button class="lt-ctrpick-close" onclick="tableAddCounter('+i+')">Close</button>';
   h += '</div>';
   return h;
@@ -11405,12 +11619,27 @@ function syncStationTable(){
   // (enterStation sets it) or handAnalysis would read a null hand.
   const sv = document.getElementById("view-station");
   if (sv && sv.classList.contains("active") && STATION && typeof renderStation === "function" && ACTIVE_KEY) renderStation();
+  // Same for the game screen: every table tap (from any screen) lands here last.
+  const gv = document.getElementById("view-game");
+  if (gv && gv.classList.contains("active") && typeof renderGame === "function") renderGame();
 }
 function renderTable(){
   const host = document.getElementById("tableBody");
   if (!host) return;
   const t = TABLE;
   let html = "";
+  // Opened from a game, this view is just the round-table picture. Players, starting
+  // life, undo, new game and the dice all live on the game screen, so here they'd
+  // only be a second (pop-up driven) way to do the same thing. Layout stays.
+  if (document.body.classList.contains("in-game")){
+    const lay0 = t.layout || "round";
+    html += '<div class="lt-setup"><span class="lt-lbl">Layout</span><div class="lt-laybtns">';
+    html += '<button class="lt-lay'+(lay0==="round"?' on':'')+'" onclick="tableSetLayout(\'round\')">Round</button>';
+    html += '<button class="lt-lay'+(lay0==="list"?' on':'')+'" onclick="tableSetLayout(\'list\')">List</button>';
+    html += '</div></div>';
+    html += ltWinnerHTML(t);
+    return renderTableBoard(host, t, html);
+  }
   // setup bar
   html += '<div class="lt-setup">';
   html += '<span class="lt-lbl">Players</span><div class="lt-seatbtns">';
@@ -11429,6 +11658,12 @@ function renderTable(){
   html += '</div>';
   html += ltToolsHTML(t);
   html += ltWinnerHTML(t);
+  return renderTableBoard(host, t, html);
+}
+/* The seats themselves (round honeycomb or list), the log, then paint. Split out
+   of renderTable so the in-game version can reuse it with a smaller top bar. */
+function renderTableBoard(host, t, html){
+  const lay = t.layout || "round";
   if (lay === "round"){
     // Modular honeycomb: same regular-hexagon cells, arranged the way Greg picks.
     // Whose-turn info sits in a slim banner on top so a seat can never cover it.
@@ -11463,6 +11698,733 @@ function enterTable(){
   // them so they "just appear" on the seats and battle station. Fire-and-forget;
   // only touches legacy seats, so it runs its work once and then stays idle.
   backfillCommanderTokens();
+}
+
+/* ============ GAME SCREEN (live play: one table screen) ============
+   The app has two modes now. Deck mode is study and building (Showcase,
+   Spellbook, Playtest, Look Up). Game mode is THIS one screen, reached from the
+   "Play a game" door.
+   - It reads and writes the same TABLE as the Life Table, so there is ONE life
+     total for every player, Greg included.
+   - Greg's own deck tools (hand read, Don't forget, notes) fold into his seat.
+   - Seats are filled right here (name + a commander search or one of his decks).
+   - The fixed bottom button is always the single next step.
+   - No prompt() / alert() / confirm() anywhere in here: they stop a phone game. */
+const GAME_VIEWS = ["game", "table"];      // the round-table seat map opens inside game mode
+const MODE_KEY = "anxiouscorner.mode";
+let LAST_DECK_VIEW = "showcase";
+let CUR_VIEW = "showcase";
+let GAME_UI = { edit: null, open: {}, confirm: null };   // in-memory only; a reload starts tidy
+let GAME_WAKE = null;
+function saveMode(m){ if (!STORAGE_OK) return; try { localStorage.setItem(MODE_KEY, m); } catch(e){} }
+function loadMode(){ if (!STORAGE_OK) return "deck"; try { return localStorage.getItem(MODE_KEY) || "deck"; } catch(e){ return "deck"; } }
+function gameIsLive(){ return !!(TABLE && (TABLE.gstate === "play" || TABLE.resume === "play") && !TABLE.wonBy); }
+/* Keep the phone screen awake during a game (where the browser allows it). */
+async function gameWakeLock(on){
+  try {
+    if (on && !GAME_WAKE && navigator.wakeLock){
+      GAME_WAKE = await navigator.wakeLock.request("screen");
+      GAME_WAKE.addEventListener("release", function(){ GAME_WAKE = null; });
+    } else if (!on && GAME_WAKE){
+      const w = GAME_WAKE; GAME_WAKE = null; await w.release();
+    }
+  } catch(e){ GAME_WAKE = null; }
+}
+/* The door in deck mode, and the slim bar in game mode. */
+function updateGameDoor(){
+  if (!TABLE) TABLE = loadTable();
+  const d = document.getElementById("gameDoor");
+  if (d){
+    const main = d.querySelector(".gd-main"), sub = document.getElementById("gameDoorSub");
+    const going = (TABLE.gstate !== "setup" || !!TABLE.resume) && !TABLE.wonBy;   // a paused game still counts
+    if (main) main.textContent = going ? "Back to your game" : "Play a game";
+    if (sub) sub.textContent = going ? ("Round " + (TABLE.round || 1) + ", " + TABLE.players.length + " players") : "";
+    d.classList.toggle("live", going);
+  }
+  const ex = document.getElementById("gameExit");
+  if (ex) ex.innerHTML = (CUR_VIEW === "game") ? "&lsaquo; Decks" : "&lsaquo; Game";
+  const title = document.getElementById("gameTitle");
+  if (title){
+    const st = TABLE.gstate;
+    title.textContent = CUR_VIEW === "table" ? "Round table"
+      : (st === "setup" ? (TABLE.resume ? "Change players" : "New game")
+      : (st === "first" ? "Who goes first" : "Round " + (TABLE.round || 1)));
+  }
+}
+function gameDeadTag(p){
+  const d = playerDead(p);
+  return d === "OUT" ? "Out" : d === "POISONED" ? "Poisoned" : d === "CMDR KILL" ? "Commander damage" : "";
+}
+function gameDeckLabel(key){
+  const d = DECKS[key];
+  return d ? (d.commander ? stripQty(decodeName(d.commander)) : d.name) : "";
+}
+
+function enterGame(){
+  if (!TABLE) TABLE = loadTable();
+  // Your seat plays one of your decks. The first time, it's the deck you had open.
+  const me = youSeat();
+  if (me){
+    if (/^Seat \d+$/.test(me.name || "")) me.name = "You";
+    // A brand-new game (not a paused one) follows the deck you have open right now.
+    // A game already going keeps the deck you're playing in it.
+    const fresh = TABLE.gstate === "setup" && !TABLE.resume;
+    if (fresh && DECKS[ACTIVE_KEY] && me.deckKey !== ACTIVE_KEY && (me.deckKey || !me.commander)) gameSetSeatDeck(youIndex(), ACTIVE_KEY, true);
+    saveTable();
+  }
+  // Greg's hand / triggers / notes for this deck: the same per-deck save the Station uses.
+  gameSyncYourDeck();
+  // The old Station screen renders the same hand markup (same ids). Empty it so
+  // there is only ever one copy on the page.
+  const sb = document.getElementById("stationBody");
+  if (sb) sb.innerHTML = "";
+  renderTable();           // keeps the log and winner current; redraws this screen last
+  renderGame();
+  // Card text for the hand read and triggers. The table never waits for it.
+  if (!DECK_CACHE.has(ACTIVE_KEY) && ACTIVE_DECK){
+    const k = ACTIVE_KEY;
+    ensureDeckAnalysis(k, ACTIVE_DECK).then(function(){
+      if (CUR_VIEW === "game" && ACTIVE_KEY === k) renderGame();
+    }).catch(function(){});
+  }
+  backfillCommanderTokens();
+}
+
+/* ---- seat changes ---- */
+function gameSetSeatDeck(i, key, noSnap){
+  const p = TABLE.players[i], d = DECKS[key];
+  if (!p || !d) return;
+  if (!noSnap) tableSnapshot();
+  const cmdName = gameDeckLabel(key);
+  const bundle = DECK_CACHE.get(key);
+  p.deckKey = key;
+  p.commander = {
+    name: cmdName,
+    art: cardArtUrl(cmdName, bundle ? bundle.cardData : {}),
+    colors: identityStringToArray(d.identity),
+    tokens: deckCounters(d).map(function(c){ return c.name; })
+  };
+  seedSeatCountersFromDeck(p, d);
+  // Your seat drives the whole app's active deck, so the hand read matches.
+  if (p.id === TABLE.youId && key !== ACTIVE_KEY){
+    switchDeck(key, { stay: true });
+    STATION = loadStation(key); STATION_DECK = key; STATION_UNDO = []; STATION_CTR_PICK = false;
+    HAND_PICKER_OPEN = false; HAND_FILTER = "";
+  }
+}
+function gameSetSeatCard(p, card){
+  const tokens = commanderCounters(card);
+  p.deckKey = null;
+  p.commander = {
+    name: card.name,
+    art: cardArtCrop(card),
+    colors: Array.isArray(card.color_identity) ? card.color_identity.slice() : [],
+    tokens: tokens.map(function(t){ return t.name; })
+  };
+  seedSeatCountersFromCommander(p, card);
+}
+function gameOpenEditor(id){
+  if (!TABLE) TABLE = loadTable();
+  const p = id ? TABLE.players.find(function(x){ return x.id === id; }) : null;
+  const isYou = !!(p && p.id === TABLE.youId);
+  clearTimeout(G_SUGG_T); G_SUGG_SEQ++;   // a slow answer for the last seat must not land in this one
+  GAME_UI.edit = {
+    tok: ++GAME_ED_TOK,                // which editor the typing boxes on screen belong to
+    id: p ? p.id : null,
+    name: p && !/^(Seat|Player) \d+$/.test(p.name || "") ? p.name : "",
+    q: (p && p.commander && !p.deckKey) ? p.commander.name : "",
+    deckKey: p ? p.deckKey : null,
+    deckList: isYou,
+    msg: "", busy: false
+  };
+  if (CUR_VIEW === "game") renderGame(); else switchView("game");
+  if (!p){
+    setTimeout(function(){ const el = document.getElementById("gEdName"); if (el) el.focus(); }, 40);
+  }
+  const ed = document.querySelector("#gameBody .g-editor");
+  if (ed && ed.scrollIntoView) ed.scrollIntoView({ block: "center" });
+}
+/* Copy what's typed into the editor's memory, so a redraw never loses it. */
+let GAME_ED_TOK = 0;
+function gameEdSync(){
+  const e = GAME_UI.edit; if (!e) return;
+  // Only read boxes that belong to THIS editor, never a different seat's old one.
+  const box = document.querySelector("#gameBody .g-editor");
+  if (!box || box.dataset.tok !== String(e.tok)) return;
+  const n = document.getElementById("gEdName"), q = document.getElementById("gEdCmdr");
+  if (n) e.name = n.value;
+  if (q) e.q = q.value;
+}
+async function gameEditorSave(){
+  const e = GAME_UI.edit;
+  if (!e || e.busy) return;
+  gameEdSync();
+  const existing = e.id ? TABLE.players.find(function(x){ return x.id === e.id; }) : null;
+  if (!existing && TABLE.players.length >= 6){ e.msg = "Six is the most this table holds."; renderGame(); return; }
+  const q = String(e.q || "").trim();
+  const deckKey = (e.deckKey && DECKS[e.deckKey]) ? e.deckKey : null;
+  let card = null;
+  const sameCmdr = existing && existing.commander && !existing.deckKey && existing.commander.name === q;
+  if (!deckKey && q && !sameCmdr && G_SUGG_CARDS[q]) card = G_SUGG_CARDS[q];   // tapped a suggestion: already have it
+  else if (!deckKey && q && !sameCmdr){
+    e.busy = true; e.msg = "Looking it up..."; renderGame();
+    try { card = await lookupCommander(q); } catch(err){ card = null; }
+    e.busy = false;
+    if (GAME_UI.edit !== e) return;          // the editor was closed while we waited
+    if (!card){ e.msg = "Couldn't find that one. Try more of the name, or clear the box and add it later."; renderGame(); return; }
+  }
+  // Undo can swap TABLE out while we waited on Scryfall: find the seat again.
+  const seat = e.id ? TABLE.players.find(function(x){ return x.id === e.id; }) : null;
+  if (e.id && !seat){ GAME_UI.edit = null; renderGame(); return; }
+  tableSnapshot();
+  let i;
+  if (seat) i = TABLE.players.indexOf(seat);
+  else {
+    TABLE.players.push(makePlayer(TABLE.players.length, TABLE.start));
+    TABLE.count = TABLE.players.length;
+    i = TABLE.players.length - 1;
+  }
+  const p = TABLE.players[i];
+  const nm = String(e.name || "").trim().slice(0, 20);
+  if (nm) p.name = nm;
+  else if (!seat || /^Seat \d+$/.test(p.name || "")) p.name = (p.id === TABLE.youId) ? "You" : ("Player " + (i + 1));
+  if (deckKey){ if (p.deckKey !== deckKey) gameSetSeatDeck(i, deckKey, true); }
+  else if (card) gameSetSeatCard(p, card);
+  else if (!q){ p.commander = null; p.deckKey = null; }
+  seatPlayers(TABLE);
+  if (!seat && (TABLE.gstate !== "setup" || TABLE.resume)) ltLog(seatName(p, i) + " joined the table");
+  GAME_UI.edit = null;
+  saveTable(); renderTable();
+}
+function gameRemoveSeat(id){
+  if (!id || id === TABLE.youId) return;
+  const i = TABLE.players.findIndex(function(x){ return x.id === id; });
+  if (i < 0) return;
+  tableSnapshot();
+  const nm = seatName(TABLE.players[i], i);
+  // If they were on turn, or the seat a round starts from, hand that to the next
+  // person around the table, not back to seat one.
+  const nx = TABLE.players[(i + 1) % TABLE.players.length];
+  if (id === TABLE.turnId){ const ni = nextAliveIndex(i, 1); TABLE.turnId = (ni >= 0 ? TABLE.players[ni] : nx).id; }
+  if (id === TABLE.firstId) TABLE.firstId = nx.id;
+  TABLE.players.splice(i, 1);
+  TABLE.count = TABLE.players.length;
+  seatPlayers(TABLE);
+  if (TABLE.gstate !== "setup" || TABLE.resume) ltLog(nm + " left the table");
+  GAME_UI.edit = null;
+  saveTable(); renderTable();
+}
+/* ---- game flow ---- */
+function gameStart(){
+  if (TABLE.players.length < 2) return;
+  // One-step safety copy of the table as it was, before anything resets.
+  if (STORAGE_OK){ try { localStorage.setItem(TABLE_KEY + ".prev", JSON.stringify(TABLE)); } catch(e){} }
+  tableNewGame(true);            // life, poison, commander damage, tokens, log, round: all fresh
+  TABLE.gstate = "first";
+  TABLE.resume = null;
+  ltLog("New game. " + TABLE.players.length + " players.");
+  saveTable(); renderTable();
+}
+function gameFirstPick(i){
+  const p = TABLE.players[i];
+  if (!p) return;
+  tableSnapshot();
+  TABLE.firstId = p.id; TABLE.turnId = p.id; TABLE.round = 1;
+  TABLE.gstate = "play";
+  ltLog(seatName(p, i) + " goes first.");
+  saveTable(); renderTable();
+}
+function gameRollFirst(){
+  tableWhoStarts();              // random living seat, logged, round 1
+  TABLE.gstate = "play";
+  saveTable(); renderTable();
+}
+function gamePlayAgain(){
+  GAME_UI.confirm = null;
+  tableNewGame(true);
+  TABLE.gstate = "first";
+  TABLE.resume = null;
+  ltLog("New game, same people.");
+  saveTable(); renderTable();
+}
+function gameChangePlayers(){
+  tableSnapshot();
+  if (TABLE.gstate !== "setup" && !TABLE.wonBy) TABLE.resume = TABLE.gstate;   // come back to this exact game
+  TABLE.gstate = "setup";
+  GAME_UI.confirm = null; GAME_UI.open = {};
+  saveTable(); renderTable();
+  window.scrollTo(0, 0);
+}
+function gameResume(){
+  tableSnapshot();
+  TABLE.gstate = TABLE.resume || "play";
+  TABLE.resume = null;
+  saveTable(); renderTable();
+}
+function gameEnd(){
+  tableSnapshot();
+  TABLE.gstate = "setup";
+  TABLE.resume = null;
+  GAME_UI.confirm = null; GAME_UI.edit = null; GAME_UI.open = {};
+  saveTable();
+  switchView(LAST_DECK_VIEW || "showcase");
+}
+
+/* ---- render ---- */
+function gameSeatStyle(i){
+  const col = SEAT_COLORS[i % SEAT_COLORS.length];
+  return '--seat:' + col.c + ';--seat-bright:' + col.b + ';';
+}
+function gameCmdrLine(p){
+  if (p.deckKey && DECKS[p.deckKey]) return esc(gameDeckLabel(p.deckKey));
+  if (p.commander && p.commander.name) return esc(p.commander.name);
+  return "";
+}
+function gameEditorHTML(t){
+  const e = GAME_UI.edit;
+  const p = e.id ? t.players.find(function(x){ return x.id === e.id; }) : null;
+  const isYou = !!(p && p.id === t.youId);
+  const idx = p ? t.players.indexOf(p) : t.players.length;
+  let h = '<div class="g-card g-editor" data-tok="' + e.tok + '" style="' + gameSeatStyle(idx) + '">';
+  h += '<div class="g-ed-title">' + (isYou ? "Your seat" : (p ? "Change " + esc(seatName(p, idx)) : "Add a player")) + '</div>';
+  h += '<label class="g-lbl" for="gEdName">Name</label>';
+  h += '<input id="gEdName" class="g-input" type="text" maxlength="20" autocomplete="off" autocapitalize="words" enterkeyhint="next" placeholder="' + (isYou ? "You" : "Their name") + '" value="' + esc(e.name || "") + '">';
+  h += '<div class="g-lbl">' + (isYou ? "Which deck are you playing?" : "What are they playing?") + '</div>';
+  if (e.deckKey && DECKS[e.deckKey]){
+    h += '<div class="g-picked"><span>' + (isYou ? "Your " : "Borrowing your ") + esc(gameDeckLabel(e.deckKey).split(",")[0]) + ' deck</span>';
+    h += '<button class="g-link" type="button" data-act="ed-undeck">Change</button></div>';
+  } else {
+    h += '<input id="gEdCmdr" class="g-input" type="text" autocomplete="off" autocapitalize="words" enterkeyhint="done" placeholder="Any part of the commander\'s name" value="' + esc(e.q || "") + '">';
+    h += '<div class="g-sugg" id="gSugg"></div>';
+    h += '<button class="g-link" type="button" data-act="ed-decks">' + (e.deckList ? "Hide my decks" : (isYou ? "Pick one of my decks" : "Or one of my decks")) + '</button>';
+    if (e.deckList){
+      h += '<div class="g-decklist">';
+      Object.keys(DECKS).forEach(function(k){
+        const th = themeForDeck(k, DECKS[k]);
+        h += '<button class="g-deckbtn" type="button" data-act="ed-deck" data-key="' + esc(k) + '"><span class="g-dot" style="background:' + th.accent + '"></span>' + esc(gameDeckLabel(k)) + '</button>';
+      });
+      h += '</div>';
+    }
+  }
+  if (e.msg) h += '<p class="g-ed-msg" role="status">' + esc(e.msg) + '</p>';
+  h += '<button class="g-primary" type="button" data-act="ed-save"' + (e.busy ? " disabled" : "") + '>' + (p ? "Save" : "Add to the table") + '</button>';
+  h += '<button class="g-quiet" type="button" data-act="ed-cancel">Cancel</button>';
+  if (p){
+    const i = t.players.indexOf(p);
+    h += '<div class="g-ed-move"><span class="g-lbl">Turn order</span>';
+    h += '<button class="g-small" type="button" data-act="ed-move" data-d="-1"' + (i <= 0 ? " disabled" : "") + '>Move earlier</button>';
+    h += '<button class="g-small" type="button" data-act="ed-move" data-d="1"' + (i >= t.players.length - 1 ? " disabled" : "") + '>Move later</button></div>';
+    if (!isYou) h += '<button class="g-danger" type="button" data-act="ed-remove">Take ' + esc(seatName(p, i)) + ' off the table</button>';
+  }
+  h += '</div>';
+  return h;
+}
+function gameSetupHTML(t){
+  const e = GAME_UI.edit;
+  let h = '<h2 class="g-h">' + (t.resume ? "Change players" : "Who's playing?") + '</h2>';
+  h += '<p class="g-sub">' + (t.resume ? "Your game is saved. Add or change people, then go back to it." : "Tap a seat to change it. Turns go in this order.") + '</p>';
+  t.players.forEach(function(p, i){
+    if (e && e.id === p.id){ h += gameEditorHTML(t); return; }
+    const isYou = p.id === t.youId;
+    const line = gameCmdrLine(p);
+    h += '<button class="g-card g-setrow" type="button" data-act="edit" data-id="' + esc(p.id) + '" style="' + gameSeatStyle(i) + '">';
+    h += '<span class="g-setrow-name">' + esc(seatName(p, i)) + (isYou && p.name !== "You" ? ' <span class="g-tag">you</span>' : '') + '</span>';
+    h += '<span class="g-setrow-cmdr">' + (line || (isYou ? "Tap to pick your deck" : "Tap to add what they're playing")) + '</span>';
+    h += '<span class="g-setrow-edit">Change</span>';
+    h += '</button>';
+  });
+  if (e && !e.id) h += gameEditorHTML(t);
+  else if (t.players.length < 6) h += '<button class="g-add' + (t.players.length >= 2 ? ' calm' : '') + '" type="button" data-act="add">+ Add a player</button>';
+  if (!t.resume){
+    h += '<div class="g-life-start"><span>Everyone starts at <b>' + t.start + '</b> life.</span>';
+    if (GAME_UI.open.startLife){
+      h += '<span class="g-stepper"><button class="g-small" type="button" data-act="start-life" data-d="-5">&#8722;5</button><button class="g-small" type="button" data-act="start-life" data-d="5">+5</button></span>';
+    } else {
+      h += '<button class="g-link" type="button" data-act="open" data-k="startLife">Change</button>';
+    }
+    h += '</div>';
+  }
+  return h;
+}
+function gameCmdRowsHTML(t, i){
+  const p = t.players[i];
+  let h = '';
+  t.players.forEach(function(opp, j){
+    if (opp.id === p.id) return;
+    const v = p.cmd[opp.id] || 0;
+    const cl = gameCmdrLine(opp);
+    h += '<div class="g-row' + (v >= 21 ? ' hot' : '') + '" style="' + gameSeatStyle(j) + '">';
+    h += '<span class="g-row-lbl">From ' + esc(seatName(opp, j)) + (cl ? '<small>' + cl + '</small>' : '') + '</span>';
+    h += '<span class="g-stepper"><button class="g-small" type="button" data-act="cmd" data-i="' + i + '" data-from="' + esc(opp.id) + '" data-d="-1" aria-label="Less">&#8722;</button>';
+    h += '<span class="g-row-val">' + v + '</span>';
+    h += '<button class="g-small" type="button" data-act="cmd" data-i="' + i + '" data-from="' + esc(opp.id) + '" data-d="1" aria-label="More">+</button></span>';
+    h += '</div>';
+  });
+  return h || '<p class="g-sub">No one else is seated yet.</p>';
+}
+function gameTokensHTML(i, p, withDeck){
+  let h = '<div class="lt-ctrgrid">';
+  normCounters(p.counters).forEach(function(c){ h += drawerCtrTileHTML(i, c.name, c.icon, c.val, false); });
+  h += '<div class="lt-ctrtile add"><button class="lt-ctradd" onclick="tableAddCounter(' + i + ')">+ counter</button>';
+  if (withDeck) h += '<button class="lt-ctrdeck" onclick="tableLoadDeckCounters(' + i + ')">from my deck</button>';
+  h += '</div></div>';
+  if (LT_CTR_PICK === i) h += counterPickerHTML(i, p);
+  return h;
+}
+function gameYouHTML(t){
+  const i = youIndex(), p = t.players[i];
+  const tag = gameDeadTag(p);
+  const st = t.gstate;
+  const cmdVals = Object.values(p.cmd || {});
+  const cmdMax = cmdVals.length ? Math.max.apply(null, cmdVals) : 0;
+  const toks = normCounters(p.counters);
+  const O = GAME_UI.open;
+  let h = '<div class="g-card g-you' + (tag ? ' dead' : '') + (t.turnId === p.id && st === "play" ? ' turn' : '') + '" style="' + gameSeatStyle(i) + '">';
+  h += '<div class="g-you-head"><span class="g-you-name">' + esc(seatName(p, i)) + '</span>';
+  h += '<span class="g-you-deck">' + (gameCmdrLine(p) || "No deck picked") + '</span>';
+  h += '<button class="g-small" type="button" data-act="edit" data-id="' + esc(p.id) + '">Change</button></div>';
+  if (tag) h += '<div class="g-deadtag">' + tag + '</div>';
+  if (st === "first") h += '<button class="g-first" type="button" data-act="first-pick" data-i="' + i + '">I go first</button>';
+  h += '<div class="g-life-row">';
+  h += '<button class="g-step" type="button" data-act="life" data-i="' + i + '" data-d="-1" aria-label="Lose 1 life">&#8722;</button>';
+  h += '<div class="lt-num g-life' + (p.life <= 5 ? ' low' : '') + '">' + p.life + ltDeltaTag(p) + '</div>';
+  h += '<button class="g-step" type="button" data-act="life" data-i="' + i + '" data-d="1" aria-label="Gain 1 life">+</button>';
+  h += '</div>';
+  h += '<div class="g-quick"><button class="g-small" type="button" data-act="life" data-i="' + i + '" data-d="-5">&#8722;5</button><button class="g-small" type="button" data-act="life" data-i="' + i + '" data-d="5">+5</button></div>';
+  h += '<div class="g-chips">';
+  h += '<button class="g-chip poison' + (O.youPoison ? ' on' : '') + (p.poison > 0 ? ' live' : '') + '" type="button" data-act="open" data-k="youPoison"><span>Poison</span><b>' + p.poison + '</b></button>';
+  h += '<button class="g-chip cmd' + (O.youCmd ? ' on' : '') + (cmdMax > 0 ? ' live' : '') + '" type="button" data-act="open" data-k="youCmd"><span>Cmdr dmg</span><b>' + cmdMax + '</b></button>';
+  h += '<button class="g-chip tok' + (O.youTok ? ' on' : '') + '" type="button" data-act="open" data-k="youTok"><span>Counters</span><b>' + toks.length + '</b></button>';
+  h += '</div>';
+  if (O.youPoison) h += '<div class="g-panel"><div class="lt-ctrgrid">' + drawerCtrTileHTML(i, "Poison", "&#9763;", p.poison, true) + '</div></div>';
+  if (O.youCmd) h += '<div class="g-panel"><p class="g-sub">Commander damage you have taken. It also comes off your life.</p>' + gameCmdRowsHTML(t, i) + '</div>';
+  if (O.youTok) h += '<div class="g-panel">' + gameTokensHTML(i, p, true) + '</div>';
+  // Greg's own deck tools: only when this seat plays one of his decks.
+  if (p.deckKey && DECKS[p.deckKey] && p.deckKey === ACTIVE_KEY && STATION){
+    const bundle = DECK_CACHE.get(ACTIVE_KEY);
+    const cd = bundle ? bundle.cardData : {};
+    h += '<div class="g-tools">';
+    h += '<button class="g-drawer' + (O.hand ? ' on' : '') + '" type="button" data-act="open" data-k="hand"><span>My hand</span><span class="g-drawer-ic">' + (O.hand ? "&#8722;" : "+") + '</span></button>';
+    if (O.hand){
+      if (!bundle) h += '<p class="g-sub">Reading your cards. The keep-or-mulligan advice fills in shortly.</p>';
+      h += '<div class="g-deckbits">' + handSectionHTML(ACTIVE_DECK, cd) + '</div>';
+    }
+    h += '<button class="g-drawer' + (O.walker ? ' on' : '') + '" type="button" data-act="open" data-k="walker"><span>Don\'t forget</span><span class="g-drawer-ic">' + (O.walker ? "&#8722;" : "+") + '</span></button>';
+    if (O.walker) h += '<div class="g-deckbits">' + turnWalkerHTML(ACTIVE_DECK, cd) + '</div>';
+    h += '<button class="g-drawer' + (O.notes ? ' on' : '') + '" type="button" data-act="open" data-k="notes"><span>Notes</span><span class="g-drawer-ic">' + (O.notes ? "&#8722;" : "+") + '</span></button>';
+    if (O.notes) h += '<textarea class="station-notes g-notes" id="gNotes" placeholder="Threats to watch, deals made, who is the archenemy...">' + esc(STATION.notes || "") + '</textarea>';
+    h += '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+function gameOppHTML(t, i){
+  const p = t.players[i];
+  const tag = gameDeadTag(p);
+  const st = t.gstate;
+  const k = "opp_" + p.id;
+  const open = !!GAME_UI.open[k];
+  const line = gameCmdrLine(p);
+  let h = '<div class="g-card g-opp' + (tag ? ' dead' : '') + (t.turnId === p.id && st === "play" ? ' turn' : '') + '" style="' + gameSeatStyle(i) + '">';
+  h += '<button class="g-opp-top" type="button" data-act="edit" data-id="' + esc(p.id) + '">';
+  h += '<span class="g-opp-name">' + esc(seatName(p, i)) + '</span>';
+  h += '<span class="g-opp-cmdr">' + (line || "Tap to add their commander") + '</span>';
+  h += '</button>';
+  if (tag) h += '<div class="g-deadtag">' + tag + '</div>';
+  if (st === "first") h += '<button class="g-first" type="button" data-act="first-pick" data-i="' + i + '">' + esc(seatName(p, i)) + ' goes first</button>';
+  h += '<div class="g-opp-life">';
+  h += '<button class="g-step sm" type="button" data-act="life" data-i="' + i + '" data-d="-1" aria-label="Lose 1 life">&#8722;</button>';
+  h += '<div class="lt-num g-opp-num' + (p.life <= 5 ? ' low' : '') + '">' + p.life + ltDeltaTag(p) + '</div>';
+  h += '<button class="g-step sm" type="button" data-act="life" data-i="' + i + '" data-d="1" aria-label="Gain 1 life">+</button>';
+  h += '<button class="g-more' + (open ? ' on' : '') + '" type="button" data-act="open" data-k="' + esc(k) + '">' + (open ? "Less" : "More") + '</button>';
+  h += '</div>';
+  if (open){
+    h += '<div class="g-panel">';
+    h += '<div class="g-quick"><button class="g-small" type="button" data-act="life" data-i="' + i + '" data-d="-5">&#8722;5</button><button class="g-small" type="button" data-act="life" data-i="' + i + '" data-d="5">+5</button></div>';
+    h += '<div class="lt-ctrgrid">' + drawerCtrTileHTML(i, "Poison", "&#9763;", p.poison, true) + '</div>';
+    h += '<div class="g-lbl">Commander damage they have taken</div>' + gameCmdRowsHTML(t, i);
+    h += '<div class="g-lbl">Their counters</div>' + gameTokensHTML(i, p, false);
+    if (st === "play" && t.turnId !== p.id) h += '<button class="g-small wide" type="button" data-act="set-turn" data-i="' + i + '">Make it their turn</button>';
+    h += '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+function gameConfirmHTML(kind){
+  if (GAME_UI.confirm !== kind) return "";
+  const txt = kind === "end" ? "End this game? Everyone stays seated for next time."
+                             : "Start over? Everyone goes back to " + TABLE.start + " life.";
+  const yes = kind === "end" ? "End the game" : "Yes, start over";
+  return '<div class="g-confirm" role="alert"><p>' + esc(txt) + '</p>' +
+         '<button class="g-danger" type="button" data-act="' + (kind === "end" ? "end-yes" : "again") + '">' + yes + '</button>' +
+         '<button class="g-quiet" type="button" data-act="ask-no">Keep playing</button></div>';
+}
+function gamePlayHTML(t){
+  const st = t.gstate;
+  const n = t.players.length;
+  let h = "";
+  // 1. the turn card (or who goes first / game over)
+  if (t.wonBy){
+    const w = t.players.find(function(p){ return p.id === t.wonBy; });
+    const wi = w ? t.players.indexOf(w) : 0;
+    h += '<div class="g-card g-over" style="' + gameSeatStyle(wi) + '">';
+    h += '<div class="g-over-name">' + esc(w ? (w.id === t.youId ? "You are" : seatName(w, wi) + " is") : "Someone is") + ' the last one standing.</div>';
+    h += '<button class="g-quiet" type="button" data-act="players">Change players</button>';
+    h += '<button class="g-quiet" type="button" data-act="end-yes">Done for now</button>';
+    h += '</div>';
+  } else if (st === "first"){
+    h += '<div class="g-card g-turn"><div class="g-turn-name">Who goes first?</div>';
+    h += '<p class="g-sub">Roll for it with the button at the bottom, or tap the person who goes first.</p></div>';
+  } else {
+    const ci = turnIndex(), cur = t.players[ci];
+    const ni = nextAliveIndex(ci, 1), nx = ni >= 0 ? t.players[ni] : null;
+    const curLine = gameCmdrLine(cur);
+    h += '<div class="g-card g-turn" style="' + gameSeatStyle(ci) + '">';
+    h += '<div class="g-turn-name">' + (cur.id === t.youId ? "Your turn" : esc(seatName(cur, ci)) + "'s turn") + '</div>';
+    if (curLine) h += '<div class="g-turn-cmdr">' + curLine + '</div>';
+    if (nx) h += '<div class="g-turn-next">Up next: <b>' + (nx.id === t.youId ? "You" : esc(seatName(nx, ni))) + '</b></div>';
+    if (!((t.round || 1) === 1 && t.turnId === t.firstId)) h += '<button class="g-quiet" type="button" data-act="prev">Back one turn</button>';
+    h += '</div>';
+  }
+  // 2. you, then 3. everyone else in turn order going round from you
+  const yi = youIndex();
+  h += gameYouHTML(t);
+  for (let k = 1; k < n; k++) h += gameOppHTML(t, (yi + k) % n);
+  // 4. what happened
+  const logN = (t.log || []).length;
+  h += '<button class="g-drawer" type="button" data-act="open" data-k="log"><span>What happened <span class="lt-log-n" id="gLogN">' + logN + '</span></span><span class="g-drawer-ic">' + (GAME_UI.open.log ? "&#8722;" : "+") + '</span></button>';
+  if (GAME_UI.open.log) h += '<ol class="lt-log g-log" id="gLogList">' + ltLogListHTML(t) + '</ol>';
+  // 5. more table tools
+  h += '<button class="g-drawer" type="button" data-act="open" data-k="tools"><span>More table tools</span><span class="g-drawer-ic">' + (GAME_UI.open.tools ? "&#8722;" : "+") + '</span></button>';
+  if (GAME_UI.open.tools){
+    h += '<div class="g-panel g-toolbox">';
+    h += '<div class="g-dice"><button class="g-small" type="button" data-act="roll" data-n="6">Roll d6</button><button class="g-small" type="button" data-act="roll" data-n="20">Roll d20</button><button class="g-small" type="button" data-act="flip">Flip coin</button></div>';
+    if (LT_TOOL_MSG) h += '<p class="lt-toolout" role="status">' + esc(LT_TOOL_MSG) + '</p>';
+    h += '<button class="g-small wide" type="button" data-act="players">Add or change players</button>';
+    h += '<button class="g-small wide" type="button" data-act="seatmap">Round table view</button>';
+    if (t.players.some(function(p){ return p.commander && p.commander.name; })) h += '<button class="g-small wide" type="button" data-act="tokens">Load commander counters</button>';
+    h += '<button class="g-small wide" type="button" data-act="ask" data-k="new">Start over</button>' + gameConfirmHTML("new");
+    h += '<button class="g-small wide warn" type="button" data-act="ask" data-k="end">End this game</button>' + gameConfirmHTML("end");
+    h += '</div>';
+  }
+  return h;
+}
+function renderGameNext(){
+  const el = document.getElementById("gameNext");
+  if (!el || !TABLE) return;
+  const t = TABLE, st = t.gstate;
+  if (GAME_UI.edit){ el.hidden = true; el.innerHTML = ""; return; }   // the editor has its own button
+  let act = "", label = "";
+  if (st === "setup"){
+    if (t.players.length < 2){ act = "add"; label = "Add a player"; }
+    else if (t.resume){ act = "back-to-play"; label = "Back to the game"; }
+    else { act = "start"; label = "Start the game"; }
+  } else if (t.wonBy){ act = "again"; label = "Play again, same people"; }
+  else if (st === "first"){ act = "first-roll"; label = "Roll for who goes first"; }
+  else {
+    const ni = nextAliveIndex(turnIndex(), 1);
+    const nx = ni >= 0 ? t.players[ni] : null;
+    act = "next";
+    label = "Next turn" + (nx ? " → " + (nx.id === t.youId ? "You" : seatName(nx, ni)) : "");
+  }
+  el.hidden = false;
+  el.innerHTML = '<button class="g-next-btn" type="button" data-act="' + act + '">' + esc(label) + '</button>';
+}
+function renderGame(){
+  const host = document.getElementById("gameBody");
+  if (!host) return;
+  if (!TABLE) TABLE = loadTable();
+  const t = TABLE;
+  // Keep the cursor where it was if a redraw lands while someone is typing.
+  const ae = document.activeElement;
+  const keep = (ae && ae.id && host.contains(ae) && (ae.tagName === "INPUT" || ae.tagName === "TEXTAREA"))
+    ? { id: ae.id, a: ae.selectionStart, b: ae.selectionEnd } : null;
+  // (No gameEdSync here: the input listener already keeps the editor's memory
+  //  current, and reading the boxes now would undo a suggestion just tapped.)
+  // An editor for a seat that no longer exists (Undo took it away) just closes.
+  if (GAME_UI.edit && GAME_UI.edit.id && !t.players.some(function(p){ return p.id === GAME_UI.edit.id; })) GAME_UI.edit = null;
+  let h = "";
+  if (!STORAGE_OK) h += '<p class="g-warn">Saving is off in this browser. This game lasts until you close the tab.</p>';
+  if (t.gstate === "setup") h += gameSetupHTML(t);
+  // Mid-game, changing a seat takes the whole screen for a moment: one thing at a
+  // time. Save or Cancel brings the table straight back.
+  else if (GAME_UI.edit) h += gameEditorHTML(t);
+  else h += gamePlayHTML(t);
+  host.innerHTML = h;
+  gameBindDeckBits(host);
+  renderGameNext();
+  updateGameDoor();
+  if (keep){
+    const el = document.getElementById(keep.id);
+    if (el){ el.focus(); try { el.setSelectionRange(keep.a, keep.b); } catch(e){} }
+  }
+  // If the box being typed in was redrawn away, bring the bottom button back.
+  const a = document.activeElement;
+  document.body.classList.toggle("g-typing", !!(a && host.contains(a) && /^(INPUT|TEXTAREA)$/.test(a.tagName)));
+}
+/* Undo or a reload can leave your seat on one deck and the app on another.
+   Put the app (and the hand / notes save) back on the deck your seat plays. */
+function gameSyncYourDeck(){
+  const me = youSeat();
+  if (me && me.deckKey && DECKS[me.deckKey] && me.deckKey !== ACTIVE_KEY){
+    switchDeck(me.deckKey, { stay: true });
+  }
+  if (STATION_DECK !== ACTIVE_KEY){
+    STATION = loadStation(ACTIVE_KEY); STATION_DECK = ACTIVE_KEY; STATION_UNDO = []; STATION_CTR_PICK = false;
+    HAND_PICKER_OPEN = false; HAND_FILTER = "";
+  }
+}
+/* The hand read / triggers / notes markup is the Station's own; wire it here the
+   same way renderStation does, scoped to the game screen. */
+function gameBindDeckBits(host){
+  const pick = host.querySelector("#handPick"); if (pick) pick.addEventListener("click", handTogglePicker);
+  // Clear takes two taps here: the top Undo is for the table, so a mis-tap on
+  // Clear mid-game would otherwise lose the hand for good.
+  const clr = host.querySelector("#handClear");
+  if (clr) clr.addEventListener("click", function(){
+    if (clr.dataset.armed){ handClearAll(); return; }
+    clr.dataset.armed = "1";
+    clr.textContent = "Tap again to clear";
+  });
+  host.querySelectorAll(".hand-pick").forEach(function(b){ b.addEventListener("click", function(){ handToggleCard(b.dataset.add); }); });
+  const hf = host.querySelector("#handFilter");
+  if (hf) hf.addEventListener("input", function(){
+    HAND_FILTER = hf.value;
+    const listEl = host.querySelector("#handPickList");
+    if (listEl){
+      listEl.innerHTML = handPickListHTML(ACTIVE_DECK);
+      listEl.querySelectorAll(".hand-pick").forEach(function(b){ b.addEventListener("click", function(){ handToggleCard(b.dataset.add); }); });
+    }
+  });
+  const notesBtn = host.querySelector("#handNotesBtn");
+  if (notesBtn) notesBtn.addEventListener("click", function(){ HAND_NOTES_OPEN = !HAND_NOTES_OPEN; renderGame(); });
+  const inl = host.querySelector("#handNotesInline");
+  if (inl) inl.addEventListener("input", function(){ STATION.notes = inl.value; saveStation(); });
+  const gn = host.querySelector("#gNotes");
+  if (gn) gn.addEventListener("input", function(){ STATION.notes = gn.value; saveStation(); });
+  host.querySelectorAll(".wbtn").forEach(function(b){ b.addEventListener("click", function(){ stationSetPhase(b.dataset.phase); }); });
+}
+/* Commander suggestions while typing. Asks Scryfall for real commanders only,
+   most-played first, and keeps the cards so saving needs no second lookup.
+   Falls back to plain name autocomplete when that finds nothing. Its own
+   sequence guard means a slow answer never overwrites a newer one. */
+let G_SUGG_SEQ = 0, G_SUGG_T = null, G_SUGG_CARDS = {};
+function gameSuggest(q){
+  clearTimeout(G_SUGG_T);
+  q = String(q || "").trim();
+  const host = document.getElementById("gSugg");
+  if (!host) return;
+  if (q.length < 2){ host.innerHTML = ""; G_SUGG_SEQ++; return; }
+  G_SUGG_T = setTimeout(async function(){
+    const seq = ++G_SUGG_SEQ;
+    let names = [];
+    try {
+      const r = await fetch("https://api.scryfall.com/cards/search?q=" + encodeURIComponent(q + " is:commander") + "&order=edhrec&unique=cards");
+      if (r.ok){
+        const j = await r.json();
+        (j.data || []).slice(0, 6).forEach(function(c){ names.push(c.name); G_SUGG_CARDS[c.name] = c; });
+      }
+    } catch(e){}
+    if (!names.length){
+      try {
+        const r2 = await fetch("https://api.scryfall.com/cards/autocomplete?q=" + encodeURIComponent(q));
+        if (r2.ok) names = (await r2.json()).data || [];
+      } catch(e){}
+    }
+    if (seq !== G_SUGG_SEQ) return;
+    const h2 = document.getElementById("gSugg");
+    if (!h2) return;
+    h2.innerHTML = names.slice(0, 6).map(function(n){
+      return '<button class="g-sugg-btn" type="button" data-act="ed-sugg" data-name="' + esc(n) + '">' + esc(n) + '</button>';
+    }).join("");
+  }, 250);
+}
+function gameAct(act, el){
+  const ds = el.dataset;
+  const i = ds.i != null ? parseInt(ds.i, 10) : -1;
+  const d = ds.d != null ? parseInt(ds.d, 10) : 0;
+  const e = GAME_UI.edit;
+  switch (act){
+    case "life": tableLife(i, d); break;
+    case "cmd": tableCmd(i, ds.from, d); break;
+    case "next": tableNextTurn(1); break;
+    case "prev": tableNextTurn(-1); break;
+    case "set-turn": tableSetTurn(i); break;
+    case "open": GAME_UI.open[ds.k] = !GAME_UI.open[ds.k]; renderGame(); break;
+    case "add": gameOpenEditor(null); break;
+    case "edit": gameOpenEditor(ds.id); break;
+    case "ed-save": gameEditorSave(); break;
+    case "ed-cancel": GAME_UI.edit = null; renderGame(); break;
+    case "ed-remove": if (e) gameRemoveSeat(e.id); break;
+    case "ed-decks": if (e){ gameEdSync(); e.deckList = !e.deckList; renderGame(); } break;
+    case "ed-deck": if (e){ gameEdSync(); e.deckKey = ds.key; e.msg = ""; renderGame(); } break;
+    case "ed-undeck": if (e){ gameEdSync(); e.deckKey = null; e.deckList = true; renderGame(); } break;
+    case "ed-sugg": if (e){ gameEdSync(); e.q = ds.name; e.deckKey = null; e.msg = ""; renderGame(); } break;
+    case "ed-move": if (e){
+      gameEdSync();
+      const idx = TABLE.players.findIndex(function(x){ return x.id === e.id; });
+      const to = idx + d;
+      if (idx >= 0 && to >= 0 && to < TABLE.players.length) tableSwap(idx, to);
+    } break;
+    case "start": gameStart(); break;
+    case "first-roll": gameRollFirst(); break;
+    case "first-pick": gameFirstPick(i); break;
+    case "again": gamePlayAgain(); break;
+    case "ask": GAME_UI.confirm = ds.k; renderGame(); break;
+    case "ask-no": GAME_UI.confirm = null; renderGame(); break;
+    case "end-yes": gameEnd(); break;
+    case "players": gameChangePlayers(); break;
+    case "back-to-play": gameResume(); break;
+    case "seatmap": switchView("table"); break;
+    case "start-life": tableSetStart(d); break;
+    case "roll": tableRoll(parseInt(ds.n, 10) || 6); break;
+    case "flip": tableFlip(); break;
+    case "tokens": backfillCommanderTokens({ force: true }); break;
+  }
+}
+function bindGame(){
+  const body = document.getElementById("gameBody"), next = document.getElementById("gameNext");
+  if (!body || !next) return;
+  const onClick = function(ev){
+    const b = ev.target.closest && ev.target.closest("[data-act]");
+    if (!b || b.disabled) return;
+    gameAct(b.dataset.act, b);
+  };
+  body.addEventListener("click", onClick);
+  next.addEventListener("click", onClick);
+  body.addEventListener("input", function(ev){
+    const e = GAME_UI.edit;
+    if (!e) return;
+    if (ev.target.id === "gEdName") e.name = ev.target.value;
+    if (ev.target.id === "gEdCmdr"){ e.q = ev.target.value; e.msg = ""; gameSuggest(e.q); }
+  });
+  body.addEventListener("keydown", function(ev){
+    if (ev.key !== "Enter") return;
+    if (ev.target.id === "gEdName"){
+      ev.preventDefault();
+      const c = document.getElementById("gEdCmdr");
+      if (c) c.focus(); else gameEditorSave();
+    } else if (ev.target.id === "gEdCmdr"){ ev.preventDefault(); gameEditorSave(); }
+  });
+  // The fixed bottom button hides while the phone keyboard is up.
+  body.addEventListener("focusin", function(ev){ if (/^(INPUT|TEXTAREA)$/.test(ev.target.tagName)) document.body.classList.add("g-typing"); });
+  body.addEventListener("focusout", function(){ document.body.classList.remove("g-typing"); });
+  const door = document.getElementById("gameDoor");
+  if (door) door.addEventListener("click", function(){ switchView("game"); });
+  const ex = document.getElementById("gameExit");
+  if (ex) ex.addEventListener("click", function(){
+    if (CUR_VIEW === "game"){ GAME_UI.edit = null; switchView(LAST_DECK_VIEW || "showcase"); }
+    else switchView("game");
+  });
+  const un = document.getElementById("gameUndo");
+  if (un) un.addEventListener("click", function(){
+    tableUndo();
+    gameSyncYourDeck();
+    if (CUR_VIEW === "game") renderGame();
+  });
+  document.addEventListener("visibilitychange", function(){
+    if (document.visibilityState === "visible" && document.body.classList.contains("in-game")) gameWakeLock(true);
+  });
 }
 /* Hex pick-up & drop (phone-first). Press-and-HOLD a hex to lift it, drag it over
    another seat, release to snap the two players' places. A swipe that moves before
@@ -11737,6 +12699,12 @@ function boot(){
 
   bindPeek();
   bindTableDrag();
+
+  // Game mode: the door, the slim bar, the game screen. A reload in the middle
+  // of a game opens straight back into it, not into Showcase.
+  bindGame();
+  updateGameDoor();
+  if (loadMode() === "game") switchView("game");
 }
 boot();
 </script>
