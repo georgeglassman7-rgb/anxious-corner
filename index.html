@@ -238,6 +238,46 @@ html.calm .deck-mark{filter:none;opacity:.13}
 .combo-name{font-size:1.08em;font-weight:600;color:var(--bone-bright);margin-bottom:.28em;line-height:1.35}
 .combo-why{font-size:.95em;color:var(--steel);line-height:1.55}
 
+/* Wish list — upgrade ideas for every deck in one column at the top of Showcase.
+   Rows reuse the .combo-row shape. The left bar and the deck chip carry that
+   deck's OWN accent as inline --wl-* tokens (same trick as .swdeck), so a row
+   reads as "this belongs to Kess" without retinting the page. */
+.wl-strip{margin:0 0 1.6em}
+.wl-strip:empty{display:none}
+.wl-head{display:flex;align-items:baseline;gap:.6em;flex-wrap:wrap;margin-bottom:.7em}
+.wl-title{font-family:'Cinzel',serif;font-size:.72em;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.wl-n{font-size:.82em;color:var(--steel)}
+.wl-row{border-left:3px solid var(--wl-hint,var(--gold))}
+/* Card links here are not inside .deck-block, so without this they fall all the way
+   back to the browser default -- #0000EE and underlined on a near-black panel.
+   Hover uses the row's own tint rather than --accent-2, which retints per deck. */
+.wl-row .combo-name a{color:var(--text);text-decoration:none;border-bottom:1px dotted transparent;transition:color .16s,border-color .16s}
+.wl-row .combo-name a:hover{color:var(--wl-hint,var(--gold));border-bottom-color:var(--wl-edge,transparent)}
+.wl-deck{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--wl-hint,var(--gold));border:1px solid var(--wl-edge,var(--panel-edge));
+  border-radius:20px;padding:.2em .7em;margin-left:.5em;white-space:nowrap}
+.wl-pick{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(215,178,90,0.45);background:rgba(215,178,90,0.09);
+  border-radius:12px;padding:.15em .6em;margin-left:.5em;white-space:nowrap}
+.wl-out{font-size:.9em;color:var(--bone-bright);margin-top:.45em;line-height:1.5}
+.wl-caveat{font-size:.86em;color:var(--text-dim);font-style:italic;line-height:1.55;margin-top:.35em}
+.wl-quiet>summary{font-family:'Cinzel',serif;font-size:.72em;letter-spacing:2px;text-transform:uppercase;color:var(--steel)}
+.wl-ask{font-size:.94em;line-height:1.55;color:var(--bone-bright);margin-top:.7em;padding:.6em .7em;border-radius:8px;background:rgba(var(--panel-rgb),0.55);border:1px solid var(--wl-edge,var(--panel-edge))}
+.wl-err{font-size:.9em;color:var(--crimson-bright);line-height:1.55;margin-top:.5em}
+.wl-acts{display:flex;gap:.5em;flex-wrap:wrap;align-items:center;margin-top:.8em}
+.wl-acts .btn{min-height:44px}
+.wl-acts .status{font-size:.9em;color:var(--steel)}
+.wl-done{opacity:.62}
+.wl-park{display:flex;gap:.5em;flex-wrap:wrap;align-items:center;margin-bottom:1em}
+.wl-park input{flex:1;min-width:180px;min-height:44px;padding:.5em .8em;border-radius:6px;
+  border:1px solid var(--panel-edge);background:rgba(var(--void-rgb),0.55);color:var(--bone-bright);
+  font-family:inherit;font-size:.95em}
+.wl-park select{min-height:44px;padding:.5em .7em;border-radius:6px;border:1px solid var(--panel-edge);
+  background:rgba(var(--void-rgb),0.55);color:var(--bone-bright);font-family:inherit;font-size:.9em}
+.wl-park .btn{min-height:44px}
+.wl-parkmsg{font-size:.9em;line-height:1.55;margin-bottom:1em;color:var(--steel)}
+.wl-parkmsg.bad{color:var(--crimson-bright)}
+
 /* views with a light fade */
 .view{display:none;opacity:0;transition:opacity .22s ease}
 .view.active{display:block;opacity:1}
@@ -651,6 +691,27 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .upgrade-list li a:hover{color:var(--accent-2-bright);border-bottom-color:var(--accent-2);text-shadow:0 0 10px var(--glow-2)}
 .upgrade-list li .price{color:var(--text-dim);font-style:italic;font-size:.9em;margin-left:.5em}
 .upgrade-list li .why{display:block;color:var(--text-dim);font-size:.87em;margin-top:.2em;font-style:italic}
+/* Put it in. The queue used to be a reading list; now every card on it has a
+   thumb-sized way in, and the swap question opens right on the row. */
+.upgrade-list .btn,.upgrade-list .swap-btn,#gradePanel .swap-btn,.ed-move{min-height:44px}
+.up-acts{display:flex;gap:.5em;flex-wrap:wrap;align-items:center;margin-top:.6em}
+.upgrade-list .wl-ask{margin-top:.7em}
+.upgrade-list .wl-ask b{color:var(--bone-bright)}
+.upgrade-list .wl-ask em{display:block;color:var(--text-dim);margin-top:.35em}
+.upgrade-list .swap-block.done{margin-bottom:.8em}
+.up-queue-done{margin-bottom:.8em}
+/* Move a card the app placed. Only on rows marked NEW, only while editing. */
+.ed-move{display:inline-flex;align-items:center;margin-left:.6em;padding:0 .8em;border-radius:7px;
+  border:1px solid var(--panel-edge);background:rgba(var(--panel-rgb),0.55);color:var(--text-dim);
+  font-family:'Cinzel',serif;font-size:.62em;letter-spacing:1.6px;text-transform:uppercase;cursor:pointer;vertical-align:middle}
+.ed-move:hover,.ed-move:focus{color:var(--bone-bright);border-color:var(--accent-2);outline:none}
+.ed-bucketpick{display:grid;grid-template-columns:1fr;gap:.4em;margin:.5em 0 .3em}
+.ed-bucketpick button{min-height:44px;text-align:left;padding:.5em .9em;border-radius:7px;
+  border:1px solid var(--panel-edge);background:rgba(var(--panel-rgb),0.6);color:var(--bone-bright);
+  font-family:inherit;font-size:.92em;cursor:pointer}
+.ed-bucketpick button:hover,.ed-bucketpick button:focus{border-color:var(--accent-2);outline:none}
+.ed-bucketpick .ed-pick-lab{font-size:.86em;color:var(--text-dim);font-style:italic}
+.ed-panel .status .ed-movelink{margin-left:.6em;min-height:44px;vertical-align:middle}
 
 .load-line{font-size:.95em;color:var(--text-dim);font-style:italic;padding:1em 0;animation:softPulse 1.8s ease-in-out infinite}
 
@@ -989,6 +1050,28 @@ h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.15em,3vw,1.6em);
 .lt-arrow{width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--panel-edge);background:rgba(5,6,13,0.4);color:var(--steel);font-size:1em;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:color .15s,border-color .15s}
 .lt-arrow:hover{color:var(--bone-bright);border-color:var(--seat,var(--accent))}
 .lt-round-hint{text-align:center;color:var(--dim);font-style:italic;font-size:.8em;margin:.2em 0 1em}
+/* ---- Table tools (who goes first / dice / coin), running tally, winner, game log.
+   Fixed base palette (jade / crimson / bone), never --accent*, so the colors read
+   the same in every deck theme. No motion. ---- */
+.lt-tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5em;margin:0 0 .6em}
+.lt-tool{min-height:44px;padding:.3em .5em;border:1px solid var(--panel-edge);border-radius:9px;background:var(--void-2);color:var(--steel);font-family:'Cinzel',serif;font-size:.74em;letter-spacing:1px;text-transform:uppercase;cursor:pointer;line-height:1.2}
+.lt-tool.lead{border-color:var(--jade);color:var(--jade-bright)}
+@media (max-width:560px){.lt-tools{grid-template-columns:repeat(3,minmax(0,1fr))}.lt-tool.lead{grid-column:1 / -1}}
+.lt-toolout{margin:.1em 0 .9em;padding:.6em .9em;border-left:3px solid var(--jade);border-radius:6px;background:rgba(92,224,142,0.07);color:var(--bone);font-size:1.02em;line-height:1.5}
+.lt-num{position:relative}
+.lt-delta{position:absolute;left:62%;top:-.55rem;z-index:3;font-family:'Cinzel',serif;font-size:1rem !important;font-weight:800;line-height:1;padding:.25rem .45rem;border-radius:8px;white-space:nowrap;text-shadow:none !important;pointer-events:none;border:1px solid currentColor}
+.comb-num .lt-delta{left:50%;top:-1.25rem;transform:translateX(-50%);font-size:.85rem !important;padding:.15rem .4rem}  /* hex cell: sit above the number, never on it */
+.lt-delta.neg{color:var(--crimson-bright) !important;background:#2a1220}
+.lt-delta.pos{color:var(--jade-bright) !important;background:#10261b}
+.lt-winner{display:flex;align-items:center;justify-content:space-between;gap:.8em;flex-wrap:wrap;margin:0 0 .9em;padding:.8em 1em;border:1px solid var(--gold);border-radius:12px;background:rgba(215,178,90,0.10);color:var(--bone-bright);font-size:1.05em;line-height:1.5}
+.lt-winner .lt-reset{margin-left:0}
+.lt-logbox{margin:1em 0 1.2em;border:1px solid var(--panel-edge);border-radius:12px;background:linear-gradient(160deg,var(--panel),var(--shadow))}
+.lt-logbox summary{min-height:44px;display:flex;align-items:center;gap:.6em;padding:0 1em;cursor:pointer;font-family:'Cinzel',serif;font-size:.82em;letter-spacing:1.5px;text-transform:uppercase;color:var(--steel)}
+.lt-log-n{min-width:1.8em;padding:.1em .45em;border-radius:20px;background:var(--void-2);color:var(--bone);text-align:center;font-size:.9em;letter-spacing:0}
+.lt-log{list-style:none;margin:0;padding:0 1em .9em}
+.lt-log li{padding:.55em 0;border-top:1px solid rgba(230,225,245,0.07);color:var(--bone);font-size:.98em;line-height:1.5}
+.lt-log-r{display:inline-block;min-width:2.4em;margin-right:.5em;color:var(--text-dim);font-size:.82em}
+.lt-log li.lt-log-empty{color:var(--text-dim);font-style:italic;border-top:0}
 
 /* active (on-turn) seat highlight */
 .lt-seat.active{box-shadow:0 0 0 3px var(--seat-bright,var(--accent-bright)),0 0 22px 3px color-mix(in srgb,var(--seat-bright,var(--accent-bright)) 78%,transparent),0 0 46px color-mix(in srgb,var(--seat,#5b5f9a) 55%,transparent);z-index:5}
@@ -1700,6 +1783,8 @@ html.calm .bstation .hero-card{box-shadow:0 0 0 1px var(--panel-edge) !important
   <div class="view active" id="view-showcase">
     <div class="actions" id="showcaseActions"></div>
     <div id="showcaseConfirm"></div>
+    <!-- Wish list: upgrade ideas for ALL decks. Empty means empty; the strip hides itself. -->
+    <div class="wl-strip" id="wishStrip"></div>
     <div id="deckFront" class="deck-front"></div>
     <div id="twoThrones" class="two-thrones"></div>
     <div class="validation" id="validation"></div>
@@ -2009,7 +2094,8 @@ const CHATTERFANG_DECK = {
       {"n":"Scavenger Grounds"},{"n":"Maze of Ith"},{"n":"Phyrexian Tower"},
       {"n":"Fountainport"},{"n":"Yavimaya, Cradle of Growth"},
       {"n":"Wastewood Verge"},{"n":"Tranquil Thicket","new":1},
-      {"n":"Forest ×9"},{"n":"Swamp ×8"}
+      {"n":"Swarmyard","new":1},
+      {"n":"Forest ×8"},{"n":"Swamp ×8"}
     ]}
   ]
 };
@@ -2018,8 +2104,8 @@ const CHATTERFANG_DECK = {
 const KESS_DECK = {
   name: "Kess, Dissident Mage",
   flavor: "Every spell comes back. The graveyard is hand number two.",
-  winLine: "Recast your spells out of the graveyard, out-card the room, and close with a big burn or a storm turn once they are buried in card advantage.",
-  character: "Kess casts everything twice. Play the spell, then play it again from the graveyard — she treats the yard as a second hand and never really runs dry. She counters what matters, wipes what does not, and chips the table down while she waits. Bookish, patient, a little ruthless. By the time the game feels decided, she decided it a few turns ago.",
+  winLine: "Answer everything, recast it out of the graveyard, and let the Wraiths do the killing. Lord of the Nazgûl turns every instant and sorcery into a 3/3 with menace, and once you control nine Wraiths they all swing as 9/9s. Backup line is Duskmantle Guildmage plus Mindcrank, which mills an opponent out and collects on their next draw.",
+  character: "Kess casts everything twice. Play the spell, then play it again from the graveyard — she treats the yard as a second hand and never really runs dry. She counters what matters, wipes what does not, and every spell she throws puts another Wraith on the board. Bookish, patient, a little ruthless. The army builds itself while she says no. By the time the game feels decided, she decided it a few turns ago.",
   colors: "Grixis (U/B/R)",
   commander: "Kess, Dissident Mage",
   kicker: "Commander . Grixis Spellslinger",
@@ -2167,13 +2253,26 @@ const GHOUL_DECK = {
 
 /* ============ SEED REGISTRY ============ */
 /* Seed decks always exist. Stored decks under the same name shadow them (the user's evolved list wins). */
+const GISHATH_DECK = {
+  name: "Gishath, Sun's Avatar",
+  flavor: "Ramp hard. Connect once. Empty the top of your library onto the table.",
+  winLine: "Land Gishath with haste protection, connect once, and flip seven cards — fourteen with a doubler. Every dinosaur in them hits the battlefield free, and their arrival triggers fire on the way in.",
+  character: "Not a creature deck that happens to have big creatures. A one-punch combo deck where the combo piece is an eight-drop with haste and the payoff is measured in free dinosaurs per swing. Ramp hard, keep him alive for one turn, connect. With Roaming Throne out the trigger fires twice, and one connection puts a table-ending board into play for free.",
+  colors: "Naya (R/G/W)",
+  commander: "Gishath, Sun's Avatar",
+  kicker: "Commander . Naya Dinosaur Tribal",
+  identity: "wrg",
+  buckets: [{"bucket": "Commander (1)", "cards": [{"n": "Gishath, Sun's Avatar", "star": 1}]}, {"bucket": "Ramp & Cost Reduction (13)", "cards": [{"n": "Sol Ring", "star": 1}, {"n": "Arcane Signet"}, {"n": "Selvala, Heart of the Wilds", "star": 1, "new": 1}, {"n": "Nature's Lore", "star": 1}, {"n": "Three Visits", "star": 1}, {"n": "Skyshroud Claim", "star": 1, "new": 1}, {"n": "Farseek"}, {"n": "Herd Heirloom", "star": 1, "new": 1}, {"n": "Cultivate"}, {"n": "Kodama's Reach"}, {"n": "Urza's Incubator", "star": 1}, {"n": "Mirari's Wake"}, {"n": "Otepec Huntmaster", "star": 1}]}, {"bucket": "Trigger Doublers & Haste (6)", "cards": [{"n": "Roaming Throne", "star": 1, "new": 1}, {"n": "Berserkers' Onslaught", "star": 1, "new": 1}, {"n": "Swiftfoot Boots", "new": 1}, {"n": "Rhythm of the Wild", "star": 1}, {"n": "Lightning Greaves", "star": 1}, {"n": "Palani's Hatcher", "new": 1}]}, {"bucket": "Dinosaur Ramp & Land Engines (4)", "cards": [{"n": "Ranging Raptors", "star": 1}, {"n": "Topiary Stomper"}, {"n": "Wayward Swordtooth"}, {"n": "Regal Behemoth"}]}, {"bucket": "Card Advantage (7)", "cards": [{"n": "Guardian Project", "star": 1, "new": 1}, {"n": "Elemental Bond"}, {"n": "Garruk's Uprising", "star": 1}, {"n": "Runic Armasaur"}, {"n": "Ripjaw Raptor", "star": 1}, {"n": "Etali, Primal Storm", "star": 1}, {"n": "Bonehoard Dracosaur", "star": 1, "new": 1}]}, {"bucket": "Removal & Interaction (11)", "cards": [{"n": "Swords to Plowshares", "star": 1}, {"n": "Path to Exile", "star": 1}, {"n": "Chaos Warp", "star": 1, "new": 1}, {"n": "Beast Within"}, {"n": "Trapjaw Tyrant"}, {"n": "Raging Swordtooth"}, {"n": "Apex Altisaur", "star": 1}, {"n": "Trumpeting Carnosaur", "star": 1, "new": 1}, {"n": "Marauding Raptor"}, {"n": "Thrashing Brontodon"}, {"n": "Burning Sun's Avatar"}]}, {"bucket": "Protection (4)", "cards": [{"n": "Heroic Intervention", "star": 1}, {"n": "Akroma's Will", "star": 1, "new": 1}, {"n": "Temple Altisaur"}, {"n": "Carnage Tyrant", "star": 1}]}, {"bucket": "Tutors & Recursion (5)", "cards": [{"n": "Worldly Tutor", "star": 1}, {"n": "Monster Manual // Zoological Study", "star": 1}, {"n": "Majestic Genesis", "star": 1}, {"n": "Lurking Predators", "star": 1}, {"n": "Welcome to . . . // Jurassic Park", "star": 1, "new": 1}]}, {"bucket": "Dinosaur Beef & Finishers (13)", "cards": [{"n": "Pantlaza, Sun-Favored", "star": 1, "new": 1}, {"n": "Devil Dinosaur", "star": 1, "new": 1}, {"n": "Territorial Allosaurus", "new": 1}, {"n": "Crested Herdcaller", "new": 1}, {"n": "Regisaur Alpha", "star": 1}, {"n": "Quartzwood Crasher", "star": 1}, {"n": "Ghalta, Primal Hunger"}, {"n": "Ghalta and Mavren"}, {"n": "Kogla and Yidaro"}, {"n": "Wakening Sun's Avatar"}, {"n": "Verdant Sun's Avatar"}, {"n": "Polyraptor"}, {"n": "Zacama, Primal Calamity"}]}, {"bucket": "Lands (36)", "cards": [{"n": "Command Tower", "star": 1}, {"n": "Jetmir's Garden", "star": 1, "new": 1}, {"n": "Sacred Foundry", "star": 1, "new": 1}, {"n": "Stomping Ground", "star": 1, "new": 1}, {"n": "Temple Garden", "star": 1, "new": 1}, {"n": "Overgrown Farmland", "new": 1}, {"n": "Flooded Strand", "new": 1}, {"n": "Rootbound Crag", "new": 1}, {"n": "Karplusan Forest", "new": 1}, {"n": "Sunpetal Grove", "new": 1}, {"n": "Brushland", "new": 1}, {"n": "Battlefield Forge", "new": 1}, {"n": "Rugged Prairie", "new": 1}, {"n": "Krosan Verge", "new": 1}, {"n": "Path of Ancestry"}, {"n": "Unclaimed Territory"}, {"n": "Canopy Vista"}, {"n": "Cinder Glade"}, {"n": "Clifftop Retreat"}, {"n": "Temple of Abandon"}, {"n": "Temple of Triumph"}, {"n": "Terramorphic Expanse"}, {"n": "Evolving Wilds"}, {"n": "Sejiri Shelter // Sejiri Glacier"}, {"n": "Forest ×5"}, {"n": "Plains ×3"}, {"n": "Mountain ×4"}]}]
+};
+
 const SEED_DECKS = {
   splinter: SPLINTER_DECK,
   urtet: URTET_DECK,
   chatterfang: CHATTERFANG_DECK,
   kess: KESS_DECK,
   sheoldred: SHEOLDRED_DECK,
-  ghoul: GHOUL_DECK
+  ghoul: GHOUL_DECK,
+  gishath: GISHATH_DECK
 };
 const SEED_KEYS = new Set(Object.keys(SEED_DECKS));
 /* Map deck.name (lowercased) to the seed key it belongs to, so stored decks with the same name overwrite the seed slot. */
@@ -2383,6 +2482,14 @@ function findBucketByLabelBase(deck, baseLabel){
   if (!target) return null;
   return deck.buckets.find(b => bucketLabelBase(b.bucket).toLowerCase() === target) || null;
 }
+/* "New Additions" only ever exists as a holding pen the app made. Once the last
+   card is moved out of it, an empty group with a (0) on it is just clutter. */
+function dropEmptyHoldingPen(deck, bucket){
+  if (!bucket || bucket.cards.length) return;
+  if (!bucketLabelBase(bucket.bucket).toLowerCase().startsWith("new additions")) return;
+  const i = deck.buckets.indexOf(bucket);
+  if (i >= 0) deck.buckets.splice(i, 1);
+}
 function replaySeedLog(deck, log){
   if (!Array.isArray(log)) return deck;
   log.forEach(op => {
@@ -2397,6 +2504,16 @@ function replaySeedLog(deck, log){
         target = pickTargetBucket(deck, role);
       }
       target.cards.push({ n: op.in, new: 1 });
+    } else if (op.op === "move") {
+      // Same card, different group. The entry itself travels (star, NEW badge,
+      // stacked count all stay); only the bucket that holds it changes.
+      const loc = findCardLocation(deck, op.n);
+      if (!loc) return;
+      const target = findBucketByLabelBase(deck, op.bucket);
+      if (!target || target === loc.bucket) return;
+      const moved = loc.bucket.cards.splice(loc.cardIndex, 1)[0];
+      target.cards.push(moved);
+      dropEmptyHoldingPen(deck, loc.bucket);
     } else if (op.op === "remove") {
       const loc = findCardLocation(deck, op.n);
       if (!loc) return;
@@ -3088,6 +3205,269 @@ const COMBOS = [
     note:"Forge casts Top off the library and Top puts itself back. Wants one artifact cost reducer to run free." }
 ];
 
+/* ============ WISH LIST ============
+   Cards worth thinking about, for every deck, in one column at the top of Showcase.
+
+   Hand-entered. Automation never writes here. The Thursday sweep writes
+   MTG_Deck_App/SWEEP_LOG.md and sweep_state.json; a later session, with a backup
+   taken first, moves the findings into this list. Two ideas a week, one deck a
+   week, six decks in rotation -- about a dozen rows at steady state, not hundreds.
+   Keep it that way. When a row goes stale, delete it.
+
+   deck     a key in SEED_DECKS. A row pointing at a key that no longer exists is skipped.
+   card     the EXACT Scryfall name, PLAIN. This string is what gets added to the deck,
+            so no quantity suffix and no HTML entities. A wrong name here fails silently.
+   cost     printed mana cost as prose. Display only.
+   why      one line on what it does for that deck.
+   out      the card this comes in for, EXACT and PLAIN -- this one gets cut, so the
+            same naming rule applies. null when the sweep did not name one, which
+            turns the row into a plain add instead of a swap.
+   outNote  the human aside about the out card. Display only, never matched on.
+   caveat   the honest downside. null when there genuinely is none.
+   pick     1 on the single idea the sweep named under "Next:". At most one per week.
+   at       the sweep week, YYYY-MM-DD. Drives the ordering. */
+const WISHLIST = [
+  { deck:"splinter", card:"Willie Lumpkin, Postman", cost:"W/U, 2 mana", pick:1,
+    why:"Can't be blocked, and draws you a card every time he connects. That is a free ninjutsu trigger every single turn.",
+    out:"Mothdust Changeling",
+    outNote:"which you already marked hold",
+    caveat:null,
+    at:"2026-08-24" },
+
+  { deck:"splinter", card:"Elektra, Daughter of the Hand", cost:"2BB",
+    why:"Has Sneak, which works like ninjutsu — return an unblocked attacker and cast her cheap. Fits the Ninjas bucket.",
+    out:null,
+    outNote:null,
+    caveat:"Four mana is clunky next to your 1- and 2-drops. Weaker than Willie.",
+    at:"2026-08-24" },
+
+  { deck:"urtet", card:"Anointed Procession", cost:"4 mana, white", pick:1,
+    why:"Every token you make, you make two of instead. Urtet already spits out a Myr every time you cast a Myr, so this doubles your best engine — and it doubles Genesis Chamber and Myr Turbine on top of that.",
+    out:"Myr Incubator",
+    outNote:"six mana to cast, then six more to use it",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"urtet", card:"Intruder Alarm", cost:"3 mana, blue",
+    why:"Whenever any creature enters, every creature untaps. Urtet makes a Myr token each time you cast a Myr, so every Myr you play untaps your whole board — including the ones that make mana.",
+    out:"Myr Propagator",
+    outNote:"three mana to cast, three more for every copy",
+    caveat:"Real downside: your creatures stop untapping on your own untap step. Urtet untaps your Myr at combat anyway, so the Myr are fine. Anything that is not a Myr is not.",
+    at:"2026-08-25" },
+
+  { deck:"chatterfang", card:"Ashnod's Altar", cost:"3 mana, colorless", pick:1,
+    why:"Sacrifice any creature, get two mana back. A free sac outlet that pays you instead of costing you — and you already run Blood Artist, Zulaport Cutthroat and Bastion of Remembrance, so every squirrel you feed it drains the table.",
+    out:"Chatter of the Squirrel",
+    outNote:"one mana for one squirrel, then three more for a second",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"chatterfang", card:"Dictate of Erebos", cost:"5 mana, black",
+    why:"Every time one of your creatures dies, each opponent has to sacrifice one of theirs. You already run Grave Pact — this is the second copy of it. Flash means you can drop it at the end of their turn.",
+    out:"Grievous Wound",
+    outNote:"five mana, and it only ever hurts one player",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"kess", card:"Mystical Tutor", cost:"1 mana, blue", pick:1,
+    why:"One mana, find any instant or sorcery, put it on top. Kess lets you cast a spell out of your graveyard once a turn, so this one keeps paying — tutor now, then cast the tutor again later.",
+    out:"The Dawning Archaic",
+    outNote:"ten mana before discounts, and it still has to attack",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"kess", card:"Bolas's Citadel", cost:"6 mana, black",
+    why:"Play off the top of your library and pay life instead of mana. You already run Sensei's Divining Top, and Top plus Citadel is the engine — you set the top card, then cast it for nothing.",
+    out:"Unfulfilled Desires",
+    outNote:"three mana, then a mana and a life every time you loot",
+    caveat:"Six mana, and the life adds up fast with three opponents pointing at you.",
+    at:"2026-08-25" },
+
+  { deck:"sheoldred", card:"Howling Mine", cost:"2 mana, colorless", pick:1,
+    why:"Everyone draws an extra card each turn. With Sheoldred out that is two more damage to every opponent every time around the table, and two more life for you. It belongs right next to Temple Bell.",
+    out:"Greed",
+    outNote:"you already run thirteen card engines",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"sheoldred", card:"Deserted Temple", cost:"a land",
+    why:"Taps for one, or pays one to untap any land. That means untapping Cabal Coffers — a second Coffers activation in the same turn, which in this deck is a pile of black mana.",
+    out:"Crystal Vein",
+    outNote:"a colorless land you have to sacrifice to get two out of",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"ghoul", card:"Phyrexian Altar", cost:"3 mana, colorless", pick:1,
+    why:"Sacrifice a creature, get one mana of any colour. Unlike Ashnod's Altar it makes black — so Gravecrawler goes down, comes back, and goes down again for free. With Blood Artist or Zulaport Cutthroat out, that loop drains the whole table.",
+    out:"Rise of the Dread Marn",
+    outNote:"only good on a turn things already died",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"ghoul", card:"Cryptbreaker", cost:"1 mana, black",
+    why:"A one-drop that turns dead cards into 2/2 zombies, and turns spare zombies back into cards. Discarding is upside here — you already run Reanimate, Animate Dead and Gravecrawler.",
+    out:"Greed",
+    outNote:"four mana to do a slower version of the same job",
+    caveat:null,
+    at:"2026-08-25" },
+
+  { deck:"splinter", card:"Silver-Fur Master", cost:"U/B, 2 mana", pick:1,
+    why:"Every ninjutsu you activate costs one less, and your other Ninjas get +1/+1. He is a Rat and a Ninja both, so everything Splinter cares about counts him.",
+    out:"Ninja of the New Moon",
+    outNote:"five mana for a plain body with no ability at all",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"splinter", card:"Thousand-Faced Shadow", cost:"1 mana, blue",
+    why:"A one-mana flyer to sneak in early. Later its ninjutsu copies your best attacker — it lands mid-combat as a second Fallen Shinobi or Ink-Eyes, tapped and attacking.",
+    out:"Moonblade Shinobi",
+    outNote:"four mana for a token maker that never scares anyone",
+    caveat:"The copy trick costs four mana. Early on it is just a cheap flyer, and that is fine.",
+    at:"2026-08-27" },
+
+  { deck:"urtet", card:"Tempered Steel", cost:"3 mana, white", pick:1,
+    why:"All your artifact creatures get +2/+2. Every Myr you own is an artifact creature, so this is an army-sized pump for three mana — and new tokens arrive already big.",
+    out:"Render Silent",
+    outNote:"three exact colors of mana to counter one spell",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"urtet", card:"Sai, Master Thopterist", cost:"3 mana, blue",
+    why:"Every artifact spell you cast makes a flying 1/1 on the side. Myr are artifacts, so each one now brings a friend — more bodies for Coat of Arms, Impact Tremors and Skullclamp.",
+    out:"Spellskite",
+    outNote:"a two-mana wall that mostly just sits there",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"chatterfang", card:"Camellia, the Seedmiser", cost:"3 mana, black-green", pick:1,
+    why:"All your Squirrels get menace, and every Food you sacrifice makes another Squirrel. Academy Manufactor turns your Treasures into Food, so the engine feeds itself — and menace means the swarm actually gets through.",
+    out:"Garruk, Cursed Huntsman",
+    outNote:"six mana, and he mostly just makes two wolves",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"chatterfang", card:"Ravenous Squirrel", cost:"1 mana, black or green",
+    why:"A one-drop that grows every time you sacrifice anything, and turns spare tokens into cards and life. Cheap early, a mana sink forever.",
+    out:"Scheming Symmetry",
+    outNote:"it hands an opponent a free tutor too, and you already run five better ones",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"kess", card:"Storm-Kiln Artist", cost:"4 mana, red", pick:1,
+    why:"Every instant or sorcery you cast or copy makes a Treasure. Kess casts one from the graveyard every turn, so he pays for the spells you are already casting.",
+    out:"Stifle",
+    outNote:"a one-shot answer that sits dead in hand most games",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"kess", card:"Third Path Iconoclast", cost:"2 mana, blue-red",
+    why:"Every noncreature spell you cast leaves a 1/1 artifact body behind. Free blockers all game, in a deck that is nothing but noncreature spells.",
+    out:"Reality Shift",
+    outNote:"it exiles a creature but hands them a surprise 2/2 back",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"sheoldred", card:"Underworld Dreams", cost:"3 mana, black", pick:1,
+    why:"Every card an opponent draws burns them for one. It stacks with Sheoldred, so Peer into the Abyss and Temple Bell now hit twice as hard.",
+    out:"Force of Despair",
+    outNote:"it only kills creatures made that same turn",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"ghoul", card:"Headless Rider", cost:"3 mana, black", pick:1,
+    why:"Every nontoken Zombie of yours that dies leaves a 2/2 Zombie behind. Gravecrawler plus either altar now makes a body every loop — with Blood Artist out, that drains the whole table.",
+    out:"Springleaf Drum",
+    outNote:"the weakest rock here, and it needs a spare creature just to tap",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"ghoul", card:"Plague Belcher", cost:"3 mana, black",
+    why:"Every other Zombie of yours that dies stings each opponent for one. A second Blood Artist that only counts Zombies — on a 5/4 menace body.",
+    out:"Zodiark, Umbral God",
+    outNote:"five black pips, and its arrival makes you sacrifice half your own board too",
+    caveat:"Its arrival puts two -1/-1 counters on one of your own creatures. Aim them at Gravecrawler — he does not stay dead.",
+    at:"2026-08-27" },
+
+  { deck:"urtet", card:"Unwinding Clock", cost:"4 mana, colorless",
+    why:"Untap all your artifacts on every opponent's untap step. Your mana Myr and every rock wake up four times a round instead of once.",
+    out:"Eldrazi Displacer",
+    outNote:"it wants colorless mana this five-color deck struggles to hold",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"ghoul", card:"Relentless Dead", cost:"2 mana, black",
+    why:"A zombie that never stays dead — pay one to bounce it back to hand, or pay more and it reanimates another zombie on its way out. Endless altar fodder, endless Blood Artist triggers.",
+    out:"Victimize",
+    outNote:"a one-shot version of what this card does every turn",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"gishath", card:"The Great Henge", cost:"9 mana, but really about 2", pick:1,
+    why:"Costs less for every point of power on your biggest creature — with Ghalta out it is nearly free. Then every dinosaur that enters draws you a card and gets bigger, including every one Gishath flips in. The dump turn refills your whole hand.",
+    out:"Elemental Bond",
+    outNote:"Henge is Bond plus ramp plus life, on a card they cannot easily remove",
+    caveat:null,
+    at:"2026-08-27" },
+
+  { deck:"gishath", card:"Aggravated Assault", cost:"3 mana, red",
+    why:"Pay five, untap everything, take another combat. Gishath connects twice in one turn — two flips, one board.",
+    out:"Mirari's Wake",
+    outNote:"a five-drop anthem on the turn you would rather cast Gishath",
+    caveat:"With Selvala tapping for big mana this goes infinite combats. Same table talk as Raptor plus Polyraptor — say it at rule zero.",
+    at:"2026-08-27" },
+
+  { deck:"sheoldred", card:"Font of Mythos", cost:"4 mana, colorless",
+    why:"Every player draws two extra cards each turn. With Sheoldred out that is four damage to each opponent every time around the table. Howling Mine, doubled.",
+    out:"Beseech the Queen",
+    outNote:"the weakest of your eight tutors",
+    caveat:null,
+    at:"2026-08-27" }
+];
+
+/* Wish-list state: what you decided, and what you parked yourself.
+   One key, one object -- not a key per row.
+   decided is keyed by wishId(); mine is the cards you added by hand. */
+const WISH_KEY = "anxiouscorner.wish";
+function wishId(w){ return w.deck + "|" + String(w.card).toLowerCase(); }
+
+/* Which row is asking to be confirmed, which one is mid-action, and which one is
+   showing a refusal. All three are drawn from these by renderWishList, so a
+   redraw -- and a deck analysis landing forces one -- cannot wipe them. */
+let WISH_PENDING = null, WISH_BUSY = null, WISH_ERR = null;
+function loadWish(){
+  let raw = null;
+  try { raw = JSON.parse(localStorage.getItem(WISH_KEY) || "null"); } catch(e){}
+  if (!raw || typeof raw !== "object") raw = {};
+  if (!raw.decided || typeof raw.decided !== "object") raw.decided = {};
+  if (!Array.isArray(raw.mine)) raw.mine = [];
+  return raw;
+}
+function saveWish(state){
+  try { localStorage.setItem(WISH_KEY, JSON.stringify(state)); } catch(e){}
+}
+/* d is "in" | "out", or null to undo the decision and put the row back.
+   landedName is the name the card actually went into the deck under, which is
+   not always the name on the row -- Scryfall canonicalises. Storing it lets the
+   render step check the claim against the real list. */
+function setWishDecision(id, d, landedName){
+  const st = loadWish();
+  if (d){
+    st.decided[id] = { d:d, at:Date.now() };
+    if (landedName) st.decided[id].n = landedName;
+  } else delete st.decided[id];
+  saveWish(st);
+}
+/* Sweep rows and parked rows render identically; parked ones just carry mine:1
+   so they get a Remove button and the sweep rows do not. */
+function allWishRows(){
+  const st = loadWish();
+  const parked = st.mine.map(m => ({
+    deck:m.deck, card:m.card, cost:m.cost || "", why:m.why || "You parked this one.",
+    out:null, outNote:null, caveat:null, pick:0, at:m.at || "", mine:1
+  }));
+  return WISHLIST.concat(parked).filter(w => DECKS[w.deck]);
+}
+
 /* Combo pieces are stored lowercase for matching. Put them back into card-name case
    without mangling possessives ("bolas's" must not become "Bolas'S") or hyphens. */
 const NAME_SMALL = new Set(["of","the","and","from","to","in","a","an","on"]);
@@ -3163,6 +3543,429 @@ function firstOracleLine(card){
   return "";
 }
 
+/* ============ WHAT A LAND ACTUALLY DOES ============
+   The rule here used to be "lands say what they tap for, nothing more." The instinct
+   was right -- the land block is the longest thing on the page on a phone, and fifteen
+   rows of "Taps for {B}" is scrolling, not reading. But it was too blunt to tell a
+   Forest from Cabal Coffers. Any land whose text mentioned mana stopped at the mana,
+   so the reason the land is in the deck -- regenerate your squirrels, sacrifice a
+   creature for two black, blow up an artifact -- never got printed at all.
+
+   So: basics and plain duals still say one short thing, exactly as before. A land that
+   genuinely DOES something gets one more short phrase, and only those do. */
+
+function upperFirst(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+function tidyPhrase(s){
+  return String(s)
+    .replace(/\s*\([^)]*\)\s*/g, " ")   // reminder text in brackets
+    .replace(/\s+/g, " ")
+    .replace(/\s+([,.])/g, "$1")
+    .trim();
+}
+
+function clampPhrase(s, max){
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max), sp = cut.lastIndexOf(" ");
+  return (sp > max * 0.5 ? cut.slice(0, sp) : cut) + "…";
+}
+
+/* A line that is nothing but mana: "{T}: Add {C}." The cost has to be symbols only,
+   so "{T}, Sacrifice a creature: Add {B}{B}" does NOT count -- paying a creature is
+   the whole point of Phyrexian Tower, not a footnote. */
+function isPlainManaLine(line){
+  const m = String(line).match(/^([^:]+):\s*(.+)$/);
+  if (!m) return false;
+  if (!/^(\{[^}]+\}|,|\s)+$/.test(m[1].trim())) return false;
+  if (/for each/i.test(m[2])) return false;
+  return /^add\b/i.test(m[2].trim());
+}
+
+/* Drop the activation cost, keep the effect, first sentence only. Keeps the keyword
+   as a lead-in where the keyword IS the reason you run the card (Channel, Cycling). */
+function landEffectPhrase(line){
+  // Reminder text has to go FIRST. "Cycling {G} ({G}, Discard this card: Draw a card.)"
+  // hides a colon inside the brackets, and splitting on that colon leaves the garbage
+  // fragment "Draw a card.)" with the stray bracket still attached.
+  let s = tidyPhrase(line), lead = "";
+  const kw = s.match(/^(channel|landcycling|transmute)\s*—\s*/i);
+  if (kw){ lead = upperFirst(kw[1].toLowerCase()) + ": "; s = s.slice(kw[0].length); }
+  // War Room's activation cost alone runs 84 characters, so a tight cap here left the
+  // whole cost sitting in the row and the effect cut off the end of it.
+  const c = s.match(/^[^:]{0,100}:\s*(.+)$/);
+  if (c) s = c[1];
+  s = tidyPhrase(s);
+  const dot = s.search(/\.(\s|$)/);
+  if (dot > 0) s = s.slice(0, dot + 1);
+  if (!s) return "";
+  /* Timing boilerplate. "When this land enters, scry 1" is just "Scry 1" once you are
+     looking at the land, and the row was running to three lines on a phone because of
+     openers like this. Also: it is the only land on screen, so "this land" is "it". */
+  s = s.replace(/^when (this land|it) enters(?: the battlefield)?,\s*/i, "")
+       .replace(/^at the beginning of (the end step|your upkeep|your end step),\s*/i, "")
+       .replace(/\bthis land\b/gi, "it")
+       // "a creature card" is a creature. "to your hand" is where things go from a
+       // graveyard. Both are rules precision that costs a line break on a phone.
+       .replace(/\b(creature|artifact|land|instant|sorcery|planeswalker|enchantment) cards?\b/gi, "$1")
+       .replace(/\bfrom your graveyard to your hand\b/gi, "from your graveyard")
+       // "a 1/1 colorless Spirit creature token" is a 1/1 Spirit. The colour word and
+       // the word "creature" are already carried by the 1/1 and by the creature type.
+       .replace(/\b(\d+\/\d+) (?:colorless |white |blue |black |red |green )?(\w+)(?: artifact| enchantment)? creature token/gi, "$1 $2 token");
+  s = lead + upperFirst(s);
+  if (!/[.!]$/.test(s)) s += ".";
+  // 80, not 92. The mana clause sits in front of this, so 92 here was putting 106-character
+  // rows on a phone. Three lines under one card name is where he stops reading.
+  return clampPhrase(s, 80);
+}
+
+/* Does it really come in tapped? The naive test says yes for shocks, fastlands and
+   crowd lands -- all of which are usually UNtapped by the time you actually play them,
+   and a crowd land is NEVER tapped in a four-player pod. Getting this wrong tells him
+   to hold a land he could have dropped, which is a worse lie than saying nothing. */
+/* These conditions get read off a lowercased copy of the text, and a basic land type is
+   a proper noun. "Untapped with an island or a swamp" looks like a typo, and looking like
+   a typo is enough to make him stop trusting the line. */
+function landTypeCase(s){
+  return s.replace(/\b(plains|island|swamp|mountain|forest)\b/gi, m => upperFirst(m.toLowerCase()));
+}
+
+function landTempoPhrase(card){
+  const lo = String(card.oracle_text || card.oracle || "").toLowerCase();
+  if (/tapped unless you have [^.]*opponents/.test(lo)) return "Untapped in your pod.";
+  if (!/enters (the battlefield )?tapped/.test(lo)) return "";
+  const life = lo.match(/you may pay (\d+) life/);
+  if (life) return "Pay " + life[1] + " life for untapped.";
+  // Choked Estuary is untapped whenever you can show it a land. Calling that "comes in
+  // tapped" is flat wrong, and it is wrong on the exact turn the answer matters.
+  const reveal = lo.match(/you may reveal ([^.]+?) from your hand/);
+  if (reveal) return "Untapped if you reveal " + landTypeCase(tidyPhrase(reveal[1])) + ".";
+  if (/two or fewer other lands/.test(lo)) return "Untapped early.";
+  // Name the condition. "A land it likes" was true for check lands and battle lands
+  // alike and told him nothing he could act on -- which land? He has to know.
+  const unless = lo.match(/tapped unless you control ([^.]+)/);
+  if (unless) return "Untapped with " + landTypeCase(tidyPhrase(unless[1])) + ".";
+  return "Comes in tapped.";
+}
+
+/* WHAT COLORS DOES IT ACTUALLY MAKE?
+   Scryfall has already worked this out and hands it over as produced_mana, so read that
+   rather than guessing from the text box. The old code took the first "Add {X}" line it
+   found and stopped. On any land with two mana abilities -- every shock, check land,
+   painland, Verge, triome and guildgate -- that printed ONE color and hid the rest.
+   Shivan Reef read "Taps for {C}" when it makes blue and red. Roughly thirty lands
+   across the six decks were wrong. Colors are the one thing a land row has to get
+   right, so this now comes from the data. */
+const WUBRG = ["W","U","B","R","G"];
+
+/* "{B}, {G} or {U}" -- reads out loud the way you'd say it, and keeps the pips together
+   so the eye can grab the colors without reading a sentence. */
+function orList(pips){
+  if (pips.length <= 1) return pips.join("");
+  return pips.slice(0, -1).join(", ") + " or " + pips[pips.length - 1];
+}
+
+/* The mana you get for JUST TAPPING -- every mana ability whose cost is nothing but
+   symbols. produced_mana on its own is too generous: it unions every ability on the card,
+   so Phyrexian Tower comes back as black when the black actually costs you a creature.
+   Leading a row with a color the land won't give you for free is a lie he'd act on. */
+function landManaSymbols(o){
+  const out = { colors: new Set(), colorless: false, both: null };
+  for (const raw of String(o).split("\n")){
+    const m = raw.trim().match(/^([^:]+):\s*(.+)$/);
+    if (!m) continue;
+    if (!/^(\{[^}]+\}|,|\s)+$/.test(m[1].trim())) continue;   // cost must be symbols only
+    const eff = m[2];
+    if (!/^add\b/i.test(eff.trim())) continue;
+    if (/for each|equal to the number/i.test(eff)) continue;   // scaling is said elsewhere
+    if (/any color/i.test(eff)){ WUBRG.forEach(c => out.colors.add(c)); continue; }
+    for (const p of eff.match(/\{[wubrgc]\}/gi) || []){
+      const c = p[1].toUpperCase();
+      if (c === "C") out.colorless = true; else out.colors.add(c);
+    }
+    /* "Add {U}{B}." hands you both at once (Dimir Aqueduct). "Add {B}{B}, {B}{G}, or
+       {G}{G}." is a choice between them (Twilight Mire), and reading that as "both"
+       printed {B}{B} and dropped green off a land he runs for green. So the run of pips
+       only counts when it is the whole effect. */
+    const run = eff.match(/^add\s+((?:\{[wubrgc]\}){2,})\s*(?:\.|$)/i);
+    if (run) out.both = run[1].toUpperCase();
+  }
+  return out;
+}
+
+function landManaPhrase(card, o){
+  // Command Tower is capped at your commander, so say that instead of "any color".
+  if (/commander/.test(o) && /any color/.test(o)) return "Taps for any of your colors.";
+  // Exotic Orchard makes whatever the table is playing, which is not a promise.
+  if (/a land an opponent controls could produce/.test(o)) return "Taps for what your opponents' lands make.";
+
+  const free = landManaSymbols(o);
+  let colors    = WUBRG.filter(c => free.colors.has(c));
+  let colorless = free.colorless;
+
+  // Nothing comes free. Urborg has no mana ability of its own -- it just turns itself
+  // into a Swamp -- so fall back to everything the card can end up making.
+  if (!colors.length && !colorless){
+    const made = Array.isArray(card.produced_mana) ? card.produced_mana : [];
+    colors    = WUBRG.filter(c => made.includes(c));
+    colorless = made.includes("C");
+  }
+
+  if (colors.length >= 5) return "Taps for any color.";
+  if (colors.length >= 2) return "Taps for " + (free.both || orList(colors.map(c => "{" + c + "}"))) + ".";
+  if (colors.length === 1) return "Taps for {" + colors[0] + "}.";
+  if (colorless) return "Taps for " + (free.both || "{C}") + ".";
+  return "";
+}
+
+/* WHAT A ROCK OR A DORK ACTUALLY MAKES
+   The same defect the lands had, one function over, never carried across. manaAdded()
+   takes the first "Add {X}" run it finds and stops, and it cannot read "Add one mana of
+   any color" at all -- there are no pips in that sentence to grab. So all five Talismans
+   read "Taps for {C}" and hid the two colors they are in the deck FOR, Birds of Paradise
+   fell through the entire chain and led with "Flying", and Sylvan Caryatid came out as
+   "Protection." Colors are the one thing a mana source has to say out loud.
+
+   Built on the land helpers rather than a second parser: landManaSymbols already keeps
+   only the abilities whose cost is symbols alone, and "{T}:" passes that test exactly
+   the way a land's does. Returns "" when the card is not really a mana source, and the
+   rest of the chain runs untouched. */
+function rockManaPhrase(card, o, t){
+  // Reminder text in brackets is not the card's own rules. A Treasure token's reminder
+  // spells out "{T}, Sacrifice this token: Add one mana of any color", so Pitiless
+  // Plunderer -- a card that never taps for anything -- came out reading as a mana rock.
+  const oc = String(o).replace(/\([^)]*\)/g, " ");
+  if (!/add (\{|\w+ mana)/.test(oc)) return "";
+
+  const say = list => list.length >= 5 ? "any color"
+                    : orList(list.map(c => "{" + c + "}"));
+  const produced = () => {
+    const made = Array.isArray(card.produced_mana) ? card.produced_mana : [];
+    return WUBRG.filter(c => made.includes(c));
+  };
+
+  // Mana that scales off the card itself IS the card. Vivi can dump its whole power
+  // into one turn, so "Taps for {U} or {R}" made it look like a two-mana dork.
+  if (/add x mana/.test(oc)){
+    const cs = produced();
+    return "Adds " + (cs.length ? say(cs) : "mana")
+         + (/where x is [^.]*\bpower\b/.test(oc) ? " equal to its power." : ".");
+  }
+
+  // When the only way to get the mana is to sacrifice a creature, the card is a sac
+  // outlet first and a rock second -- that is why Ashnod's Altar is in a squirrel deck.
+  // Hand it to the sac-outlet rule further down instead of leading with the mana.
+  if (/sacrifice (a|another) creature:\s*add/.test(oc)) return "";
+
+  // Galazeth hands the mana ability to your ARTIFACTS. It does not tap for mana itself,
+  // so a "Taps for" line would be describing a card that isn't on the table.
+  const grant = oc.match(/(artifacts|creatures|lands|permanents) you control have "\{t\}: add ([^"]*)"/);
+  if (grant){
+    // Say "any color" only when the granted mana really is unrestricted -- Galazeth's
+    // is spendable on instants and sorceries alone, and promising fixing it can't do
+    // is the same lie this whole pass exists to stop.
+    const open = /any color/.test(grant[2]) && !/spend this mana only/.test(grant[2]);
+    return "Every " + grant[1].slice(0, -1) + " you control taps for " + (open ? "any color" : "mana") + ".";
+  }
+
+  // Capped at your commander -- Arcane Signet, Commander's Sphere.
+  if (/any color/.test(oc) && /commander/.test(oc)) return "Taps for any of your colors.";
+  // Fellwar Stone gives you whatever the table happens to be playing. Not a promise.
+  if (/a land an opponent controls could produce/.test(oc)) return "Taps for what your opponents' lands make.";
+  // Bloom Tender scales off your own board, so a flat color list would be a guess.
+  if (/each color among permanents you control/.test(oc)) return "Taps for each color you control.";
+
+  // Mana you can only spend on one kind of spell is not fixing. Counting Delighted
+  // Halfling's any-color as five real colors promised it could cast anything in the
+  // deck, so that ability is pulled out and said separately. Cut at the first comma --
+  // the full clause runs to "and that spell can't be countered", which is a paragraph.
+  const restrictM = oc.match(/add one mana of any color\.\s*spend this mana only to cast ([^.]+)/);
+  const restricted = restrictM ? restrictM[1].split(",")[0].trim() : "";
+
+  // Mana that hurts is not free mana. The modern Talismans put the damage in the EFFECT
+  // ("{T}: Add {U} or {B}. This artifact deals 1 damage to you.") rather than the cost,
+  // so the colour ability looks free to a cost-only parser. Held out of the free pass
+  // and said in its own sentence instead.
+  const isPain = l => /:\s*add\b/i.test(l) && /(deals \d+ damage to you|you lose \d+ life)/.test(l);
+  // Neither is mana you have to pay mana for. Pili-Pala's ability costs {2} on top of
+  // the untap, and a cost made only of symbols looks free to a symbols-only test.
+  const isBought = l => {
+    const m = l.trim().match(/^([^:]+):\s*(.+)$/);
+    return !!m && /^add\b/i.test(m[2].trim()) && /\{[wubrgcx0-9]\}/i.test(m[1]);
+  };
+  const oFree = String(oc).split("\n")
+    .filter(l => !/spend this mana only/.test(l) && !isPain(l) && !isBought(l)).join("\n");
+
+  const free = landManaSymbols(oFree);
+  const colors = WUBRG.filter(c => free.colors.has(c));
+
+  // Everything you can still get, but not for nothing.
+  const paid = new Set();
+  let paidCost = "", paidSac = false, paidTapCreature = false, usesUntap = false;
+  for (const raw of String(oc).split("\n")){
+    if (/spend this mana only/.test(raw)) continue;
+    const m = raw.trim().match(/^([^:]+):\s*(.+)$/);
+    if (!m) continue;
+    const cost = m[1].trim(), eff = m[2];
+    // {Q} is the untap symbol -- Pili-Pala untaps rather than taps, and calling that
+    // "Taps for" describes a motion the card does not make.
+    if (!/\{t\}/.test(cost) && !/\{q\}/.test(cost)) continue;
+    if (!/^add\b/i.test(eff.trim())) continue;
+    const hurt = eff.match(/deals (\d+) damage to you/) || eff.match(/you lose (\d+) life/);
+    // Only real mana symbols count as a price to print. Pulling the whole cost string
+    // apart instead turned Lotus Petal into "Costs SACRIFICETHISARTIFACT".
+    const buy  = (cost.match(/\{[wubrgcx0-9]\}/gi) || []).join("").toUpperCase();
+    // A cost of nothing but {T} with no rider was already counted as free.
+    if (/^(\{[^}]+\}|,|\s)+$/.test(cost) && !hurt && !buy) continue;
+    if (/\{q\}/.test(cost)) usesUntap = true;
+    if (hurt) paidCost = hurt[1] + (/damage/.test(hurt[0]) ? " damage" : " life");
+    else if (buy) paidCost = buy.toUpperCase();
+    else {
+      const life = cost.match(/pay (\d+) life/);
+      if (life) paidCost = life[1] + " life";
+      if (/sacrifice this/.test(cost)) paidSac = true;
+      if (/tap an? (untapped )?creature/.test(cost)) paidTapCreature = true;
+    }
+    if (/any color/i.test(eff)) WUBRG.forEach(c => paid.add(c));
+    else for (const p of eff.match(/\{[wubrg]\}/gi) || []) paid.add(p[1].toUpperCase());
+  }
+  const extra = WUBRG.filter(c => paid.has(c) && !free.colors.has(c));
+
+  let head = "";
+  if (colors.length >= 2)       head = free.both || say(colors);
+  else if (colors.length === 1) head = "{" + colors[0] + "}";
+  else if (free.colorless)      head = free.both || "{C}";
+
+  // A ritual hands it over once. "Taps for" would promise a repeat it cannot make.
+  const oneShot = t.includes("instant") || t.includes("sorcery");
+  // Urza, Grand Architect and Skirge Familiar all buy their mana with something other
+  // than tapping themselves -- an artifact, a blue creature, a card out of hand. Saying
+  // "Taps for" there describes a motion none of them make.
+  const verb = usesUntap ? "Untaps for " : "Taps for ";
+  const taps = /\{t\}/.test(oc) || usesUntap;
+
+  if (!head){
+    // A ritual has no activation cost at all -- "Add {B}{B}{B}." is the whole card and
+    // there is no colon for the ability parser to find. manaAdded reads those right,
+    // so it stays in service here rather than being thrown away.
+    head = manaAdded(oc) || "";
+    if (!head){
+      // Cost is a sacrifice, a creature tap, a discard. Fall back to everything
+      // Scryfall says the card can end up making.
+      const anyc = produced();
+      if (anyc.length) head = say(anyc);
+      else if ((card.produced_mana || []).includes("C")) head = "{C}";
+    }
+    if (!head) return "";
+    if (oneShot)         return "Adds " + head + " right now.";
+    if (paidSac)         return "Sacrifices for " + head + ".";
+    if (!taps)           return "Adds " + head + ".";
+    if (restricted)      return verb + head + ", but only for " + restricted + ".";
+    if (paidCost)        return verb + head + ". Costs " + paidCost + ".";
+    if (paidTapCreature) return verb + head + ", if you tap a creature too.";
+    return verb + head + ", but not for free.";
+  }
+
+  if (oneShot) return "Adds " + head + " right now.";
+  if (!taps)   return "Adds " + head + ".";
+  let line = verb + head + ".";
+  if (extra.length) line += " " + say(extra).replace(/^any/, "Any")
+                          + " costs " + (paidCost || "extra") + ".";
+  else if (restricted) line += " Any color for " + restricted + ".";
+  // A rock that also pumps the team is in the deck for the pump as much as the mana.
+  if (/creatures you control (of the chosen type )?get \+/.test(oc)) line += " Pumps your team.";
+  return line;
+}
+
+/* The payoff: what the land does beyond making one mana. Ordered by what defines the
+   card, not by what comes first in the text box. */
+function landPayoff(card){
+  const lines = String(card.oracle_text || card.oracle || "").split("\n").map(s => s.trim()).filter(Boolean);
+
+  // 1. Mana that SCALES is the entire card. Cabal Coffers is not a Swamp.
+  for (const line of lines){
+    const per = line.match(/add\s+((?:\{[^}]+\}\s*)+?)for each ([^.]+)/i);
+    if (per) return { head: "Taps for " + per[1].replace(/\s+/g, "").toUpperCase()
+                            + " per " + tidyPhrase(per[2]) + "." };
+    // Same idea, spelled the long way round: "Add an amount of mana of that color
+    // equal to the number of creatures you control of the chosen type." (Three Tree City)
+    const eq = line.match(/add an amount of mana[^.]*equal to the number of ([^.]+)/i);
+    // "per creatures you control" — the card counts a plural, but "per" takes one.
+    if (eq) return { extra: "Adds one mana per " + tidyPhrase(eq[1]).replace(/^(\w+?)s\b/, "$1") + "." };
+  }
+  /* 2. Mana you have to give something up for. Phyrexian Tower, Crystal Vein.
+        Only sacrifice costs -- "Pay 2 life: Add {C}" also matched this once, and on
+        Boseiju it beat out the line that is the actual reason the card is in the deck. */
+  for (const line of lines){
+    const costly = line.match(/^\{t\}\s*,\s*([^:]*sacrifice[^:]*):\s*add\s+((?:\{[^}]+\}\s*)+)/i);
+    if (costly) return { extra: upperFirst(tidyPhrase(costly[1])).replace(/\bthis land\b/gi, "it") + " for "
+                                + costly[2].replace(/\s+/g, "").toUpperCase() + "." };
+  }
+  /* 2b. Uncounterable. On Boseiju, Who Shelters All this is buried at the end of a mana
+         ability, so the generic pass took the first sentence and printed "Add {C}." --
+         which is both useless and already said by the mana clause in front of it. */
+  for (const line of lines){
+    if (!/can't be countered/i.test(line)) continue;
+    if (/instant and sorcery spells you control/i.test(line))
+      return { extra: "Your instants and sorceries can't be countered." };
+    const life = line.match(/pay (\d+) life/i);
+    return { extra: life ? "Pay " + life[1] + " life to make a spell uncounterable."
+                         : "Its mana makes a spell uncounterable." };
+  }
+  // 3. Filter lands. Pay one, get two.
+  for (const line of lines){
+    if (/^\{[wubrg]\/[wubrg]\}\s*,\s*\{t\}\s*:\s*add/i.test(line)) return { extra: "Filters one mana into two." };
+  }
+  // 4. Cycling. Printed as a bare keyword with the rules buried in brackets, so say
+  //    what it means instead: this land is a spare card when you already have lands.
+  for (const line of lines){
+    if (/^cycling\s*\{/i.test(line.trim())) return { extra: "Cycle it if you don't need a land." };
+  }
+  // 4b. Painlands. The life is the whole trade-off and it belongs on the row -- otherwise
+  //     "Taps for {W} or {R}." reads like a free dual, which is the wrong land to fetch.
+  for (const line of lines){
+    // Ancient Tomb charges you on every tap; a painland only charges for the colors.
+    const dmg = line.match(/deals (\d+) damage to you/i);
+    if (dmg) return { extra: dmg[1] === "1" ? "1 life per colored mana." : dmg[1] + " life every tap." };
+    // Spire of Industry and Mana Confluence. Spire has a free colorless tap to fall back
+    // on; Confluence has nothing free at all, so the life is not optional there.
+    if (/pay 1 life[^:]*:\s*add/i.test(line))
+      return { extra: lines.some(isPlainManaLine) ? "1 life for any color." : "Costs 1 life each tap." };
+  }
+  /* 4c. Three sentences the rules text says the long way round. Left alone they ran the
+         row to three lines on a phone, which is the one thing that makes him stop reading. */
+  for (const line of lines){
+    // Urborg / Yavimaya
+    const each = line.match(/^each land is a (\w+) in addition/i);
+    if (each) return { extra: "Every land is also a " + upperFirst(each[1]) + "." };
+    // Inventors' Fair, and any other "reveal it, put it into your hand, then shuffle"
+    const tut = line.match(/search your library for (an? [^,.]+?) card/i);
+    if (tut) return { extra: "Tutors up " + tut[1].toLowerCase() + "." };
+    // Mishra's Factory. The Assembly-Worker typing is not why it is in the deck.
+    const anim = line.match(/becomes? an? (\d+\/\d+)[^.]*creature/i);
+    if (anim) return { extra: "Becomes a " + anim[1] + " creature." };
+  }
+  // 5. Anything else it actually does.
+  //    Two passes, because a land with four abilities should be described by the
+  //    interesting one. Fountainport makes Fish and Treasure; picking its first
+  //    non-mana line got "Draw a card.", which is the least of what it does.
+  const BIG = /\b(create|destroy|exile|regenerate|counter target|search your library|return)\b/i;
+  const candidates = [];
+  for (const line of lines){
+    if (isPlainManaLine(line)) continue;
+    if (/^\(/.test(line)) continue;
+    // A line with no colon that talks about entering tapped is pure tempo, and tempo
+    // is said separately. Covers "This land enters tapped." and both "...unless" forms.
+    if (!line.includes(":") && /enters (the battlefield )?tapped/i.test(line)) continue;
+    candidates.push(line);
+  }
+  const pick = candidates.find(l => BIG.test(l)) || candidates[0];
+  if (pick){
+    const eff = landEffectPhrase(pick);
+    if (eff) return { extra: eff };
+  }
+  return null;
+}
+
 /* Double-faced cards keep all their text on the faces, so the top-level oracle is
    empty and every rule below would miss. Read the FRONT face — that is the side you
    cast — and say when the back is a land, because "a spell that can be a land instead"
@@ -3188,26 +3991,32 @@ function cardOneLinerCore(card, deck){
   const t = String(card.type_line || card.type || "").toLowerCase();
   const first = String(card.oracle_text || card.oracle || "").split("\n")[0].trim();
 
-  // Lands: say what they tap for, nothing more. Double-faced cards whose back is a
-  // land ("Fell the Profane // Fell Mire") are judged on their front face instead —
-  // that is the side you actually cast.
+  // Lands: what it taps for, then what it DOES, then whether it really comes in
+  // tapped. A land that is only mana still says only one thing. Double-faced cards
+  // whose back is a land ("Fell the Profane // Fell Mire") are judged on their front
+  // face instead — that is the side you actually cast.
   if (t.includes("land") && !t.includes("//")){
     if (/^(plains|island|swamp|mountain|forest)$/.test(String(card.name||"").toLowerCase()))
       return "Basic land.";
-    const add = manaAdded(o);
-    if (/enters .*tapped/.test(o) && add) return "Taps for " + add + ". Comes in tapped.";
-    if (add) return "Taps for " + add + ".";
+    const pay   = landPayoff(card);
+    const tempo = landTempoPhrase(card);
+    // Scaling mana replaces the mana clause outright rather than sitting next to it,
+    // because "Taps for {B}. Taps for {B} per Swamp." would be nonsense.
+    if (pay && pay.head) return [pay.head, tempo].filter(Boolean).join(" ");
+    const mana = landManaPhrase(card, o);
+    if (mana) return [mana, pay && pay.extra, tempo].filter(Boolean).join(" ");
+    // A fetchland's search IS the card, so don't also print the search line twice.
     if (/search your library/.test(o)) return "Fetches a land.";
     // A utility land that makes no mana still does something. Say what, rather
     // than printing the word "Land." under it.
+    const parts = [pay && pay.extra, tempo].filter(Boolean);
+    if (parts.length) return parts.join(" ");
     return firstOracleLine(card) || "Land.";
   }
 
   // Mana first — rocks, dorks and rituals are the backbone of most lists.
-  const add = manaAdded(o);
-  if (add && /\{t\}/.test(o)) return "Taps for " + add + ".";
-  if (add && (t.includes("instant") || t.includes("sorcery"))) return "Adds " + add + " right now.";
-  if (add) return "Adds " + add + ".";
+  const mana = rockManaPhrase(card, o, t);
+  if (mana) return mana;
 
   if (/search your library for .*(land|plains|island|swamp|mountain|forest)/.test(o)) return "Ramps a land out of the deck.";
   if (/search your library for an artifact/.test(o)) return "Finds any artifact.";
@@ -3217,6 +4026,11 @@ function cardOneLinerCore(card, deck){
 
   if (/counter target spell/.test(o)) return "Says no to one spell.";
   if (/destroy all|exile all|each creature gets -|destroy each/.test(o)) return "Board wipe.";
+  // Removal that hits more than one body reads "destroy TWO target creatures", which the
+  // single-target rule below misses entirely. Curtains' Call fell all the way through to
+  // the cost rule and got called a discount instead of a two-for-one kill spell.
+  const multiKill = o.match(/(?:destroy|exile) (two|three|four|up to \w+) target creatures/);
+  if (multiKill) return "Kills " + multiKill[1] + " creatures.";
   if (/(destroy|exile) target creature/.test(o)) return "Kills a creature.";
   if (/(destroy|exile) target/.test(o)) return "Removal.";
   if (/target (player|opponent) sacrifices/.test(o)) return "Forces a sacrifice.";
@@ -3228,7 +4042,21 @@ function cardOneLinerCore(card, deck){
   // Sac outlets and self-recursion define a card far more than a rider does,
   // so they get asked about before the draw and counter rules.
   if (/sacrifice (a|another) creature:/.test(o)) return "Free sacrifice outlet.";
-  if (/you may cast .* from your graveyard/.test(o)) return "Recasts itself out of the graveyard.";
+  // "You may cast X from your graveyard" is two completely different cards depending
+  // on what X is. Gravecrawler and a flashback spell bring THEMSELVES back. Kess,
+  // Snapcaster and Bilbo let you cast the REST of your yard -- that is an engine, not
+  // self-recursion. Calling every one of them "itself" described the whole Kess deck
+  // backwards, commander included. Note "that card" and "target ... card" point at
+  // something else, so only the literal self-words count as self.
+  const gyCast = o.match(/you may cast ([^.]*?) from your graveyard/);
+  if (gyCast){
+    const what = gyCast[1].trim();
+    if (/^(this card|this creature|this spell|this land|it)$/.test(what))
+      return "Recasts itself out of the graveyard.";
+    if (/whenever [^.]*attacks/.test(o))
+      return "Attacks let you cast a spell out of your graveyard.";
+    return "Lets you cast spells out of your graveyard.";
+  }
   if (/when this creature dies, return it to the battlefield/.test(o)) return "Saves a creature the turn it would die.";
   if (/have undying/.test(o)) return "Your creatures come back bigger when they die.";
   if (/have persist/.test(o)) return "Your creatures come back once more after they die.";
@@ -3239,15 +4067,44 @@ function cardOneLinerCore(card, deck){
   if (/draw a card/.test(o)) return "Draws a card.";
   if (/scry|surveil|look at the top/.test(o)) return "Smooths your next few draws.";
 
+  // A Treasure is not a body. "Makes bodies" on Pitiless Plunderer pointed him at the
+  // wrong half of the card — what it actually does is turn deaths into mana.
+  const artTok = o.match(/create[^.]*?\b(treasure|powerstone|clue|food|blood)\b/);
+  if (artTok && !/creature token/.test(o)){
+    // Academy Manufactor names all three and turns any one of them into all of them.
+    // Grabbing the first word in the sentence called it a Clue engine, which is a third
+    // of the card.
+    const kinds = [...new Set(o.match(/\b(treasure|powerstone|clue|food|blood)\b/g) || [])];
+    if (kinds.length > 1){
+      const nice = kinds.map(w => w[0].toUpperCase() + w.slice(1));
+      return "One " + nice.slice(0, -1).join(", ") + " or " + nice[nice.length - 1]
+           + " token becomes all of them.";
+    }
+    const w = artTok[1];
+    if (w === "treasure")   return /whenever|at the beginning/.test(o)
+                                   ? "Makes Treasure again and again. That is your ramp."
+                                   : "Makes Treasure. Extra mana when you need it.";
+    if (w === "powerstone") return "Makes a Powerstone. Extra mana for artifacts.";
+    if (w === "clue")       return "Makes Clues. Pay later to draw.";
+    if (w === "food")       return "Makes Food. Pay later to gain life.";
+    if (w === "blood")      return "Makes Blood. Pay later to swap a card.";
+  }
   if (/create .*token/.test(o) && /whenever|at the beginning/.test(o)) return "Makes a body every turn.";
   if (/create .*token/.test(o)) return "Makes bodies.";
   if (/creatures you control get \+/.test(o)) return "Pumps the whole team.";
   if (/\+1\/\+1 counter/.test(o)) return "Grows your board.";
   if (/whenever .*(dies|creature you control dies)/.test(o)) return "Pays you off when your creatures die.";
   if (/lifelink/.test(o) && t.includes("creature")) return "A body that gains you life back.";
+  // Shadowspear takes hexproof and indestructible AWAY from the other side. Matching on
+  // the bare words labelled it "Protection." — the exact opposite of what it does.
+  if (/lose (hexproof|indestructible|protection)/.test(o)) return "Strips hexproof and indestructible off their board.";
   if (/hexproof|indestructible|protection from|can't be countered/.test(o)) return "Protection.";
   if (/extra turn/.test(o)) return "Takes an extra turn.";
-  if (/costs? \{?\d?\}? ?less/.test(o)) return "Makes your spells cheaper.";
+  // Reminder text is the explanation, not the card. Undaunted's bracketed note contains
+  // the words "costs {1} less", which is how a two-for-one kill spell got called a cost
+  // reducer. Only stripped here — flashback's "cast this from your graveyard" also lives
+  // inside brackets, and the graveyard rule above needs to keep seeing it.
+  if (/costs? \{?\d?\}? ?less/.test(o.replace(/\([^)]*\)/g, " "))) return "Makes your spells cheaper.";
 
   // Nothing matched, so fall back to the card's own printed text.
   const own = firstOracleLine(card);
@@ -3395,6 +4252,8 @@ function renderDecklist(deck, cardData){
       a.dataset.card = stripQty(decodeName(c.n));
       li.appendChild(a);
       if (c.new) { const s = document.createElement("span"); s.className = "nw"; s.textContent = "NEW"; li.appendChild(s); }
+      // The app chose this row's group. While editing, offer to change its mind.
+      if (EDIT_MODE && c.new) li.appendChild(moveControlFor(c, deck));
 
       const card = lookup(c.n);
       const key = stripQty(decodeName(c.n)).toLowerCase();
@@ -3420,6 +4279,7 @@ function renderDecklist(deck, cardData){
         }
         li.appendChild(w);
       }
+      if (EDIT_MODE && c.new && MOVE_OPEN === stripQty(decodeName(c.n))) li.appendChild(bucketPickerFor(c, deck));
       ul.appendChild(li);
     });
     block.appendChild(ul);
@@ -3451,6 +4311,28 @@ function setEditStatus(msg, isErr){
   if (!el) return;
   el.textContent = msg || "";
   el.className = "status" + (isErr ? " err" : "");
+}
+
+/* A half-typed name is not a misspelled name. Scryfall answers "Bilbo" with a 404
+   whose body says the name was AMBIGUOUS -- twelve cards start with it -- not that
+   the card is missing. We used to throw that away and tell you to check your
+   spelling, which sends you hunting for a typo that was never there. Read the real
+   reason and say the real thing. Falls back to the old wording on a genuine miss. */
+const NO_SUCH_CARD = "No card by that name. Check the spelling, or pick one from the list that drops down as you type.";
+
+/* Same words, minus the pointer at a type-ahead list. The wish list and the park
+   box have no dropdown, so telling him to pick from one sends him looking for
+   something that is not on screen. */
+const NO_SUCH_CARD_NOLIST = "No card by that name. Check the spelling — it does not have to be exact, just close.";
+
+async function scryfallNameError(res, typed, noList){
+  let why = "";
+  try { const j = await res.json(); why = String((j && j.details) || ""); } catch(e){}
+  if (/ambiguous|too many cards/i.test(why))
+    return noList
+      ? "More than one card starts with “" + typed + "”. Type a few more words of the name."
+      : "More than one card starts with “" + typed + "”. Pick the one you want from the list, or type a few more words.";
+  return noList ? NO_SUCH_CARD_NOLIST : NO_SUCH_CARD;
 }
 
 function deckCardTotal(deck){
@@ -3520,6 +4402,7 @@ function exitEditMode(){
   if (cols) cols.classList.remove("editing");
   if (inp) inp.value = "";
   if (undo) undo.innerHTML = "";
+  MOVE_OPEN = null;
   hideEditSugg();
   setEditStatus("");
   updateEditCount();
@@ -3565,6 +4448,7 @@ function afterDeckEdit(deck, key){
   resetGeneratedViews();
   renderEditUndo();
   if (typeof renderChangeLog === "function") renderChangeLog();
+  refillSpellbookAfterEdit();
 }
 
 /* ---- taking a card out ---- */
@@ -3600,6 +4484,94 @@ function cutCardFromDeck(cleanName){
   afterDeckEdit(deck, key);
 }
 
+/* ---- moving a card to another group ---- */
+/* The picker guesses well now, but a guess is still a guess. When it is wrong
+   the fix should be one tap on the row, not a cut and a re-add. Writes the same
+   kind of log entry every other edit writes, so Undo and Reset cover it. */
+function moveCardToBucket(cleanName, labelBase){
+  const deck = ACTIVE_DECK, key = ACTIVE_KEY;
+  if (!deck) return;
+  const loc = findCardLocation(deck, cleanName);
+  if (!loc){ setEditStatus("Could not find " + cleanName + " in the list.", true); return; }
+  const target = findBucketByLabelBase(deck, labelBase);
+  if (!target){ setEditStatus("No group called " + labelBase + ".", true); return; }
+  if (target === loc.bucket){ setEditStatus(cleanName + " is already under " + labelBase + "."); return; }
+
+  pushSnapshot(key, deck);
+  const moved = loc.bucket.cards.splice(loc.cardIndex, 1)[0];
+  target.cards.push(moved);
+  dropEmptyHoldingPen(deck, loc.bucket);
+  appendSeedLogOp(key, { op:"move", n:cleanName, bucket:labelBase, at:Date.now() });
+
+  refreshBucketCounts(deck);
+  flashSavedToast();
+  setEditStatus(cleanName + " moved to " + labelBase + ".");
+  afterDeckEdit(deck, key);
+}
+
+/* Which row has its group list open. One at a time; a column of open lists
+   would push the deck off the screen. */
+let MOVE_OPEN = null;
+
+/* The small Move word on a NEW row while editing. Tap it and the list of groups
+   opens under that row; tap again and it closes. */
+function moveControlFor(cardObj, deck){
+  const clean = stripQty(decodeName(cardObj.n));
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "ed-move";
+  btn.textContent = (MOVE_OPEN === clean) ? "Close" : "Move";
+  btn.title = "Put " + clean + " under a different group";
+  btn.addEventListener("click", () => {
+    MOVE_OPEN = (MOVE_OPEN === clean) ? null : clean;
+    const bundle = DECK_CACHE.get(ACTIVE_KEY);
+    renderDecklist(deck, bundle ? bundle.cardData : undefined);
+  });
+  return btn;
+}
+
+/* One column of group names. Tap one and the card goes there. */
+function bucketPickerFor(cardObj, deck){
+  const clean = stripQty(decodeName(cardObj.n));
+  const here = findCardLocation(deck, clean);
+  const wrap = document.createElement("div");
+  wrap.className = "ed-bucketpick";
+  const lab = document.createElement("div");
+  lab.className = "ed-pick-lab";
+  lab.textContent = "Where should " + clean + " go?";
+  wrap.appendChild(lab);
+  deck.buckets.forEach(b => {
+    const base = bucketLabelBase(b.bucket);
+    if (base.toLowerCase().startsWith("commander")) return;
+    if (here && b === here.bucket) return;
+    const o = document.createElement("button");
+    o.type = "button";
+    o.textContent = base;
+    o.addEventListener("click", () => { MOVE_OPEN = null; moveCardToBucket(clean, base); });
+    wrap.appendChild(o);
+  });
+  return wrap;
+}
+
+/* After an add, the status line says where the card went. This puts the fix
+   right next to that sentence, so a wrong guess costs one tap. */
+function offerMoveLink(cleanName){
+  const el = document.getElementById("editStatus");
+  if (!el || !EDIT_MODE) return;
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "btn ghost small ed-movelink";
+  b.textContent = "Not right? Move it";
+  b.addEventListener("click", () => {
+    MOVE_OPEN = cleanName;
+    const bundle = DECK_CACHE.get(ACTIVE_KEY);
+    renderDecklist(ACTIVE_DECK, bundle ? bundle.cardData : undefined);
+    const pick = document.querySelector(".ed-bucketpick");
+    if (pick) pick.scrollIntoView({ block:"center" });
+  });
+  el.appendChild(b);
+}
+
 /* ---- putting a card in ---- */
 const COLOR_WORDS = { W:"white", U:"blue", B:"black", R:"red", G:"green" };
 
@@ -3607,6 +4579,26 @@ function joinWords(list){
   if (list.length === 1) return list[0];
   if (list.length === 2) return list[0] + " and " + list[1];
   return list.slice(0,-1).join(", ") + " and " + list[list.length-1];
+}
+
+/* The colors your commander can pay for are the only colors this deck may contain.
+   Returns the refusal to show, or null when the card is legal here.
+   Shared: the wish list needs this because applySwap checks no colors at all --
+   the coach only ever hands it cards it already filtered. */
+function identityRejection(deck, key, card){
+  const bundle  = DECK_CACHE.get(key);
+  const cmdData = (bundle && bundle.cardData && deck.commander)
+    ? bundle.cardData[String(deck.commander).toLowerCase()] : null;
+  const allowed = new Set(
+    (cmdData && cmdData.color_identity)
+      ? cmdData.color_identity.map(x => String(x).toUpperCase())
+      : identityStringToArray(deck.identity || "")
+  );
+  const off = (card.color_identity || []).map(x => String(x).toUpperCase()).filter(c => !allowed.has(c));
+  if (!off.length) return null;
+  const cmdShort = deck.commander ? String(deck.commander).split(",")[0].trim() : "your commander";
+  return card.name + " is " + joinWords(off.map(c => COLOR_WORDS[c] || c)) + ", and " + cmdShort +
+    " cannot pay for that. A deck can only run cards inside its commander's colors.";
 }
 
 async function addCardToDeck(raw){
@@ -3620,10 +4612,11 @@ async function addCardToDeck(raw){
   const addBtn = document.getElementById("editAddBtn");
   if (addBtn) addBtn.disabled = true;
 
-  let card = null;
+  let card = null, nameErr = null;
   try {
     const res = await fetch("https://api.scryfall.com/cards/named?fuzzy=" + encodeURIComponent(typed));
     if (res.ok) card = await res.json();
+    else nameErr = await scryfallNameError(res, typed);
   } catch(e){ /* offline: fall through to the same plain message */ }
   if (addBtn) addBtn.disabled = false;
 
@@ -3632,28 +4625,14 @@ async function addCardToDeck(raw){
   if (ACTIVE_KEY !== key){ setEditStatus(""); return; }
 
   if (!card || !card.name){
-    setEditStatus("No card by that name. Check the spelling, or pick one from the list that drops down as you type.", true);
+    setEditStatus(nameErr || NO_SUCH_CARD, true);
     return;
   }
 
-  // Commander legality, refused up front and in plain words. The colors your
-  // commander can pay for are the only colors this deck may contain, so an
-  // off-color card gets stopped here instead of quietly failing a check later.
-  const bundle  = DECK_CACHE.get(key);
-  const cmdData = (bundle && bundle.cardData && deck.commander)
-    ? bundle.cardData[String(deck.commander).toLowerCase()] : null;
-  const allowed = new Set(
-    (cmdData && cmdData.color_identity)
-      ? cmdData.color_identity.map(x => String(x).toUpperCase())
-      : identityStringToArray(deck.identity || "")
-  );
-  const off = (card.color_identity || []).map(x => String(x).toUpperCase()).filter(c => !allowed.has(c));
-  if (off.length){
-    const cmdShort = deck.commander ? String(deck.commander).split(",")[0].trim() : "your commander";
-    setEditStatus(card.name + " is " + joinWords(off.map(c => COLOR_WORDS[c] || c)) + ", and " + cmdShort +
-      " cannot pay for that. A deck can only run cards inside its commander's colors.", true);
-    return;
-  }
+  // Commander legality, refused up front and in plain words.
+  const bundle = DECK_CACHE.get(key);
+  const reject = identityRejection(deck, key, card);
+  if (reject){ setEditStatus(reject, true); return; }
 
   const cap      = multiCopyCap(card.name);
   const isBasic  = BASICS.includes(card.name);
@@ -3681,7 +4660,7 @@ async function addCardToDeck(raw){
     appendSeedLogOp(key, { op:"qty", n:card.name, to:have + 1, at:Date.now() });
     msg = "Another " + card.name + " is in. " + (have + 1) + " now.";
   } else {
-    const target = pickTargetBucket(deck, inferInRole(card, null));
+    const target = pickTargetBucket(deck, inferInRole(card, null), card, bundle ? bundle.cardData : null);
     const label  = bucketLabelBase(target.bucket);
     target.cards.push({ n: card.name, new: 1 });
     appendSeedLogOp(key, { op:"add", n:card.name, bucket:label, at:Date.now() });
@@ -3699,6 +4678,7 @@ async function addCardToDeck(raw){
   const inp = document.getElementById("editAdd");
   if (inp){ inp.value = ""; inp.focus(); }
   afterDeckEdit(deck, key);
+  if (!existing) offerMoveLink(card.name);
 }
 
 /* ---- undo ---- */
@@ -3713,6 +4693,7 @@ function describeEditOp(op){
   if (op.op === "add")    return "take " + nm(op.n) + " back out";
   if (op.op === "qty")    return "undo the " + nm(op.n) + " count";
   if (op.op === "swap")   return "undo the " + nm(op.in) + " swap";
+  if (op.op === "move")   return "put " + nm(op.n) + " back in its old group";
   return "the last change";
 }
 
@@ -3789,6 +4770,11 @@ function wireEditDeck(){
     });
     input.addEventListener("input", () => {
       clearTimeout(EDIT_TIMER);
+      // A red line from the last attempt must not sit under a name you have since
+      // fixed -- it reads as though the app is still refusing a card it would take.
+      // Only errors get cleared; the green "X is in" confirmation stays put.
+      const stEl = document.getElementById("editStatus");
+      if (stEl && stEl.classList.contains("err")) setEditStatus("");
       const q = input.value.trim();
       if (q.length < 3){ hideEditSugg(); return; }
       EDIT_TIMER = setTimeout(() => suggestEditNames(q), 220);
@@ -4650,6 +5636,7 @@ function renderShowcase(deck, cardData){
     if (cached && cached.cardData) cardData = cached.cardData;
   }
   renderDeckHeader(deck);
+  renderWishList();
   renderDeckFront(deck);
   renderTwoThrones(deck);
   updateCommanderPrompt(deck);
@@ -4658,6 +5645,425 @@ function renderShowcase(deck, cardData){
   renderPowerModules(deck, cardData);
   renderDecklist(deck, cardData);
   renderShowcaseActions();
+}
+
+/* ============ WISH LIST ============
+   Every deck's ideas in one column at the top of Showcase, active deck first.
+   Deciding a row never deletes it -- it drops into the collapsed "Already
+   decided" block with a way back. */
+
+function wishShortName(key){
+  const d = DECKS[key];
+  if (!d) return key;
+  return (d.commander ? d.commander.split(",")[0] : d.name.split(",")[0]).trim();
+}
+
+/* That deck's own accent, inline, so a row reads as "this belongs to Kess"
+   without retinting the page. Same trick renderSwitcher uses for .swdeck. */
+function wishTint(key){
+  const t = themeForDeck(key, DECKS[key]);
+  return "--wl-hint:" + t.accent + ";--wl-edge:" + t.glow + ";";
+}
+
+function prettyCost(mc){ return String(mc || "").replace(/[{}]/g, ""); }
+
+function todayStamp(){
+  const d = new Date(), p = n => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+}
+
+/* Refusals stay on the row until he acts on them. flashInlineMessage wipes itself
+   after three seconds, which is not long enough to read a reason. Held in a
+   variable rather than written straight to the node so a redraw cannot lose it. */
+function wishError(id, msg){
+  WISH_ERR = { id: id, msg: msg };
+}
+
+/* A row with nothing to cut leaves the deck one card over. The count that says so
+   lives in the validation block, thousands of pixels below the button he just
+   tapped, so say it here while he can still say no. */
+/* A wish-list row with nothing named to cut used to leave the deck at 101. Ask
+   the cut engine for its best cut in that deck instead, so Add it can be a real
+   swap. Null when the deck has not been analyzed yet, or nothing is safe to cut;
+   the row then falls back to the plain add it always did. */
+function wishProposedCut(w){
+  if (!w || w.out) return null;
+  const deck = DECKS[w.deck];
+  const bundle = DECK_CACHE.get(w.deck);
+  if (!deck || !bundle || !bundle.cardData) return null;
+  const cuts = pickCutsFor(deck, bundle.cardData, bundle.archetype, null, null, 1);
+  return cuts.length ? cuts[0] : null;
+}
+
+function wishAskText(w, deckName){
+  const pick = wishProposedCut(w);
+  let ask = w.out
+    ? "Put " + w.card + " into " + deckName + " and take " + w.out + " out?"
+    : pick
+      ? "Put " + w.card + " into " + deckName + " and take " + pick.name + " out? " + (pick.reason || "That is the app's pick for the cut.")
+      : "Put " + w.card + " into " + deckName + "?";
+  ask += " This changes the copy on this device, and you can undo it.";
+  if (!w.out && !pick){
+    const after = deckCardTotal(DECKS[w.deck]) + 1;
+    if (after > 100) ask += " Nothing comes out, so " + deckName + " goes to " +
+      after + " cards. You will need to cut " + (after - 100) + ".";
+  }
+  return ask;
+}
+
+function wishRowHtml(w, decided){
+  const id = wishId(w), st = decided[id], isDone = !!st;
+  const deckName = wishShortName(w.deck);
+  let h = '<div class="combo-row wl-row' + (isDone ? " wl-done" : "") +
+          '" style="' + wishTint(w.deck) + '" data-wish="' + esc(id) + '">';
+  h += '<div class="combo-name">' +
+       '<a href="' + scry(w.card) + '" target="_blank" rel="noopener" data-card="' + esc(w.card) + '">' + esc(w.card) + '</a>' +
+       (w.cost ? '<span class="wl-n"> &middot; ' + esc(w.cost) + '</span>' : "") +
+       (w.pick && !isDone ? '<span class="wl-pick">Start here</span>' : "") +
+       '</div>';
+  h += '<div class="combo-why">' + esc(w.why) + '</div>';
+  if (w.out){
+    h += '<div class="wl-out">Comes out for: ' + esc(w.out) +
+         (w.outNote ? ", " + esc(w.outNote) : "") + '.</div>';
+  }
+  if (w.caveat) h += '<div class="wl-caveat">' + esc(w.caveat) + '</div>';
+  const err = (WISH_ERR && WISH_ERR.id === id) ? WISH_ERR.msg : "";
+  h += '<div class="wl-err" data-wish-err' + (err ? "" : " hidden") + '>' + esc(err) + '</div>';
+  if (WISH_PENDING === id && !isDone){
+    h += '<div class="wl-ask">' +
+         esc(wishAskText(w, deckName)) + '</div>';
+  }
+  h += '<div class="wl-acts">';
+  if (isDone){
+    // Two different undos wearing one button. "Passed" only ever moved the row, so
+    // putting it back is free. "Went in" changed the deck, so the label has to
+    // promise the deck change coming back out -- and undoWishRow has to deliver it.
+    h += '<span class="status">' +
+         (st.d === "in" ? esc(w.card) + " went into " + esc(deckName) + "." : "Passed on this one.") +
+         '</span><button class="btn ghost small" type="button" data-wish-undo="' + esc(id) + '">' +
+         (st.d === "in" ? "Undo this" : "Put it back") + '</button>';
+  } else if (WISH_PENDING === id){
+    h += '<button class="btn small" type="button" data-wish-yes="' + esc(id) + '">Yes, do it</button>' +
+         '<button class="btn ghost small" type="button" data-wish-no="' + esc(id) + '">Cancel</button>';
+  } else if (WISH_BUSY === id){
+    h += '<span class="status">Working on ' + esc(w.card) + '&hellip;</span>';
+  } else {
+    h += '<button class="btn small" type="button" data-wish-go="' + esc(id) + '">' +
+         ((w.out || wishProposedCut(w)) ? "Swap it in" : "Add it") + '</button>' +
+         '<button class="btn ghost small" type="button" data-wish-pass="' + esc(id) + '">Not now</button>';
+  }
+  if (w.mine) h += '<button class="btn ghost small" type="button" data-wish-del="' + esc(id) + '">Remove</button>';
+  h += '</div></div>';
+  return h;
+}
+
+function wishParkBoxHtml(){
+  // No deck picker: the list only ever shows the deck you are standing in, so a
+  // card parked for anything else would vanish the moment you parked it.
+  return '<div class="wl-park">' +
+    '<input type="text" id="wishParkName" placeholder="Card name&hellip;" autocomplete="off" ' +
+      'autocapitalize="off" spellcheck="false" aria-label="Card to park on the wish list">' +
+    '<button class="btn small" type="button" id="wishParkBtn">Park it for ' +
+      esc(wishShortName(ACTIVE_KEY)) + '</button>' +
+    '</div>';
+}
+
+function renderWishList(){
+  const host = document.getElementById("wishStrip");
+  if (!host) return;
+  // The deck you are looking at, and nothing else. Kess ideas are noise while you
+  // are reading Splinter.
+  const rows = allWishRows().filter(w => w.deck === ACTIVE_KEY);
+
+  // "in" is a claim about the deck. Undo the swap from the change log, or cut the
+  // card by hand, and the claim stops being true -- so check it against the real
+  // list and let the row come back rather than saying something false.
+  const st = loadWish();
+  let dirty = false;
+  Object.keys(st.decided).forEach(id => {
+    if (st.decided[id].d !== "in") return;
+    const w = rows.find(x => wishId(x) === id);
+    if (!w || !DECKS[w.deck]) return;
+    if (!findCardLocation(DECKS[w.deck], st.decided[id].n || w.card)){
+      delete st.decided[id];
+      dirty = true;
+    }
+  });
+  if (dirty) saveWish(st);
+
+  const decided = st.decided;
+  const open = rows.filter(w => !decided[wishId(w)]);
+  const done = rows.filter(w =>  decided[wishId(w)]);
+
+  // Newest week first, then the sweep's own "Next:" pick leads its week.
+  const order = (a, b) =>
+    String(b.at || "").localeCompare(String(a.at || "")) ||
+    ((b.pick ? 1 : 0) - (a.pick ? 1 : 0)) ||
+    String(a.card).localeCompare(String(b.card));
+
+  const deckName = wishShortName(ACTIVE_KEY);
+
+  // Nothing waiting at all: fold the whole thing down to one line. This sits at the
+  // top of every deck, and a screenful of "nothing waiting" every day is the kind of
+  // noise that gets a panel ignored. Opening it still gets you the park box.
+  if (!open.length && !done.length){
+    host.innerHTML =
+      '<details class="tt-swaps wl-quiet"><summary>Wish list &mdash; nothing waiting for ' +
+      esc(deckName) + '</summary>' +
+      '<div class="mod-empty">Nothing queued up for ' + esc(deckName) + ' right now. ' +
+      'You can park a card here yourself any time.</div>' +
+      wishParkBoxHtml() +
+      '<div class="wl-parkmsg" id="wishParkMsg" hidden></div></details>';
+    wireWishStrip(host);
+    return;
+  }
+
+  let html = '<div class="wl-head"><span class="wl-title">Wish List</span>' +
+    '<span class="wl-deck">' + esc(deckName) + '</span><span class="wl-n">' +
+    (open.length ? open.length + (open.length === 1 ? " idea waiting" : " ideas waiting") : "nothing waiting") +
+    '</span></div>';
+  html += wishParkBoxHtml();
+  html += '<div class="wl-parkmsg" id="wishParkMsg" hidden></div>';
+  if (open.length){
+    html += '<div class="combo-list">' + open.sort(order).map(w => wishRowHtml(w, decided)).join("") + '</div>';
+  }
+  if (done.length){
+    html += '<details class="tt-swaps"><summary>Already decided (' + done.length + ')</summary>' +
+            '<div class="combo-list">' + done.sort(order).map(w => wishRowHtml(w, decided)).join("") + '</div></details>';
+  }
+  host.innerHTML = html;
+  wireWishStrip(host);
+}
+
+function wireWishStrip(host){
+  host.querySelectorAll("[data-wish-go]").forEach(b =>
+    b.addEventListener("click", () => {
+      WISH_PENDING = b.getAttribute("data-wish-go"); WISH_ERR = null; renderWishList();
+    }));
+  host.querySelectorAll("[data-wish-yes]").forEach(b =>
+    b.addEventListener("click", () => runWishRow(b.getAttribute("data-wish-yes"))));
+  host.querySelectorAll("[data-wish-no]").forEach(b =>
+    b.addEventListener("click", () => { WISH_PENDING = null; renderWishList(); }));
+  host.querySelectorAll("[data-wish-pass]").forEach(b =>
+    b.addEventListener("click", () => { setWishDecision(b.getAttribute("data-wish-pass"), "out"); renderWishList(); }));
+  host.querySelectorAll("[data-wish-undo]").forEach(b =>
+    b.addEventListener("click", () => undoWishRow(b.getAttribute("data-wish-undo"))));
+  host.querySelectorAll("[data-wish-del]").forEach(b =>
+    b.addEventListener("click", () => removeParkedWish(b.getAttribute("data-wish-del"))));
+  const pb = host.querySelector("#wishParkBtn");
+  if (pb) pb.addEventListener("click", () => parkWishCard());
+  const pi = host.querySelector("#wishParkName");
+  if (pi) pi.addEventListener("keydown", e => { if (e.key === "Enter") parkWishCard(); });
+}
+
+/* One tap does not put a card in a deck. The question is drawn on the row itself,
+   not in #showcaseConfirm: that holder is emptied by renderShowcaseActions every
+   time a deck analysis lands, so a confirm put there can vanish mid-tap. On the
+   row it also sits under the card it is asking about, instead of at the top of a
+   list he may have scrolled well past. */
+async function runWishRow(id){
+  const w = allWishRows().find(x => wishId(x) === id);
+  if (!w) return;
+  WISH_PENDING = null;
+  WISH_ERR = null;
+  WISH_BUSY = id;
+  renderWishList();
+  try { await doWishAct(w); }
+  finally { WISH_BUSY = null; renderWishList(); }
+}
+
+/* Reverses a decided row. A passed row only ever moved itself, so clearing the
+   decision is the whole job. A row that went in changed the deck, and the button
+   says "Undo this" -- so the card has to actually come back out.
+
+   undoLoggedOp drops one op and rebuilds from seed + what is left, so it is safe
+   at any index, not just the newest. We find the op by the name the card really
+   landed under, because Scryfall may have canonicalised it. If the op is already
+   gone -- he undid it in Spellbook, or hit Undo everything -- just free the row
+   rather than erroring at him about a change that is already reversed. */
+function undoWishRow(id){
+  const st = loadWish().decided[id];
+  const landed = st && st.n;
+
+  if (st && st.d === "in" && landed && id.slice(0, id.indexOf("|")) === ACTIVE_KEY){
+    const log = loadSeedLog(ACTIVE_KEY) || [];
+    let found = -1;
+    for (let i = log.length - 1; i >= 0; i--){
+      const op = log[i];
+      if ((op.op === "swap" && op.in === landed) || (op.op === "add" && op.n === landed)){ found = i; break; }
+    }
+    setWishDecision(id, null);
+    if (found >= 0){ undoLoggedOp(found); renderChangeLog(); flashSavedToast(); }
+    renderWishList();
+    return;
+  }
+
+  setWishDecision(id, null);
+  renderWishList();
+}
+
+async function doWishAct(w){
+  const key = w.deck, id = wishId(w), deckName = wishShortName(key);
+  if (!DECKS[key]) return;
+
+  // applySwap and addCardToDeck both only ever write to ACTIVE_DECK, so the right
+  // deck has to be in front first. Click its switcher button rather than repeating
+  // the switch here, so the whole switch path stays in one place.
+  if (ACTIVE_KEY !== key){
+    let btn = null;
+    document.querySelectorAll(".swdeck").forEach(b => { if (b.dataset.key === key) btn = b; });
+    if (btn) btn.click();
+  }
+  // Never write into a list you are not standing in. If the switch did not take,
+  // stop rather than editing the wrong deck.
+  if (ACTIVE_KEY !== key){
+    renderWishList();
+    wishError(id, "Could not switch to " + deckName + ". Open that deck first, then try again.");
+    return;
+  }
+
+  const deck = DECKS[key];
+  if (findCardLocation(deck, w.card)){
+    setWishDecision(id, "in", w.card);
+    renderWishList();
+    flashInlineMessage(w.card + " is already in " + deckName + ".");
+    return;
+  }
+
+  // A stacked row is one entry worth many cards. applySwap removes the entry, so
+  // cutting "Swamp" here would take all twenty-two of them, not one. Refuse rather
+  // than quietly gut the mana base.
+  // No named cut? Use the one the question on the row just showed him.
+  const proposed = w.out ? null : wishProposedCut(w);
+  if (proposed) w = Object.assign({}, w, { out: proposed.name, outNote: proposed.reason });
+  const outLoc = w.out ? findCardLocation(deck, w.out) : null;
+  if (outLoc && qtyOf(outLoc.card.n) > 1){
+    wishError(id, "This one wants to cut " + w.out + ", and " + deckName + " runs " +
+      qtyOf(outLoc.card.n) + " of them on one line. Taking that out here would remove all " +
+      qtyOf(outLoc.card.n) + ". Use Edit Deck to drop just one, then come back.");
+    return;
+  }
+
+  // A swap needs a card to cut. If the out card is already gone, applySwap bails
+  // silently and it would look like nothing happened -- so fall through to a
+  // plain add instead.
+  if (outLoc) await doWishSwap(w, deck, key);
+  else await doWishAdd(w, deck, key);
+}
+
+async function doWishSwap(w, deck, key){
+  const id = wishId(w);
+  let card = null, nameErr = null;
+  try {
+    const res = await fetch("https://api.scryfall.com/cards/named?fuzzy=" + encodeURIComponent(w.card));
+    if (res.ok) card = await res.json();
+    else nameErr = await scryfallNameError(res, w.card, true);
+  } catch(e){ /* offline: falls through to the same plain message */ }
+
+  // You may have moved decks while that was in the air.
+  if (ACTIVE_KEY !== key){ renderWishList(); return; }
+  if (!card || !card.name){ wishError(id, nameErr || NO_SUCH_CARD_NOLIST); return; }
+
+  // applySwap checks no colors and no singleton -- the coach only ever hands it
+  // cards it has already filtered. Coming from here, both have to be checked.
+  const reject = identityRejection(deck, key, card);
+  if (reject){ wishError(id, reject); return; }
+  if (findCardLocation(deck, card.name)){
+    wishError(id, card.name + " is already in " + wishShortName(key) + ".");
+    return;
+  }
+
+  applySwap({ outName: w.out, inCard: card, category: null, blockEl: null });
+
+  // applySwap ends on the coach panel and never refreshes the change log -- the
+  // coach does not need it, because it draws its own Undo on the swap block.
+  // From here the change log is the only undo there is, and the confirm just
+  // promised him one.
+  renderChangeLog();
+
+  // Ask the deck, not the message. If Scryfall canonicalised the name to
+  // something else, this comes back false and the row stays open.
+  const landed = !!findCardLocation(DECKS[key], card.name);
+  if (landed) setWishDecision(id, "in", card.name);
+  renderWishList();
+  if (landed) flashInlineMessage(card.name + " is in, " + w.out + " is out. Undo is in the change log below.");
+  else wishError(id, "That did not go through. Nothing changed.");
+}
+
+async function doWishAdd(w, deck, key){
+  const id = wishId(w);
+  // addCardToDeck does its own lookup, colors, singleton and logging. Do not
+  // repeat any of it here.
+  await addCardToDeck(w.card);
+  if (ACTIVE_KEY !== key) return;
+
+  // It focuses the edit input on success, which pops the keyboard on a phone.
+  const inp = document.getElementById("editAdd");
+  if (inp) inp.blur();
+
+  const landed = !!findCardLocation(DECKS[key], w.card);
+  if (landed) setWishDecision(id, "in", w.card);
+  renderWishList();
+
+  // It also reports through #editStatus, which lives inside the edit panel and is
+  // hidden unless you are editing. Mirror the message somewhere he can see it.
+  const stEl = document.getElementById("editStatus");
+  const msg  = (stEl && stEl.textContent.trim()) ? stEl.textContent.trim() : "";
+  setEditStatus("");
+  if (landed) flashInlineMessage(msg || (w.card + " is in."));
+  else wishError(id, msg || "That did not go through. Nothing changed.");
+}
+
+/* Park a card you found yourself. The name has to be real and the deck has to be
+   able to run it, so something that could never go in never sits on the list. */
+async function parkWishCard(){
+  const inp = document.getElementById("wishParkName");
+  const btn = document.getElementById("wishParkBtn");
+  const box = document.getElementById("wishParkMsg");
+  if (!inp) return;
+  const say = (text, bad) => {
+    if (!box) return;
+    box.textContent = text || "";
+    box.hidden = !text;
+    box.classList.toggle("bad", !!bad);
+  };
+  const typed = inp.value.trim(), key = ACTIVE_KEY, deck = DECKS[key];
+  if (!typed){ say("Type a card name first.", true); return; }
+  if (!deck){ say("Pick a deck first.", true); return; }
+
+  if (btn) btn.disabled = true;
+  say("Looking up " + typed + "…", false);
+  let card = null, nameErr = null;
+  try {
+    const res = await fetch("https://api.scryfall.com/cards/named?fuzzy=" + encodeURIComponent(typed));
+    if (res.ok) card = await res.json();
+    else nameErr = await scryfallNameError(res, typed, true);
+  } catch(e){ /* offline: falls through to the same plain message */ }
+  if (btn) btn.disabled = false;
+
+  if (!card || !card.name){ say(nameErr || NO_SUCH_CARD_NOLIST, true); return; }
+  const reject = identityRejection(deck, key, card);
+  if (reject){ say(reject, true); return; }
+
+  const st = loadWish();
+  const id = key + "|" + card.name.toLowerCase();
+  const already = st.mine.some(m => (m.deck + "|" + String(m.card).toLowerCase()) === id) ||
+                  WISHLIST.some(x => wishId(x) === id);
+  if (already){ say(card.name + " is already on the list for " + wishShortName(key) + ".", true); return; }
+
+  st.mine.push({ deck:key, card:card.name, cost:prettyCost(card.mana_cost), at:todayStamp() });
+  saveWish(st);
+  inp.value = "";
+  renderWishList();
+  flashInlineMessage(card.name + " parked for " + wishShortName(key) + ".");
+}
+
+function removeParkedWish(id){
+  const st = loadWish();
+  st.mine = st.mine.filter(m => (m.deck + "|" + String(m.card).toLowerCase()) !== id);
+  delete st.decided[id];
+  saveWish(st);
+  renderWishList();
 }
 
 /* The combos your list already contains, and the ones it is a single card short of.
@@ -4807,7 +6213,10 @@ async function runLookup(raw){
     const res = await fetch("https://api.scryfall.com/cards/named?fuzzy=" + encodeURIComponent(name));
     if (seq !== LOOKUP_SEQ) return;
     if (!res.ok){
-      st.textContent = "No card found for “" + name + "”. Check the spelling, or type three letters and pick from the list.";
+      const why = await scryfallNameError(res, name);
+      st.textContent = (why === NO_SUCH_CARD)
+        ? "No card found for “" + name + "”. Check the spelling, or type three letters and pick from the list."
+        : why;
       st.className = "status err";
       return;
     }
@@ -5655,13 +7064,14 @@ function roleTotalsFromDeck(deck, cardData){
   return totals;
 }
 
-function pickCutFor(deck, cardData, archetype, needCategory, inCard){
+function pickCutFor(deck, cardData, archetype, needCategory, inCard, excludeNames){
   // 0. Free cut: if there's a nonbasic duplicate in the list, cut the duplicate first.
   const nameQty = uniqueNamesWithQty(deck);
   let dupeCut = null;
   nameQty.forEach((qty, name) => {
     if (dupeCut) return;
     if (BASICS.includes(name)) return;
+    if (excludeNames && excludeNames.has(name.toLowerCase())) return;
     if (qty > 1) {
       const loc = findCardLocation(deck, name);
       if (loc && !isProtected(loc.card, name, deck.commander)) {
@@ -5677,7 +7087,7 @@ function pickCutFor(deck, cardData, archetype, needCategory, inCard){
   });
   if (dupeCut) return dupeCut;
 
-  const pool = buildDonorPool(deck, cardData);
+  const pool = buildDonorPool(deck, cardData).filter(p => !(excludeNames && excludeNames.has(p.low)));
   if (pool.length === 0) return null;
 
   const totals = roleTotalsFromDeck(deck, cardData);
@@ -5767,6 +7177,23 @@ function pickCutFor(deck, cardData, archetype, needCategory, inCard){
     cardObj: best.cardObj,
     reason
   };
+}
+
+/* Up to n distinct cuts for one incoming card, best first. Rows that stack more
+   than one copy are skipped: applySwap takes the whole row, and "cut one Nazgûl"
+   must never quietly mean "cut all three". */
+function pickCutsFor(deck, cardData, archetype, category, inCard, n){
+  const out = [];
+  const exclude = new Set();
+  let guard = 0;
+  while (out.length < (n || 3) && guard++ < 12){
+    const cut = pickCutFor(deck, cardData, archetype, category, inCard, exclude);
+    if (!cut) break;
+    exclude.add(String(cut.name).toLowerCase());
+    if (cut.cardObj && qtyOf(cut.cardObj.n) > 1) continue;
+    out.push(cut);
+  }
+  return out;
 }
 
 /* ============ SYNERGY LINES (v0.8) ============
@@ -6141,7 +7568,8 @@ function applySwap(opts){
 
   // 3. Insert the IN card in a fitting bucket.
   const inRole = inferInRole(inCard, category);
-  const targetBucket = pickTargetBucket(deck, inRole);
+  const cacheForPick = DECK_CACHE.get(key);
+  const targetBucket = pickTargetBucket(deck, inRole, inCard, cacheForPick ? cacheForPick.cardData : null);
   const newCardObj = { n: inCard.name, new: 1 };
   targetBucket.cards.push(newCardObj);
 
@@ -6190,6 +7618,9 @@ function applySwap(opts){
   // 11. Re-render the coach panel below so remaining swap blocks in the same
   //     category pick fresh cards.
   refreshCoachPanel();
+
+  // 12. And the four panes beside it, which step 8 just blanked.
+  refillSpellbookAfterEdit();
 }
 
 function inferInRole(inCard, category){
@@ -6199,25 +7630,64 @@ function inferInRole(inCard, category){
     oracle_text: inCard.oracle_text || "",
     power: inCard.power
   });
+  // A land is a land before it is anything else. tagCard already says so; this
+  // used to ignore it, and every land you added went to a holding pen.
+  if (tags.has("land")) return "land";
   if (category && tags.has(category)) return category;
   if (tags.has("ramp")) return "ramp";
   if (tags.has("draw")) return "draw";
   if (tags.has("removal")) return "removal";
   if (tags.has("wipe")) return "wipe";
   if (tags.has("counter")) return "counter";
+  if (tags.has("tutor")) return "tutor";
+  if (tags.has("finisher")) return "finisher";
+
+  // Nothing above matched, so the card used to land in a holding pen called "New
+  // Additions" even when the list already had an obvious home for it. A card whose
+  // job happens in your own graveyard belongs with the graveyard cards; a static
+  // discount or a cast-trigger is an engine. Only guess this when the coach has not
+  // already named a category -- the swap path stays exactly as it was.
+  if (!category){
+    const o = String(inCard.oracle_text || "").toLowerCase();
+    const t = String(inCard.type_line || "").toLowerCase();
+    // A sweeper that deals damage or shrinks everything is a wipe even though it
+    // never says "destroy all". Checked first: Blasphemous Act says "costs less"
+    // too, and used to be filed as an engine because of it.
+    if (/damage to each creature|each creature gets -|all creatures get -|each player sacrifices|destroys? all|exiles? all|return all/.test(o)) return "wipe";
+    if (/from your graveyard|in your graveyard|\bflashback\b|\bescape\b/.test(o)) return "graveyard";
+    const permanent = /creature|artifact|enchantment|planeswalker|battle/.test(t);
+    if (permanent && /spells you cast cost|costs? \{\d+\} less|whenever you cast (a|an|your)/.test(o)) return "engine";
+  }
   return category || "misc";
 }
 
-function pickTargetBucket(deck, role){
+function pickTargetBucket(deck, role, card, cardData){
+  // Lands have a home in every deck, and it is the one bucket the role scoring
+  // below skips on purpose. Send them straight there.
+  if (role === "land" || role === "lands"){
+    const landsHome = deck.buckets.find(b => (b.bucket || "").toLowerCase().startsWith("lands"));
+    if (landsHome) return landsHome;
+  }
+  // A creature that shares the deck's tribe goes with its tribe, even when its
+  // power would otherwise call it a "finisher" and drop it in with the bombs.
+  // Strict here: the bucket has to be named for the type, or already hold two
+  // of them. Weaker resemblances wait until the role scoring has had its turn.
+  const tribeHome = pickThemedBucket(deck, card, cardData, true);
+  if (tribeHome) return tribeHome;
+
   // Score buckets by name match for the role.
   const roleAliases = {
+    land: ["lands"],
+    protection: ["protection","protect"],
     ramp: ["ramp","mana","rocks","signet","dorks"],
     draw: ["draw","card advantage","top control","tutors","selection"],
     removal: ["removal","interaction","answers","spot"],
-    wipe: ["wipe","board wipe","reset","sweeper"],
+    wipe: ["wipe","board wipe","reset","sweeper","interaction","answers"],
     counter: ["counter","control","interaction"],
     tutor: ["tutor","selection","top control"],
     finisher: ["finisher","bomb","win"],
+    graveyard: ["graveyard","recursion","yard","reanimat"],
+    engine: ["engine","value","payoff","synerg"],
     misc: ["rest","other","utility"]
   };
   const aliases = roleAliases[role] || [];
@@ -6231,6 +7701,13 @@ function pickTargetBucket(deck, role){
     if (score > bestScore) { bestScore = score; best = b; }
   });
   if (best && bestScore > 0) return best;
+
+  // No role bucket claimed it. Before giving up, ask the deck itself: a Wraith
+  // belongs with the Wraiths, a Ninja with the Ninjas, a cost-reducer with the
+  // other engines. That is what the card data is for.
+  const themed = pickThemedBucket(deck, card, cardData, false);
+  if (themed) return themed;
+
   // Otherwise: make (or reuse) a "New Additions" bucket.
   let addBucket = deck.buckets.find(b => (b.bucket || "").toLowerCase().startsWith("new additions"));
   if (!addBucket) {
@@ -6241,6 +7718,80 @@ function pickTargetBucket(deck, role){
     else deck.buckets.push(addBucket);
   }
   return addBucket;
+}
+
+/* Creature types after the dash on a type line, lowercased. "Legendary Creature
+   — Human Wizard" gives ["human","wizard"]. Changelings count as every type. */
+function creatureTypesOf(card){
+  const type = String((card && card.type_line) || "").toLowerCase();
+  if (!type.includes("creature")) return [];
+  const after = type.split("\u2014")[1] || type.split("--")[1] || "";
+  const list = after.split(/\s+/).map(s => s.replace(/[^a-z]/g, "")).filter(Boolean);
+  if (/changeling/.test(String((card && card.oracle_text) || "").toLowerCase())) list.push("*");
+  return list;
+}
+
+/* Which of the deck's own buckets does this card most resemble?
+   1. Creature types shared with the cards already in a bucket, plus a bonus
+      when the bucket is named after the type ("Wraith Pack", "Ninjas").
+   2. Failing that, the bucket whose cards share the most role tags with it.
+   Returns null when nothing fits, so the caller can fall back. */
+function pickThemedBucket(deck, card, cardData, strict){
+  if (!card || !deck || !deck.buckets) return null;
+  const lookup = n => {
+    if (!cardData) return null;
+    const k = stripQty(decodeName(n)).toLowerCase();
+    return (cardData instanceof Map) ? cardData.get(k) : cardData[k];
+  };
+  const eligible = deck.buckets.filter(b => {
+    const label = (b.bucket || "").toLowerCase();
+    return !label.startsWith("commander") && !label.startsWith("lands") && !label.startsWith("new additions");
+  });
+  if (!eligible.length) return null;
+
+  const myTypes = creatureTypesOf(card);
+  if (myTypes.length){
+    let best = null, bestScore = 0;
+    eligible.forEach(b => {
+      const label = (b.bucket || "").toLowerCase();
+      let score = 0;
+      myTypes.forEach(t => { if (t !== "*" && label.includes(t)) score += 5; });
+      b.cards.forEach(c => {
+        const other = creatureTypesOf(lookup(c.n) || {});
+        if (!other.length) return;
+        const shared = myTypes.includes("*") || other.includes("*") ||
+          other.some(t => myTypes.includes(t));
+        if (shared) score += 1;
+      });
+      if (score > bestScore){ bestScore = score; best = b; }
+    });
+    // Strict wants a real tribe: the label names it (5) or two bodies share it.
+    if (best && (!strict || bestScore >= 2)) return best;
+  }
+  if (strict) return null;
+
+  const myTags = tagCard(card);
+  myTags.delete("land");
+  if (myTags.size){
+    let best = null, bestShare = 0;
+    eligible.forEach(b => {
+      let hits = 0, known = 0;
+      b.cards.forEach(c => {
+        const other = lookup(c.n);
+        if (!other) return;
+        known++;
+        const t = tagCard(other);
+        for (const x of myTags){ if (t.has(x)){ hits++; break; } }
+      });
+      // Two matching cards, not one: a single coincidence is not a theme.
+      if (hits >= 2 && known){
+        const share = hits / known;
+        if (share > bestShare){ bestShare = share; best = b; }
+      }
+    });
+    if (best) return best;
+  }
+  return null;
 }
 
 function refreshBucketCounts(deck){
@@ -6300,6 +7851,7 @@ function undoSwap(blockEl){
   resetGeneratedViews();
   renderSwapMomentum();
   refreshCoachPanel();
+  refillSpellbookAfterEdit();
 }
 
 function renderSwapMomentum(){
@@ -6361,6 +7913,9 @@ function renderChangeLog(){
     } else if (op.op === "add") {
       body = '<span class="cl-card cl-in">' + esc(stripQty(decodeName(op.n || ""))) + '</span>'
            + '<span class="cl-tag in">added</span>';
+    } else if (op.op === "move") {
+      body = '<span class="cl-card cl-in">' + esc(stripQty(decodeName(op.n || ""))) + '</span>'
+           + '<span class="cl-tag in">moved to ' + esc(op.bucket || "") + '</span>';
     } else if (op.op === "qty") {
       // A count change on a stacked row -- usually basic lands. Say the number,
       // because "Swamp cut" would be a lie when twenty-one of them are still there.
@@ -6990,9 +8545,16 @@ function finisherLine(f){
 }
 
 /* WHERE I'M AT */
+/* The card whose swap question is open on the Upgrade Queue, and the last swap
+   made from there (so the row can offer Undo). Both in memory only: after a
+   reload the change log on the Coach pane is the undo, same as everywhere else. */
+let WHERE_PENDING = null;   // { key, name, cat, card, cuts, cutIdx, already }
+let WHERE_LAST_SWAP = null; // { key, out, in }
+
 function renderWhere(deck, grade, coach, archetype, suggMap){
   const el = document.getElementById("whereBody");
   const arch = archetype ? archetype.personality : "Good stuff.";
+  if (WHERE_PENDING && WHERE_PENDING.key !== ACTIVE_KEY) WHERE_PENDING = null;
 
   const workingLis = coach.working.map(w => '<li class="yes"><b>' + esc(w.label) + '.</b> ' + esc(w.text) + '</li>').join("");
 
@@ -7013,7 +8575,7 @@ function renderWhere(deck, grade, coach, archetype, suggMap){
     coach.level.forEach(row => {
       const s = suggMap.get(row.key);
       if (!s) return;
-      s.slice(0, 2).forEach(c => queue.push({ name: c.name, usd: c.usd, why: row.label }));
+      s.slice(0, 2).forEach(c => queue.push({ name: c.name, usd: c.usd, why: row.label, cat: row.key, card: c }));
     });
   }
   const top5 = queue.slice(0, 5);
@@ -7039,13 +8601,127 @@ ${growHtml || '<div class="panel"><p>This list is tuned. Play it and see what un
 
 <div class="rune-div"><span>&#9670; &#9670; &#9670;</span></div>
 <h2>Upgrade Queue</h2>
-<p class="section-sub">Five cards to try, in order. Prices from Scryfall.</p>
-${top5.length ? '<ol class="upgrade-list">' + top5.map(u =>
-  '<li><a href="https://scryfall.com/search?q=' + encodeURIComponent('!"' + u.name + '"') + '" target="_blank" rel="noopener">' + esc(u.name) + '</a>' +
-  (u.usd ? '<span class="price">$' + u.usd + '</span>' : '') +
-  '<span class="why">Helps with ' + esc(u.why) + '.</span></li>'
-).join("") + '</ol>' : '<div class="panel"><p>Nothing pressing. Run the deck a few times and see what the table tells you.</p></div>'}`;
+<p class="section-sub">Five cards to try, in order. Tap Put it in and the app picks what comes out. Prices from Scryfall.</p>
+${whereSwapDoneHtml(deck)}
+${top5.length ? '<ol class="upgrade-list">' + top5.map(u => whereQueueItemHtml(u)).join("") + '</ol>' : '<div class="panel"><p>Nothing pressing. Run the deck a few times and see what the table tells you.</p></div>'}`;
   el.innerHTML = html;
+  wireWhereQueue(el);
+}
+
+/* One queue row. Closed: the card, its price, and a Put it in button. Open: the
+   swap question, right there on the row, with the cut the app picked and why. */
+function whereQueueItemHtml(u){
+  let h = '<li data-put-name="' + esc(u.name) + '">';
+  h += '<a href="https://scryfall.com/search?q=' + encodeURIComponent('!"' + u.name + '"') + '" target="_blank" rel="noopener">' + esc(u.name) + '</a>';
+  if (u.usd) h += '<span class="price">$' + u.usd + '</span>';
+  h += '<span class="why">Helps with ' + esc(u.why) + '.</span>';
+  const p = WHERE_PENDING;
+  const open = p && p.name === u.name;
+  if (!open){
+    h += '<div class="up-acts"><button type="button" class="btn small up-put" data-put-in="' + esc(u.name) + '" data-put-cat="' + esc(u.cat || "") + '">Put it in</button></div>';
+  } else if (p.already){
+    h += '<div class="wl-ask">' + esc(u.name) + ' is already in the deck.</div>';
+    h += '<div class="wl-acts"><button type="button" class="btn ghost small" data-put-no>Close</button></div>';
+  } else if (!p.cuts.length){
+    h += '<div class="wl-ask">Nothing safe to cut for this one. Every card left is your commander, a starred card, or a basic land.' +
+         '<em>Use Edit Deck on the Showcase tab if you want it in anyway.</em></div>';
+    h += '<div class="wl-acts"><button type="button" class="btn ghost small" data-put-no>Close</button></div>';
+  } else {
+    const cut = p.cuts[p.cutIdx];
+    h += '<div class="wl-ask">Put <b>' + esc(u.name) + '</b> in. Take out <b>' + esc(cut.name) + '</b>.' +
+         (cut.reason ? '<em>' + esc(cut.reason) + '</em>' : '') + '</div>';
+    h += '<div class="wl-acts">';
+    h += '<button type="button" class="btn small" data-put-yes>Yes, swap it</button>';
+    if (p.cuts.length > 1) h += '<button type="button" class="btn ghost small" data-put-next>Not this cut</button>';
+    h += '<button type="button" class="btn ghost small" data-put-no>Cancel</button>';
+    h += '</div>';
+  }
+  return h + '</li>';
+}
+
+/* The strip above the queue after a swap from here. Shown only while that swap
+   is still the newest change, so Undo can never take back something else. */
+function whereSwapDoneHtml(deck){
+  const d = WHERE_LAST_SWAP;
+  if (!d || d.key !== ACTIVE_KEY) return "";
+  const log = loadSeedLog(ACTIVE_KEY);
+  const last = log[log.length - 1];
+  const stillLast = last && last.op === "swap" && String(last.in) === d.in;
+  if (!stillLast || !findCardLocation(deck, d.in)) return "";
+  return '<div class="swap-block done up-queue-done"><div class="swap-confirmed">Swapped. <span class="out">' + esc(d.out) +
+         '</span> is out, <span class="in">' + esc(d.in) + '</span> is in.</div>' +
+         '<div class="swap-actions"><button type="button" class="swap-btn undo" data-put-undo>Undo This Swap</button></div></div>';
+}
+
+function wireWhereQueue(el){
+  el.querySelectorAll("[data-put-in]").forEach(b => b.addEventListener("click", () => putInFromWhere(b.dataset.putIn, b.dataset.putCat)));
+  el.querySelectorAll("[data-put-yes]").forEach(b => b.addEventListener("click", () => confirmPutInFromWhere()));
+  el.querySelectorAll("[data-put-next]").forEach(b => b.addEventListener("click", () => {
+    if (!WHERE_PENDING || !WHERE_PENDING.cuts.length) return;
+    WHERE_PENDING.cutIdx = (WHERE_PENDING.cutIdx + 1) % WHERE_PENDING.cuts.length;
+    repaintWhere();
+  }));
+  el.querySelectorAll("[data-put-no]").forEach(b => b.addEventListener("click", () => { WHERE_PENDING = null; repaintWhere(); }));
+  el.querySelectorAll("[data-put-undo]").forEach(b => b.addEventListener("click", () => undoPutInFromWhere()));
+}
+
+function repaintWhere(){
+  const b = DECK_CACHE.get(ACTIVE_KEY);
+  if (!b || !b.coach) return;
+  renderWhere(ACTIVE_DECK, b.grade, b.coach, b.archetype, b.suggMap);
+}
+
+/* Tap Put it in. The card is already in hand (the suggestion list fetched it,
+   filtered to your colors, not already in the deck), so no lookup. Pick up to
+   three cuts and open the question on the row. */
+function putInFromWhere(name, cat){
+  const b = DECK_CACHE.get(ACTIVE_KEY);
+  if (!b) return;
+  const list = (b.suggMap && b.suggMap.get(cat)) || [];
+  const card = list.find(c => c.name === name);
+  if (!card) return;
+  if (findCardLocation(ACTIVE_DECK, name)){
+    WHERE_PENDING = { key: ACTIVE_KEY, name, cat, card, cuts: [], cutIdx: 0, already: true };
+  } else {
+    WHERE_PENDING = { key: ACTIVE_KEY, name, cat, card, cutIdx: 0,
+      cuts: pickCutsFor(ACTIVE_DECK, b.cardData, b.archetype, cat, card, 3) };
+  }
+  repaintWhere();
+}
+
+/* Yes, swap it. Same op the Coach writes, so the log, the change list, Undo and
+   Reset all already understand it. */
+async function confirmPutInFromWhere(){
+  const p = WHERE_PENDING;
+  if (!p || !p.cuts.length) return;
+  const cut = p.cuts[p.cutIdx];
+  const key = ACTIVE_KEY;
+  WHERE_PENDING = null;
+  WHERE_LAST_SWAP = { key, out: cut.name, in: p.card.name };
+  applySwap({ outName: cut.name, inCard: p.card, category: p.cat || null, cutPlan: cut, blockEl: null });
+  if (!findCardLocation(ACTIVE_DECK, p.card.name)) WHERE_LAST_SWAP = null;
+  renderEditUndo();
+  await refillSpellbookAfterEdit();
+}
+
+async function undoPutInFromWhere(){
+  const d = WHERE_LAST_SWAP;
+  WHERE_LAST_SWAP = null;
+  WHERE_PENDING = null;
+  if (!d) return;
+  const key = ACTIVE_KEY;
+  const log = loadSeedLog(key);
+  const last = log[log.length - 1];
+  const s = getSession(key);
+  if (last && last.op === "swap" && String(last.in) === d.in && s.snapshots.length){
+    undoSwap(null);   // pops the snapshot and the log op; no refetch
+  } else {
+    let idx = -1;
+    log.forEach((o, i) => { if (o && o.op === "swap" && String(o.in) === d.in) idx = i; });
+    if (idx >= 0) undoLoggedOp(idx);
+  }
+  renderEditUndo();
+  await refillSpellbookAfterEdit();
 }
 
 /* ============ RUN THE DECK BRAIN (fetch + compute + cache) ============ */
@@ -7169,6 +8845,11 @@ async function enterSpellbook(){
   renderChangeLog();
   // Playbook / Strategy / Where / Combos all read from ONE shared analysis.
   const fill = (b) => {
+    // The Coach used to sit blank until its button was pressed, while the four
+    // panels beside it were already full. Same numbers, so paint it too. This
+    // runs AFTER the awaited suggestion load below, so the fetches its tail
+    // kicks off hit SUGG_CACHE and cost no network.
+    b.coach = renderGradePanel(ACTIVE_DECK, b.grade, b.notFound, b.archetype, b.suggMap);
     renderPlaybook(ACTIVE_DECK, b.grade, b.archetype);
     renderStrategy(ACTIVE_DECK, b.grade, b.archetype);
     renderWhere(ACTIVE_DECK, b.grade, b.coach, b.archetype, b.suggMap);
@@ -7201,6 +8882,29 @@ async function enterSpellbook(){
     fill(bundle);
   }
   showBookSub(BOOK_SUB);
+}
+
+/* After an edit, the Spellbook panes went blank ("Reading the deck...") and
+   stayed that way until you left the tab and came back. Repaint them from the
+   numbers already in hand. The suggestion searches were fetched when the tab
+   opened, so this is cache-only. Does nothing when the Spellbook is not open. */
+function spellbookIsOpen(){
+  const v = document.getElementById("view-sb");
+  return !!(v && v.classList.contains("active"));
+}
+async function refillSpellbookAfterEdit(){
+  if (!spellbookIsOpen()) return;
+  const key = ACTIVE_KEY;
+  const b = DECK_CACHE.get(key);
+  if (!b) return;
+  if (!b.coach) b.coach = coachRead(b.grade, ACTIVE_DECK);
+  if (!b.suggMap) b.suggMap = new Map();
+  try { await loadSuggestionsForLevelRows(b.coach.level, ACTIVE_DECK, b.suggMap); } catch (e) {}
+  if (ACTIVE_KEY !== key) return;
+  renderPlaybook(ACTIVE_DECK, b.grade, b.archetype);
+  renderStrategy(ACTIVE_DECK, b.grade, b.archetype);
+  renderWhere(ACTIVE_DECK, b.grade, b.coach, b.archetype, b.suggMap);
+  renderSbCombos(b.archetype);
 }
 
 /* ============ COACH BUTTON ============ */
@@ -8471,7 +10175,7 @@ let TABLE = null, TABLE_UNDO = [];
 function genId(){ return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function defaultTable(){
   const count = 4, start = 40;
-  return { count, start, layout: "list", arrange: "hive", turnId: null, players: [] , _seed:true };
+  return { count, start, layout: "list", arrange: "hive", turnId: null, players: [] , _seed:true, round: 1, firstId: null, log: [], wonBy: null };
 }
 function makePlayer(i, start){
   return { id: genId(), name: "Seat " + (i+1), life: start, poison: 0, showCmd: false, showCtr: false, cmd: {}, commander: null, counters: [] };
@@ -8627,6 +10331,10 @@ function seatPlayers(t){
   if (ARRS.indexOf(t.arrange) < 0) t.arrange = "hive";
   // keep turn pointer valid (defaults to first seat = you)
   if (!t.turnId || !ids.has(t.turnId)) t.turnId = arr.length ? arr[0].id : null;
+  // round counter + who started it + the game log (older saves have none of these)
+  if (!t.firstId || !ids.has(t.firstId)) t.firstId = arr.length ? arr[0].id : null;
+  t.round = Math.max(1, parseInt(t.round) || 1);
+  if (!Array.isArray(t.log)) t.log = [];
 }
 function loadTable(){
   if (STORAGE_OK){
@@ -8639,7 +10347,74 @@ function saveTable(){
   try { localStorage.setItem(TABLE_KEY, JSON.stringify(TABLE)); } catch(e){}
 }
 function tableSnapshot(){ TABLE_UNDO.push(JSON.stringify(TABLE)); if (TABLE_UNDO.length>60) TABLE_UNDO.shift(); }
-function tableUndo(){ if (TABLE_UNDO.length){ TABLE = JSON.parse(TABLE_UNDO.pop()); saveTable(); renderTable(); } }
+/* ---- Running tally + game log ----------------------------------------------
+   Taps on one seat pile into a single "burst" (tap − seven times = −7). The tally
+   sits next to the life total while you tap. 2.5s after the last tap it lands in
+   the log as ONE line, so the log reads like what happened, not like button mash.
+   Bursts are in-memory only. The log lives on TABLE, so Undo rewinds it too. */
+let LT_BURST = {};            // "id|kind" -> { id, kind, from, sum, fromId, timer }
+const LT_BURST_MS = 2500;
+let LT_LOG_OPEN = false;      // is the "What happened" list open (not persisted)
+let LT_TOOL_MSG = "";         // last dice / coin / first-player result line
+function seatName(p, i){ return (p && p.name) || ("Seat " + ((i|0) + 1)); }
+function ltLog(text){
+  if (!TABLE) return;
+  if (!Array.isArray(TABLE.log)) TABLE.log = [];
+  TABLE.log.push({ r: TABLE.round || 1, s: String(text) });
+  if (TABLE.log.length > 80) TABLE.log = TABLE.log.slice(-80);
+  saveTable();
+}
+function ltNote(i, kind, delta, fromId){
+  const p = TABLE && TABLE.players[i];
+  if (!p || !delta) return;
+  const key = p.id + "|" + kind + (fromId ? "|" + fromId : "");   // cmd damage: one burst per attacker
+  let b = LT_BURST[key];
+  if (!b){
+    const start = kind === "life" ? p.life - delta : (kind === "poison" ? p.poison - delta : 0);
+    b = LT_BURST[key] = { id: p.id, kind: kind, from: start, sum: 0, fromId: fromId || null, timer: null };
+  }
+  b.sum += delta;
+  clearTimeout(b.timer);
+  b.timer = setTimeout(function(){ ltCommitBurst(key); }, LT_BURST_MS);
+}
+function ltBurstText(b){
+  const i = TABLE.players.findIndex(function(x){ return x.id === b.id; });
+  if (i < 0) return "";
+  const p = TABLE.players[i], nm = seatName(p, i);
+  if (b.kind === "life"){
+    return nm + (b.sum < 0 ? " lost " + (-b.sum) : " gained " + b.sum) + " (" + b.from + " → " + p.life + ")";
+  }
+  if (b.kind === "poison"){
+    return nm + " poison " + b.from + " → " + p.poison;
+  }
+  if (b.kind === "cmd"){
+    const j = TABLE.players.findIndex(function(x){ return x.id === b.fromId; });
+    const src = j >= 0 ? seatName(TABLE.players[j], j) : "a commander";
+    return b.sum > 0 ? nm + " took " + b.sum + " commander damage from " + src
+                     : nm + ": took back " + (-b.sum) + " commander damage from " + src;
+  }
+  return "";
+}
+function ltCommitBurst(key){
+  const b = LT_BURST[key];
+  if (!b) return;
+  delete LT_BURST[key];
+  if (b.sum !== 0 && TABLE){ const s = ltBurstText(b); if (s) ltLog(s); }
+  // Quiet DOM touch-up instead of a full re-render, so nothing jumps under a finger.
+  document.querySelectorAll('.lt-delta[data-pid="' + b.id + '"]').forEach(function(n){ n.remove(); });
+  ltRefreshLog();
+}
+function ltClearBursts(){
+  Object.keys(LT_BURST).forEach(function(k){ clearTimeout(LT_BURST[k].timer); });
+  LT_BURST = {};
+}
+function ltDeltaTag(p){
+  const b = LT_BURST[p.id + "|life"];
+  if (!b || !b.sum) return "";
+  const neg = b.sum < 0;
+  return '<span class="lt-delta ' + (neg ? "neg" : "pos") + '" data-pid="' + p.id + '">' + (neg ? "−" + (-b.sum) : "+" + b.sum) + '</span>';
+}
+function tableUndo(){ if (TABLE_UNDO.length){ ltClearBursts(); TABLE = JSON.parse(TABLE_UNDO.pop()); saveTable(); renderTable(); } }
 function tableSetCount(n){
   if (n === TABLE.count) return;
   tableSnapshot();
@@ -8658,19 +10433,32 @@ function tableNewGame(){
   TABLE.players.forEach((p,i)=>{ p.life = TABLE.start; p.poison = 0; p.cmd = {}; p.counters = normCounters(p.counters); p.counters.forEach(c=>c.val=0); });
   if (TABLE.players[0] && typeof ACTIVE_DECK !== "undefined" && ACTIVE_DECK) seedSeatCountersFromDeck(TABLE.players[0], ACTIVE_DECK);
   LT_OPEN = { seat:-1, type:null };
+  ltClearBursts();
+  TABLE.round = 1; TABLE.log = []; TABLE.wonBy = null; LT_TOOL_MSG = "";
+  if (TABLE.firstId) TABLE.turnId = TABLE.firstId;
   saveTable(); renderTable();
 }
-function tableLife(i, delta){ tableSnapshot(); TABLE.players[i].life += delta; saveTable(); renderTable(); }
-function tablePoison(i, delta){ tableSnapshot(); const p=TABLE.players[i]; p.poison = Math.max(0, p.poison + delta); saveTable(); renderTable(); }
+function tableLife(i, delta){ tableSnapshot(); TABLE.players[i].life += delta; ltNote(i, "life", delta); saveTable(); renderTable(); }
+function tablePoison(i, delta){
+  tableSnapshot();
+  const p = TABLE.players[i];
+  const before = p.poison;
+  p.poison = Math.max(0, p.poison + delta);
+  ltNote(i, "poison", p.poison - before);
+  saveTable(); renderTable();
+}
 function tableCmd(i, fromId, delta){
   tableSnapshot();
   const p = TABLE.players[i];
   const prev = p.cmd[fromId] || 0;
   const next = Math.max(0, prev + delta);
   // Commander damage also drains real life on the way up (not on the way down).
+  const lifeBefore = p.life;
   if (delta > 0) p.life -= delta;
   else if (delta < 0 && prev > 0) p.life += Math.min(-delta, prev);
   if (next === 0) delete p.cmd[fromId]; else p.cmd[fromId] = next;
+  ltNote(i, "cmd", next - prev, fromId);
+  ltNote(i, "life", p.life - lifeBefore);
   saveTable(); renderTable();
 }
 /* ---- Generic counters (poison lives on p.poison; everything else on p.counters) ---- */
@@ -8777,13 +10565,92 @@ function tableNextTurn(dir){
   const n = TABLE.players.length;
   if (!n) return;
   tableSnapshot();
-  let i = turnIndex();
+  const was = turnIndex();
+  let i = was;
   for (let step = 0; step < n; step++){
     i = ((i + dir) % n + n) % n;
     if (!playerDead(TABLE.players[i])) break; // land on a living seat if possible
   }
   TABLE.turnId = TABLE.players[i].id;
+  // Round counter: passing the seat that went first (going forward) starts a new
+  // round; stepping back over it undoes one. Measured from whoever started.
+  const s = Math.max(0, TABLE.players.findIndex(function(p){ return p.id === TABLE.firstId; }));
+  const rel = function(k){ return ((k - s) % n + n) % n; };
+  if (dir > 0 && rel(i) <= rel(was)){ TABLE.round = (TABLE.round || 1) + 1; ltLog("Round " + TABLE.round + " starts"); }
+  else if (dir < 0 && rel(i) >= rel(was) && (TABLE.round || 1) > 1){ TABLE.round--; }
   saveTable(); renderTable(); syncStationTable();
+}
+/* ---- Table tools: who goes first, dice, coin --------------------------------
+   Plain text results, no spinning or animation (calm mode). Every result also
+   lands in the game log so nobody argues about what got rolled. */
+function ltRand(n){
+  try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; }
+  catch(e){ return Math.floor(Math.random() * n); }
+}
+function tableWhoStarts(){
+  const alive = [];
+  TABLE.players.forEach(function(p, i){ if (!playerDead(p)) alive.push(i); });
+  if (!alive.length) return;
+  tableSnapshot();
+  const i = alive[ltRand(alive.length)];
+  const p = TABLE.players[i];
+  TABLE.firstId = p.id; TABLE.turnId = p.id; TABLE.round = 1;
+  LT_TOOL_MSG = seatName(p, i) + " goes first.";
+  ltLog(LT_TOOL_MSG);
+  saveTable(); renderTable(); syncStationTable();
+}
+function tableRoll(sides){
+  const v = ltRand(sides) + 1;
+  LT_TOOL_MSG = "Rolled a d" + sides + ": " + v;
+  ltLog(LT_TOOL_MSG);
+  renderTable();
+}
+function tableFlip(){
+  LT_TOOL_MSG = "Coin flip: " + (ltRand(2) ? "Heads" : "Tails");
+  ltLog(LT_TOOL_MSG);
+  renderTable();
+}
+function ltToolsHTML(t){
+  let h = '<div class="lt-tools">';
+  h += '<button class="lt-tool lead" onclick="tableWhoStarts()">Who goes first?</button>';
+  h += '<button class="lt-tool" onclick="tableRoll(6)">Roll d6</button>';
+  h += '<button class="lt-tool" onclick="tableRoll(20)">Roll d20</button>';
+  h += '<button class="lt-tool" onclick="tableFlip()">Flip coin</button>';
+  h += '</div>';
+  if (LT_TOOL_MSG) h += '<p class="lt-toolout" role="status">' + esc(LT_TOOL_MSG) + '</p>';
+  return h;
+}
+/* Last one standing: a banner with one clear next step. Logged once per win. */
+function ltWinnerHTML(t){
+  if (!t || t.count < 2) return "";
+  const alive = [];
+  t.players.forEach(function(p, i){ if (!playerDead(p)) alive.push(i); });
+  if (alive.length !== 1){ if (t.wonBy){ t.wonBy = null; saveTable(); } return ""; }
+  const w = t.players[alive[0]], nm = seatName(w, alive[0]);
+  if (t.wonBy !== w.id){ t.wonBy = w.id; ltLog(nm + " is the last one standing"); }
+  return '<div class="lt-winner"><span>' + esc(nm) + ' is the last one standing.</span>' +
+         '<button class="lt-reset" onclick="tableNewGame()">New Game</button></div>';
+}
+function ltLogListHTML(t){
+  const log = (t && Array.isArray(t.log)) ? t.log : [];
+  if (!log.length) return '<li class="lt-log-empty">Nothing yet. Life changes, rolls, and new rounds show up here.</li>';
+  let h = "";
+  for (let k = log.length - 1, shown = 0; k >= 0 && shown < 20; k--, shown++){
+    h += '<li><span class="lt-log-r">R' + (log[k].r || 1) + '</span>' + esc(log[k].s) + '</li>';
+  }
+  return h;
+}
+function ltLogHTML(t){
+  const n = (t && Array.isArray(t.log)) ? t.log.length : 0;
+  return '<details class="lt-logbox"' + (LT_LOG_OPEN ? " open" : "") + ' ontoggle="LT_LOG_OPEN=this.open">' +
+         '<summary>What happened <span class="lt-log-n" id="ltLogN">' + n + '</span></summary>' +
+         '<ol class="lt-log" id="ltLogList">' + ltLogListHTML(t) + '</ol></details>';
+}
+function ltRefreshLog(){
+  const list = document.getElementById("ltLogList");
+  if (list) list.innerHTML = ltLogListHTML(TABLE);
+  const n = document.getElementById("ltLogN");
+  if (n) n.textContent = (TABLE && TABLE.log) ? TABLE.log.length : 0;
 }
 /* ---- per-seat commander (Scryfall fuzzy search -> art + color identity) ---- */
 const COLOR_ORDER = ["W","U","B","R","G"];
@@ -9034,7 +10901,7 @@ function seatHTML(p, i, opts){
     hc += '</div>';
     hc += '<div class="comb-life">';
     hc += '<button class="lt-step comb-step" onclick="tableLife('+i+',-1)" aria-label="Lose 1 life">&#8722;</button>';
-    hc += '<div class="lt-num comb-num'+(p.life<=5?" low":"")+'">'+p.life+'</div>';
+    hc += '<div class="lt-num comb-num'+(p.life<=5?" low":"")+'">'+p.life+ltDeltaTag(p)+'</div>';
     hc += '<button class="lt-step comb-step" onclick="tableLife('+i+',1)" aria-label="Gain 1 life">+</button>';
     hc += '</div>';
     hc += '<div class="comb-chips">';
@@ -9084,7 +10951,7 @@ function seatHTML(p, i, opts){
   // life row
   h += '<div class="lt-life">';
   h += '<button class="lt-step" onclick="tableLife('+i+',-1)">&#8722;</button>';
-  h += '<div class="lt-num'+(p.life<=5?' low':'')+'">'+p.life+'</div>';
+  h += '<div class="lt-num'+(p.life<=5?' low':'')+'">'+p.life+ltDeltaTag(p)+'</div>';
   h += '<button class="lt-step" onclick="tableLife('+i+',1)">+</button>';
   h += '</div>';
   h += '<div class="lt-quick"><button class="lt-q" onclick="tableLife('+i+',-5)">-5</button><button class="lt-q" onclick="tableLife('+i+',5)">+5</button></div>';
@@ -9418,7 +11285,7 @@ function turnBarHTML(t){
   let h = '<div class="lt-turnbar" style="--seat:'+col.c+';--seat-bright:'+col.b+'">';
   h += '<button class="lt-arrow" onclick="tableNextTurn(-1)" title="Previous turn">&#8249;</button>';
   h += '<div class="lt-turnbar-mid">';
-  h += '<span class="lt-turnbar-lbl">On turn</span>';
+  h += '<span class="lt-turnbar-lbl">Round ' + (t.round || 1) + ' &middot; On turn</span>';
   h += '<span class="lt-turnbar-name">'+esc(cur ? (cur.name||"—") : "—")+'</span>';
   h += '<span class="lt-turnbar-next">Up next: <b>'+esc(nxt ? (nxt.name||"—") : "—")+'</b></span>';
   h += '</div>';
@@ -9560,6 +11427,8 @@ function renderTable(){
   const anyCmd = (t.players||[]).some(function(p){ return p && p.commander && p.commander.name; });
   if (anyCmd) html += '<button class="lt-loadtok" onclick="backfillCommanderTokens({force:true})" title="Look up every commander and drop its tokens &amp; counters onto the seat">&#9670; Load tokens</button>';
   html += '</div>';
+  html += ltToolsHTML(t);
+  html += ltWinnerHTML(t);
   if (lay === "round"){
     // Modular honeycomb: same regular-hexagon cells, arranged the way Greg picks.
     // Whose-turn info sits in a slim banner on top so a seat can never cover it.
@@ -9578,10 +11447,12 @@ function renderTable(){
       : '<b>Hold</b> a hex to pick it up, then drop it on another seat to swap them. Or tap <b>&#8249; &#8250;</b> to nudge one around the ' + where + '.';
     html += '<p class="lt-round-hint">'+hint+'</p>';
   } else {
+    html += turnBarHTML(t);   // List view gets the same next-turn arrows + round count
     html += '<div class="lt-table" data-count="'+t.count+'">';
     for (let i=0;i<t.count;i++){ html += seatHTML(t.players[i], i); }
     html += '</div>';
   }
+  html += ltLogHTML(t);
   host.innerHTML = html;
   syncStationTable();
 }
