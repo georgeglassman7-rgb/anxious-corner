@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Anxious Corner</title>
+<!-- Home-screen app: tap Share, then Add to Home Screen, and it opens full screen as "Corn".
+     Icon files and manifest.json sit next to index.html on GitHub. -->
+<meta name="theme-color" content="#05060d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Corn">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta property="og:title" content="The Anxious Corner">
+<meta property="og:description" content="pull up a chair. your deck, your table, your corner.">
+<meta property="og:image" content="https://georgeglassman7-rgb.github.io/anxious-corner/icon-512.png">
+<!-- @friends-cut home-screen => <link rel="manifest" href="friends-manifest.json"> -->
+<link rel="manifest" href="manifest.json">
+<!-- @friends-end home-screen -->
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@500;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Lexend:wght@300;400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -134,6 +149,9 @@ h1{font-family:'Cinzel',serif;font-weight:900;
 .guild-badge .g-try{font-family:'Cinzel',serif;font-size:.6em;letter-spacing:1.5px;text-transform:uppercase;
   color:var(--text-dim);opacity:.75;margin-left:auto}
 .guild-badge .g-flavor{flex:1 1 100%;color:var(--text-dim);font-style:italic;font-size:.98em;line-height:1.5}
+/* display:flex above beats the hidden attribute, so a list with no commander yet
+   showed a "Five-Color" badge beside "Which card is your commander?". Respect it. */
+.guild-badge[hidden]{display:none}
 /* Color-identity mana symbols ("the symbol"), sized big and set BEHIND the deck name
    as a faint watermark so it adds presence without taking its own vertical space.
    No motion, low opacity -> stays calm-mode / dyslexia friendly and keeps the title readable. */
@@ -1885,6 +1903,27 @@ body:not(.in-game) .wrap{padding-bottom:120px}
 .lt-ctrpick-other{display:flex;gap:.4em;margin:.5em 0 .2em}
 .lt-ctrpick-other input{flex:1;min-width:0;min-height:44px;padding:0 .7em;border:1px solid var(--panel-edge);border-radius:9px;background:var(--void-2);color:var(--bone-bright);font-family:inherit;font-size:max(16px,1rem)}
 .lt-ctrpick-otherbtn{min-height:44px;min-width:60px;border:1px solid var(--jade);border-radius:9px;background:#10261b;color:var(--jade-bright);font-family:inherit;font-weight:700;cursor:pointer}
+/* ============ NO DECKS YET ============
+   Only while the app holds zero decks (body.no-decks, set in renderSwitcher).
+   The main app always has its seven, so none of this ever shows there. It is for
+   friends.html, the blank copy. Anything that needs a deck steps aside. */
+#noDecks{display:none}
+body.no-decks #noDecks{display:block}
+body.no-decks .deck-head,
+body.no-decks #deckFlavor,
+body.no-decks #commanderPrompt,
+body.no-decks #guildBadge,
+body.no-decks #themeLab,
+body.no-decks .tab[data-view="play"],
+body.no-decks #view-sb .book-tabs,
+body.no-decks #view-sb [data-book-panel="coach"] > :not(.dropzone),
+body.no-decks #view-showcase > :not(#noDecks):not(#showcaseConfirm){display:none !important}
+.nodeck-card{margin:.4em 0 1.4em;padding:1.8em 1.2em 1.2em;border:1px solid var(--panel-edge);border-radius:16px;background:rgba(var(--panel-rgb),0.72);text-align:center}
+.nodeck-line{margin:0 0 .6em;font-size:1.3em;font-style:italic;color:var(--bone)}
+.nodeck-sub{margin:0 auto 1.4em;max-width:26em;color:var(--text);line-height:1.6}
+.nodeck-add{display:block;width:100%;min-height:56px;padding:0 1em;border:1.5px solid var(--jade);border-radius:12px;background:#143a26;color:var(--jade-bright);font-family:inherit;font-size:1.15em;font-weight:700;cursor:pointer}
+.nodeck-backup{display:inline-block;margin:1em 0 0;min-height:44px;padding:0 .8em;border:0;background:transparent;color:var(--text-dim);font-family:inherit;font-size:.95em;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.nav-none{margin:.2em .3em .5em;color:var(--text-dim)}
 </style>
 </head>
 <body>
@@ -1928,7 +1967,9 @@ body:not(.in-game) .wrap{padding-bottom:120px}
 
   <div class="deck-head">
     <div class="deck-mark" id="deckMark" aria-hidden="true"></div>
+    <!-- @friends-cut deck-kicker => <div class="kicker" id="deckKicker"></div> -->
     <div class="kicker" id="deckKicker">Commander . Esper Ninjutsu</div>
+    <!-- @friends-end deck-kicker -->
     <h1 id="deckName"></h1>
   </div>
   <p class="sub" id="deckFlavor"></p>
@@ -1972,6 +2013,14 @@ body:not(.in-game) .wrap{padding-bottom:120px}
 
   <!-- ============ SHOWCASE VIEW ============ -->
   <div class="view active" id="view-showcase">
+    <!-- No decks yet. Hidden unless the app holds zero decks (body.no-decks), which
+         the main app never does. friends.html, the blank copy, starts here. -->
+    <div class="nodeck-card" id="noDecks">
+      <p class="nodeck-line">pull up a chair.</p>
+      <p class="nodeck-sub">Add a deck to start. Paste it from Moxfield or any list.</p>
+      <button class="nodeck-add" id="noDecksAdd" type="button" data-nav="add">Add your first deck</button>
+      <button class="nodeck-backup" id="noDecksBackup" type="button">Have a backup file? Load it.</button>
+    </div>
     <!-- The deck's explanation comes first (bracket, why, how you win). Swap ideas
          sit under it, then the list tools. Every block is found by id, so the
          order here is only what Greg sees. (Reordered 2026-10-04 at his ask.) -->
@@ -2130,6 +2179,7 @@ body:not(.in-game) .wrap{padding-bottom:120px}
 <script>
 /* ============ THE SEED DECKS ============ */
 
+/* @friends-cut seed-decks => const SEED_DECKS = {}; */
 /* Splinter, Radical Rat (Esper Ninjutsu) */
 const SPLINTER_DECK = {
   name: "Splinter, Radical Rat",
@@ -2476,6 +2526,7 @@ const SEED_DECKS = {
   ghoul: GHOUL_DECK,
   gishath: GISHATH_DECK
 };
+/* @friends-end seed-decks */
 const SEED_KEYS = new Set(Object.keys(SEED_DECKS));
 /* Map deck.name (lowercased) to the seed key it belongs to, so stored decks with the same name overwrite the seed slot. */
 const SEED_NAME_TO_KEY = {};
@@ -2601,6 +2652,12 @@ function loadStoredActive(){
 function saveStoredActive(key){
   if (!STORAGE_OK) return;
   try { localStorage.setItem(STORAGE_KEYS.active, key); } catch(e){}
+}
+/* No deck is open (the app holds zero decks). Remove the key rather than save
+   null, which would be stored as the string "null". */
+function clearStoredActive(){
+  if (!STORAGE_OK) return;
+  try { localStorage.removeItem(STORAGE_KEYS.active); } catch(e){}
 }
 
 /* --- one-time migration from v0.8 anxiousdeck.decks blob --- */
@@ -2757,6 +2814,37 @@ const DECKS = {};           // key -> deck object
 const DECK_META = {};       // key -> { seed: bool, storageKey: string|null }
 let ACTIVE_KEY = "splinter";
 let ACTIVE_DECK = null;
+
+/* ============ NO DECKS YET ============
+   The main app always has its seven seed decks, so none of this runs there. It is
+   for friends.html: this app with the seed decks taken out, built from this file
+   by tools/build_friends_copy.rb. Greg-only data sits between friends markers.
+   Never hard-code a deck key as a fallback -- ask fallbackDeckKey(). */
+function fallbackDeckKey(){
+  if (DECKS.splinter) return "splinter";            // the main app: same as always
+  const keys = Object.keys(DECKS);
+  return keys.length ? keys[0] : null;              // no Splinter: first deck, or none
+}
+function showNoDecks(){
+  ACTIVE_KEY = null;
+  ACTIVE_DECK = null;
+  clearStoredActive();
+  exitEditMode();
+  applyTheme([], null);                             // plain colorless paint
+  renderSwitcher();                                 // sets body.no-decks
+  resetGeneratedViews();
+  const c = document.getElementById("showcaseConfirm");
+  if (c) c.innerHTML = "";                          // drop a leftover "Remove X?" row
+  if (CUR_VIEW !== "showcase" && GAME_VIEWS.indexOf(CUR_VIEW) < 0) switchView("showcase");
+}
+function bindNoDecks(){
+  // Same path as menu > Add a deck: Spellbook, Coach, the paste box.
+  const add = document.getElementById("noDecksAdd");
+  if (add) add.addEventListener("click", () => navAct(add));
+  // Import Backup normally lives under a deck, so with no deck this is the way in.
+  const bk = document.getElementById("noDecksBackup");
+  if (bk) bk.addEventListener("click", () => { const inp = document.getElementById("backupInput"); if (inp) inp.click(); });
+}
 
 /* Rebuild DECKS from seeds (+ replayed log) and user decks. Seed decks are ALWAYS
    deepClone(seed) plus their stored change log; user-imported decks come out of
@@ -2969,6 +3057,7 @@ const COLOR_THEMES = {
 
    A deck with no entry here just uses its color identity like always, so pasted
    decks behave exactly as they did before, and so does the Look Up tab. */
+/* @friends-cut deck-themes => const DECK_THEMES = {}; */
 const DECK_THEMES = {
 
   /* Splinter -- a rat sensei who only moves in the dark. Plum and indigo walls, a
@@ -3049,6 +3138,7 @@ const DECK_THEMES = {
               ink:"#e8dac0", inkDim:"#a4917a", inkBright:"#fdf4e2",
               panelRgb:"37,26,16", voidRgb:"19,13,7" } }
 };
+/* @friends-end deck-themes */
 
 /* Take a color_identity array (like ["W","U","B"]), return the theme entry. */
 function themeForIdentity(ci){
@@ -3428,6 +3518,7 @@ const COMBOS = [
    caveat   the honest downside. null when there genuinely is none.
    pick     1 on the single idea the sweep named under "Next:". At most one per week.
    at       the sweep week, YYYY-MM-DD. Drives the ordering. */
+/* @friends-cut wishlist => const WISHLIST = []; */
 const WISHLIST = [
   { deck:"splinter", card:"Willie Lumpkin, Postman", cost:"W/U, 2 mana", pick:1,
     why:"Can't be blocked, and draws you a card every time he connects. That is a free ninjutsu trigger every single turn.",
@@ -3625,6 +3716,7 @@ const WISHLIST = [
     caveat:null,
     at:"2026-08-27" }
 ];
+/* @friends-end wishlist */
 
 /* Wish-list state: what you decided, and what you parked yourself.
    One key, one object -- not a key per row.
@@ -4611,6 +4703,7 @@ function exitEditMode(){
 }
 
 function setEditMode(on){
+  if (on && !ACTIVE_DECK) return;        // no decks yet: nothing to edit
   if (!on){ exitEditMode(); }
   else {
     EDIT_MODE = true;
@@ -5201,8 +5294,9 @@ function importBackupFromText(text){
   DECK_CACHE.clear();
   rebuildRegistry();
   const wantActive = obj.activeDeck && DECKS[obj.activeDeck] ? obj.activeDeck : ACTIVE_KEY;
-  ACTIVE_KEY = DECKS[wantActive] ? wantActive : "splinter";
+  ACTIVE_KEY = DECKS[wantActive] ? wantActive : fallbackDeckKey();
   ACTIVE_DECK = DECKS[ACTIVE_KEY];
+  if (!ACTIVE_DECK){ showNoDecks(); flashInlineMessage("No decks in that file."); return; }
   applyTheme(identityStringToArray(ACTIVE_DECK.identity), ACTIVE_KEY);
   renderShowcase(ACTIVE_DECK);
   renderSwitcher();
@@ -5277,7 +5371,8 @@ function showRemoveConfirm(){
     // Fall back to the first seed
     rebuildRegistry();
     exitEditMode();
-    const firstSeed = "splinter";
+    const firstSeed = fallbackDeckKey();
+    if (!firstSeed){ showNoDecks(); return; }   // that was the last deck
     ACTIVE_KEY = firstSeed;
     ACTIVE_DECK = DECKS[firstSeed];
     saveStoredActive(firstSeed);
@@ -5527,6 +5622,7 @@ function renderDeckFront(deck){
    even if a list is edited later. The only hand-written part is the reason on
    each swap; a card with no reason still shows, it just has no note.
    ============================================================ */
+/* @friends-cut modular-pairs => const MODULAR_PAIRS = []; */
 const MODULAR_PAIRS = [
   {
     // keys[0] is the "base" mode, keys[1] is what it converts into.
@@ -5567,6 +5663,7 @@ const MODULAR_PAIRS = [
     ]
   }
 ];
+/* @friends-end modular-pairs */
 
 function modularPairFor(key){
   for (let i = 0; i < MODULAR_PAIRS.length; i++){
@@ -9055,6 +9152,9 @@ async function enterSpellbook(){
   renderSbMirror();
   // Coach panel: cheap, no network — always repaint the persistent change/undo list.
   renderChangeLog();
+  // No decks yet: just the paste box. Returning here, before any await, keeps the
+  // Add-a-deck focus inside the tap so a phone opens its keyboard.
+  if (!ACTIVE_DECK){ showBookSub("coach"); return; }
   // Playbook / Strategy / Where / Combos all read from ONE shared analysis.
   const fill = (b) => {
     // The Coach used to sit blank until its button was pressed, while the four
@@ -9121,6 +9221,7 @@ async function refillSpellbookAfterEdit(){
 
 /* ============ COACH BUTTON ============ */
 async function scoreDeck(deck){
+  if (!deck) return;                     // no decks yet: nothing to coach
   const statusEl = document.getElementById("scoreStatus");
   const btn = document.getElementById("scoreBtn");
   btn.disabled = true;
@@ -9445,6 +9546,9 @@ function handleFile(file, statusEl){
 function renderSwitcher(){
   const wrap = document.getElementById("switcher");
   const keys = Object.keys(DECKS);
+  // Every add, remove, import and reset passes through here, so this one line keeps
+  // the "no decks yet" welcome card in step. Never true in the main app.
+  document.body.classList.toggle("no-decks", keys.length === 0);
   const mdc = document.getElementById("myDecksCount");
   if (mdc) mdc.textContent = "My Decks (" + keys.length + ")";
   let html = '<span class="swlabel">Deck</span>';
@@ -9805,6 +9909,7 @@ function renderPlay(){
   });
 }
 async function enterPlay(){
+  if (!ACTIVE_DECK) return;              // no decks yet (the tab is hidden then too)
   const host = document.getElementById("playBody");
   if (PLAY.deckKey !== ACTIVE_KEY){
     PLAY = { library:[], hand:[], played:[], mulls:0, cardData:null, deckKey:ACTIVE_KEY, drawn:0 };
@@ -12052,7 +12157,7 @@ function gameEditorHTML(t){
   } else {
     h += '<input id="gEdCmdr" class="g-input" type="text" autocomplete="off" autocapitalize="words" enterkeyhint="done" placeholder="Any part of the commander\'s name" value="' + esc(e.q || "") + '">';
     h += '<div class="g-sugg" id="gSugg"></div>';
-    h += '<button class="g-link" type="button" data-act="ed-decks">' + (e.deckList ? "Hide my decks" : (isYou ? "Pick one of my decks" : "Or one of my decks")) + '</button>';
+    if (Object.keys(DECKS).length) h += '<button class="g-link" type="button" data-act="ed-decks">' + (e.deckList ? "Hide my decks" : (isYou ? "Pick one of my decks" : "Or one of my decks")) + '</button>';
     if (e.deckList){
       h += '<div class="g-decklist">';
       Object.keys(DECKS).forEach(function(k){
@@ -12509,10 +12614,11 @@ function navSheetHTML(){
     h += '<span class="nav-pips">' + colorPips(identityStringToArray(DECKS[k].identity)) + '</span>';
     h += '</button>';
   });
+  if (!Object.keys(DECKS).length) h += '<p class="nav-none">No decks yet.</p>';
   h += '</div>';
   h += '<button class="nav-item" type="button" data-nav="add"><span class="nav-ic">+</span>Add a deck</button>';
   h += '<div class="nav-sep"></div>';
-  h += '<button class="nav-item" type="button" data-nav="coach"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h6a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z"/></svg></span>Coach this deck</button>';
+  if (ACTIVE_DECK) h += '<button class="nav-item" type="button" data-nav="coach"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h6a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-6a2 2 0 00-2 2v12a2 2 0 012-2h6z"/></svg></span>Coach this deck</button>';
   h += '<button class="nav-item" type="button" data-nav="art"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M20.5 16l-5-5-8.5 8.5"/></svg></span>Card art: ' + (PEEK_RANDOM ? "random printing" : "newest printing") + '</button>';
   h += '<button class="nav-item" type="button" data-nav="comfort"><span class="nav-ic nav-aa">Aa</span>Text and comfort</button>';
   h += '<p class="nav-tag">pull up a chair. your deck, your table, your corner.</p>';
@@ -12766,7 +12872,7 @@ function boot(){
   if (storedActive && DECKS[storedActive]) {
     ACTIVE_KEY = storedActive;
   } else {
-    ACTIVE_KEY = "splinter";
+    ACTIVE_KEY = fallbackDeckKey();      // Splinter in the main app; null in an empty copy
   }
   ACTIVE_DECK = DECKS[ACTIVE_KEY];
 
@@ -12779,13 +12885,16 @@ function boot(){
   }
 
   // Theme from the deck's own skin, falling back to its color identity.
-  const seedCi = identityStringToArray(ACTIVE_DECK.identity);
-  applyTheme(seedCi, ACTIVE_KEY);
+  if (ACTIVE_DECK) {
+    const seedCi = identityStringToArray(ACTIVE_DECK.identity);
+    applyTheme(seedCi, ACTIVE_KEY);
+  }
 
   // Ambient background drips
   seedDrips();
 
-  renderShowcase(ACTIVE_DECK);
+  // No decks at all (only ever the blank friends copy): the welcome card instead.
+  if (ACTIVE_DECK) renderShowcase(ACTIVE_DECK); else showNoDecks();
   renderSwitcher();
   // Fill in the why-lines and power modules for the deck you land on.
   warmShowcase(ACTIVE_KEY);
@@ -12849,6 +12958,7 @@ function boot(){
   // of a game opens straight back into it, not into Showcase.
   bindGame();
   bindNav();
+  bindNoDecks();
   updateGameDoor();
   if (loadMode() === "game") switchView("game");
 }
